@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cps:CyberPhysicalSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:cps="http://org.eclipse.viatra/model/cps"
+    xsi:schemaLocation="http://org.eclipse.viatra/model/cps ../../org.eclipse.viatra.examples.cps.model/model/model.ecore"
+    identifier="1234"
+    dbUrl="valami"/>
