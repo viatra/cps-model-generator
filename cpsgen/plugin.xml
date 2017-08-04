@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><plugin>
+  <extension id="cpsgen.patterns.Pattern" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:cpsgen.patterns.Pattern" id="cpsgen.patterns.Pattern">
+      <query-specification fqn="cpsgen.patterns.notAllocatedButRunning"/>
+      <query-specification fqn="cpsgen.patterns.initialStateNotContainedByStateMachine"/>
+      <query-specification fqn="cpsgen.patterns.transitionWithoutTargetState"/>
+      <query-specification fqn="cpsgen.patterns.targetStateNotContainedBySameStateMachine"/>
+      <query-specification fqn="cpsgen.patterns.multipleTransitionsWithSameAction"/>
+      <query-specification fqn="cpsgen.patterns.multipleApplicationInstanceInCommunicationGroup"/>
+      <query-specification fqn="cpsgen.patterns.appTypeInstanceAndHost"/>
+      <query-specification fqn="cpsgen.patterns.hostCommunication"/>
+      <query-specification fqn="cpsgen.patterns.reachableHosts"/>
+      <query-specification fqn="cpsgen.patterns.reachableAppInstance"/>
+    </group>
+  </extension>
+</plugin>
