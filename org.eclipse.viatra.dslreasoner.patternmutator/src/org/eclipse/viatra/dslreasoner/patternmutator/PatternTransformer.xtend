@@ -36,6 +36,9 @@ import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall
 import org.eclipse.viatra.query.runtime.matchers.psystem.EnumerablePConstraint
 import org.eclipse.viatra.query.runtime.matchers.psystem.DeferredPConstraint
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Equality
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue
 
 class PatternTransformer {
 	var List<? extends IQuerySpecification<?>> patterns
@@ -70,14 +73,15 @@ class PatternTransformer {
 			pattern «patternName»V«cntr»«patternParams» {				
 			«FOR body : normalizedPquery.bodies SEPARATOR ' or {'»				
 				«FOR constraint : body.constraints»
-«««				«constraint.class.typeName»
-«««				TypeConstraints:
+«««				«constraint.class»
+«««				TypeConstraint with EClassTransitiveInstancesKey:
 				«IF constraint.class ==  TypeConstraint»
 				«IF(constraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey»
 				«FOR param : (constraint as TypeConstraint).variablesTuple.elements»
 				«((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).wrappedKey.name»(«filterParamWildCards(param.toString)»);
 				«ENDFOR»
 				«ENDIF»
+«««				TypeConstraint with EStructuralFeatureInstancesKey:
 				«IF(constraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey»
 				«((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.containerClass.typeName.split("\\.").last».«
 				((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name»(«
@@ -86,17 +90,27 @@ class PatternTransformer {
 				«ENDIF»
 «««				PositivePatternCall:
 				«IF constraint.class == PositivePatternCall»
-«««				«constraint»
-«««				«constraint.affectedVariables»
 				find «(constraint as PositivePatternCall).referredQuery.fullyQualifiedName.split("\\.").last»V«cntr»(«
 				FOR param : (constraint as PositivePatternCall).getVariablesTuple.elements SEPARATOR ', '»«filterParamWildCards(param.toString)»«ENDFOR»);	
 				«ENDIF»
 «««				NegativePatternCall:
 				«IF constraint.class == NegativePatternCall»
-«««				«constraint»
-«««				«constraint.affectedVariables.get(0)»
 				neg find «(constraint as NegativePatternCall).referredQuery.fullyQualifiedName.split("\\.").last»V«cntr»(«
 				FOR param : (constraint as NegativePatternCall).actualParametersTuple.elements SEPARATOR ', '»«filterParamWildCards(param.toString)»«ENDFOR»);	
+				«ENDIF»
+«««				ConstantValue:
+				«IF constraint.class == ConstantValue»
+				«(constraint as ConstantValue).variablesTuple.get(0)» == «
+				(((constraint as ConstantValue).supplierKey)as Enum).declaringClass.name.split("\\.").last»::«
+				(constraint as ConstantValue).supplierKey»;
+				«ENDIF»
+«««				Equality:
+				«IF constraint.class == Equality»
+				//TODO Equality
+				«ENDIF»
+«««				Inequality:
+				«IF constraint.class == Inequality»
+				//TODO Inequality
 				«ENDIF»
 				«ENDFOR»
 			}
