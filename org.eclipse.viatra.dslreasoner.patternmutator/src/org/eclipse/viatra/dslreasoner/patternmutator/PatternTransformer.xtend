@@ -185,7 +185,7 @@ class PatternTransformer {
 									«(constraint as ConstantValue).variablesTuple.get(0)» == «
 									(((constraint as ConstantValue).supplierKey)as Enum).declaringClass.name.split("\\.").last»::«
 									(constraint as ConstantValue).supplierKey»;
-									«ENDIF»
+									«ENDIF»									
 									«IF outsideConstraint == constraint»
 									«(constraint as ConstantValue).variablesTuple.get(0)» != «
 									(((constraint as ConstantValue).supplierKey)as Enum).declaringClass.name.split("\\.").last»::«
