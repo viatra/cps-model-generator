@@ -67,25 +67,24 @@ class PatternTransformer {
 «««				TypeConstraints:
 				«IF constraint.class ==  TypeConstraint»
 				«IF(constraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey»
-«««				
-				«FOR param : params»
+				«FOR param : constraint.affectedVariables»
 				«((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).wrappedKey.name»(«param.name»);
 				«ENDFOR»
 				«ENDIF»
 				«IF(constraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey»
 				«((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.containerClass.typeName.split("\\.").last».«
 				((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name»(«
-				FOR param : params SEPARATOR ', '»«param.name»«ENDFOR»);		
+				FOR param : constraint.affectedVariables SEPARATOR ', '»«param.name»«ENDFOR»);		
 				«ENDIF»
 				«ENDIF»
 «««				PositivePatternCall:
 				«IF constraint.class == PositivePatternCall»
-				find «(constraint as PositivePatternCall).referredQuery.fullyQualifiedName.split("\\.").last»(«
+				find «(constraint as PositivePatternCall).referredQuery.fullyQualifiedName.split("\\.").last»V«cntr»(«
 				FOR param : (constraint as PositivePatternCall).affectedVariables SEPARATOR ', '»«param»«ENDFOR»);	
 				«ENDIF»
 «««				NegativePatternCall:
 				«IF constraint.class == NegativePatternCall»
-				neg find «(constraint as NegativePatternCall).referredQuery.fullyQualifiedName.split("\\.").last»(«
+				neg find «(constraint as NegativePatternCall).referredQuery.fullyQualifiedName.split("\\.").last»V«cntr»(«
 				FOR param : (constraint as NegativePatternCall).affectedVariables SEPARATOR ', '»«param»«ENDFOR»);	
 				«ENDIF»
 				«ENDFOR»
