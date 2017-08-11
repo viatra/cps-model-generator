@@ -45,6 +45,12 @@ class PatternTransformer {
 		this.patterns = patterns
 	}
 
+	private def String filterParamWildCards (String parameter){ 
+		if(parameter.matches("_<[0-9]+>")){
+			return "_"
+		}			
+		return parameter
+	}
 	public def transformPatterns() {
 		var filteredPattern = patterns.filter[it.allAnnotations.exists[it.name == "Constraint"]].toSet
 		for (pattern : patterns) {
@@ -57,9 +63,7 @@ class PatternTransformer {
 //			var patternAnnotation = '''«FOR annotation : pquery.allAnnotations»@«annotation.name»«ENDFOR»'''	
 			var patternName = pquery.fullyQualifiedName.split("\\.").last
 			var patternParams ='''(«FOR param : params SEPARATOR ', '»«param.name»: «param.typeName.split("\\.").last»«ENDFOR»)'''
-			var PVariable pv  
 
-//as EClassTransitiveInstancesKey
 			var rebuiltQuery = 
 			'''
 «««			«patternAnnotation»«»
@@ -71,13 +75,13 @@ class PatternTransformer {
 				«IF constraint.class ==  TypeConstraint»
 				«IF(constraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey»
 				«FOR param : (constraint as TypeConstraint).variablesTuple.elements»
-				«((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).wrappedKey.name»(«param»);
+				«((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).wrappedKey.name»(«filterParamWildCards(param.toString)»);
 				«ENDFOR»
 				«ENDIF»
 				«IF(constraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey»
 				«((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.containerClass.typeName.split("\\.").last».«
 				((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name»(«
-				FOR param : (constraint as TypeConstraint).variablesTuple.elements SEPARATOR ', '»«param»«ENDFOR»);		
+				FOR param : (constraint as TypeConstraint).variablesTuple.elements SEPARATOR ', '»«filterParamWildCards(param.toString)»«ENDFOR»);		
 				«ENDIF»
 				«ENDIF»
 «««				PositivePatternCall:
@@ -85,21 +89,20 @@ class PatternTransformer {
 «««				«constraint»
 «««				«constraint.affectedVariables»
 				find «(constraint as PositivePatternCall).referredQuery.fullyQualifiedName.split("\\.").last»V«cntr»(«
-				FOR param : (constraint as PositivePatternCall).getVariablesTuple.elements SEPARATOR ', '»«param»«ENDFOR»);	
+				FOR param : (constraint as PositivePatternCall).getVariablesTuple.elements SEPARATOR ', '»«filterParamWildCards(param.toString)»«ENDFOR»);	
 				«ENDIF»
 «««				NegativePatternCall:
 				«IF constraint.class == NegativePatternCall»
 «««				«constraint»
 «««				«constraint.affectedVariables.get(0)»
 				neg find «(constraint as NegativePatternCall).referredQuery.fullyQualifiedName.split("\\.").last»V«cntr»(«
-				FOR param : (constraint as NegativePatternCall).actualParametersTuple.elements SEPARATOR ', '»«param»«ENDFOR»);	
+				FOR param : (constraint as NegativePatternCall).actualParametersTuple.elements SEPARATOR ', '»«filterParamWildCards(param.toString)»«ENDFOR»);	
 				«ENDIF»
 				«ENDFOR»
 			}
 			«ENDFOR»
 			
 			'''
-
 			println(rebuiltQuery)
 			cntr++
 			}

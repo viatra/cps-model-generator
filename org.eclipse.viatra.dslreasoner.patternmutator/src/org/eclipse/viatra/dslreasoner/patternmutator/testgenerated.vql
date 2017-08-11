@@ -1,20 +1,19 @@
 package org.eclipse.viatra.dslreasoner.patternmutator
 
 import epackage "FAM";
-@Constraint
+
 pattern terminatorAndInformationV0(T: FAMTerminator, I: InformationLink) {				
-	FunctionalOutput.outgoingLinks(I, Out);		
+	FunctionalOutput.outgoingLinks(Out, I);		
 	FunctionalData.terminator(Out, T);		
 } or {
 	InformationLink.to(I, In);		
-	FunctionalData.terminator(T, In);		
+	FunctionalData.terminator(In, T);		
 }
 
 
-@Constraint
 pattern noIntV0(fam: FunctionalArchitectureModel) {				
 	FunctionalArchitectureModel(fam);
-	neg find hasIntV0(_<0>);	
+	neg find hasIntV0(_);	
 }
 
 
@@ -24,20 +23,18 @@ pattern parentV0(Func: Function, Par: Function) {
 }
 
 
-@Constraint
 pattern noRootV0(fam: FunctionalArchitectureModel) {				
 	FunctionalArchitectureModel(fam);
-	neg find hasRootV0(_<0>);	
+	neg find hasRootV0(_);	
 }
 
 
 pattern rootElementsV0(Model: FunctionalArchitectureModel, Root: Function) {				
 	Function(Root);
-	FunctionalArchitectureModel.rootElements(Root, Model);		
+	FunctionalArchitectureModel.rootElements(Model, Root);		
 }
 
 
-@QueryBasedFeature
 pattern modelV0(This: FunctionalElement, Target: FunctionalArchitectureModel) {				
 	FunctionalElement(This);
 	FunctionalArchitectureModel(Target);
@@ -45,38 +42,40 @@ pattern modelV0(This: FunctionalElement, Target: FunctionalArchitectureModel) {
 
 
 pattern hasLeafV0(F: Function) {				
-	find parentV0(_Par, F);	
+	find parentV0(F, _Par);	
 	find parentV0(_Child, F);	
 }
 
 
 pattern hasIntV0(F: Function) {				
 	Function(F);
-	neg find parentV0(F, _Child);	
-	neg find rootElementsV0(F, _Model);	
+	neg find parentV0(_Child, F);	
+	neg find rootElementsV0(_Model, F);	
 }
 
-
-@QueryBasedFeature
+//TODO
+/* 
 pattern typeV0(This: Function, Target: FunctionType) {				
 	find parentV0(This, _Par);	
-	find parentV0(This, _Child);	
+	find parentV0(_Child, This);	
 } or {
 	Function(This);
-	neg find parentV0(This, _Child);	
-	neg find rootElementsV0(This, _Model);	
+	neg find parentV0(_Child, This);	
+	neg find rootElementsV0(_Model, This);	
 } or {
 	find rootElementsV0(_Model, This);	
 }
+*/
 
-
-@Constraint
 pattern noLeafV0(fam: FunctionalArchitectureModel) {				
 	FunctionalArchitectureModel(fam);
-	neg find hasLeafV0(_<0>);	
+	neg find hasLeafV0(_);	
 }
 
 
 pattern hasRootV0(F: Function) {				
-	find rootElementsV0(F, _Model);	
+	find rootElementsV0(_Model, F);	
 }
+
+
+
