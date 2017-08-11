@@ -99,6 +99,7 @@ class PatternTransformer {
 				FOR param : (constraint as NegativePatternCall).actualParametersTuple.elements SEPARATOR ', '»«filterParamWildCards(param.toString)»«ENDFOR»);	
 				«ENDIF»
 «««				ConstantValue:
+«««             TODO: check if supplier is enum before casting...
 				«IF constraint.class == ConstantValue»
 				«(constraint as ConstantValue).variablesTuple.get(0)» == «
 				(((constraint as ConstantValue).supplierKey)as Enum).declaringClass.name.split("\\.").last»::«
@@ -106,11 +107,11 @@ class PatternTransformer {
 				«ENDIF»
 «««				Equality:
 				«IF constraint.class == Equality»
-				//TODO Equality
+				«(constraint as Equality).who» == «(constraint as Equality).withWhom»;
 				«ENDIF»
 «««				Inequality:
 				«IF constraint.class == Inequality»
-				//TODO Inequality
+				«(constraint as Inequality).who» != «(constraint as Inequality).withWhom»;
 				«ENDIF»
 				«ENDFOR»
 			}
