@@ -1,0 +1,13 @@
+package org.eclipse.viatra.dslreasoner.patternmutator
+
+import epackage "FAM";
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+pattern FunctionalOutput(T){
+	 FunctionalOutput(T);
+}
+
+pattern testp(T1){
+	EObject(T1);
+	neg find FunctionalOutput(T1);
+}

@@ -25,9 +25,7 @@ class TempTest {
     @Test
     def void tempTest() {
 
-        val p = hu.bme.mit.inf.dslreasoner.domains.transima.fam.patterns.Pattern.instance
-        val PatternTransformer pt = new PatternTransformer(p.specifications.toList)
-        pt.transformPatterns()
-   
+		val p = org.eclipse.viatra.dslreasoner.patternmutator.Queries.instance
+        PatternMutator.mutate(p.specifications.toList)  
     }
 }
