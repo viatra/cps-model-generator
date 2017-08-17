@@ -76,25 +76,50 @@ import org.eclipse.emf.ecore.EEnumLiteral
 import org.eclipse.emf.ecore.ETypedElement
 import org.eclipse.emf.ecore.ENamedElement
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple
-import org.eclipse.viatra.dslreasoner.patternmutator.util.FunctionalOutputQuerySpecification
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.impl.EObjectImpl
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure
 
 //import hu.bme.mit.inf.dslreasoner.domains.transima.fam.patterns.Pattern
 //import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
-public final class PatternMutator {
+public class PatternMutator {
 	
-	private new() {}
+	static protected var HashMap<String ,PQuery> outsourcedQueries = newHashMap
+		
+	new() {}
 
+	
 	static class HelperPQuery extends BasePQuery implements InitializablePQuery {
 
 		var String name = "NoName"
+		var int version = -1
 		//var PAnnotation annotation
 		var List<PParameter> parameters = Lists.newArrayList()
-		public var Set<PBody> bodies = Sets.newLinkedHashSet()
+		var Set<PBody> bodies = Sets.newLinkedHashSet()
 
+		
+		new(){} // Added Bodies Must be initialized later!
+		
 		new(PQuery queryToCopy) {
-			copyPQuery(queryToCopy)
+			copyPQuery(queryToCopy, null)
+			initializeBodies(bodies)
+		}
+		
+		new(PQuery queryToCopy, int version, PConstraint constraintToNegate) {
+			this.version = version
+			copyPQuery(queryToCopy, constraintToNegate)
+			initializeBodies(bodies)
+		}
+		
+		new(PQuery queryToCopy, int version, PParameter parameterToNegate) {
+			this.version = version
+			copyPQuery(queryToCopy, null)
 			initializeBodies(bodies)
 		}
 
@@ -150,7 +175,7 @@ public final class PatternMutator {
 	        return literal;
 	    }
 		
-		def copyBody(PBody bodyToCopy) throws QueryInitializationException{
+		def copyBody(PBody bodyToCopy, PConstraint constraintToNegate) throws QueryInitializationException{
 			try {
 				
 				if(!bodies.contains(bodyToCopy)){				
@@ -160,36 +185,92 @@ public final class PatternMutator {
 					for (constraint : bodyToCopy.constraints) {
 						
 						// TypeConstraint
-						if (constraint.class == TypeConstraint) {
-							if((constraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey){								
-								var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(
-								(constraint as TypeConstraint).variablesTuple.elements.get(0).toString))
-								new TypeConstraint(body, Tuples.flatTupleOf(variable),
-									new EClassTransitiveInstancesKey(((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey)) 
-							}				
-							else if((constraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey){
-								var List<PVariable> variables = newArrayList
-								for (readVariable : (constraint as TypeConstraint).variablesTuple.elements) {
-									var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
-									variables.add(variable)
-								}						
-								var String packageUriName =  ((((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey as ETypedElement).EType.EPackage.nsURI.toString)					
-								var String className = ((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.containerClass.typeName.split("\\.").last
-								var String featureName = ((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name
-								new TypeConstraint(body, Tuples.flatTupleOf(variables.toArray), new EStructuralFeatureInstancesKey(
-											getFeatureLiteral(packageUriName, className, featureName)))	
-							}					
-							    
+						if (constraint.class == TypeConstraint) {				
+										
+							if (constraintToNegate != null && constraint.toString == constraintToNegate.toString) {
+								var PVariable eobjVar = body.getOrCreateVariableByName(filterParamWildCards(
+											(constraint as TypeConstraint).variablesTuple.elements.get(0).toString))
+								new TypeConstraint(body, Tuples.flatTupleOf(eobjVar),
+											new EClassTransitiveInstancesKey(getClassifierLiteral("http://www.eclipse.org/emf/2002/Ecore", "EObject") as EClass))
+								
+								if((constraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey){
+									var String outsourcedPatternName = ((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey.name
+									//outsource and create pattern from typeconstraint	
+									if(!outsourcedQueries.containsKey(outsourcedPatternName)){
+										var HelperPQuery pq = new HelperPQuery()
+										pq.name = outsourcedPatternName
+										outsourcedQueries.put(pq.name, pq)
+										var PBody outsourcedBody = new PBody(pq) 
+										pq.bodies.add(outsourcedBody)
+										var PVariable variable = outsourcedBody.getOrCreateVariableByName(filterParamWildCards(
+											(constraint as TypeConstraint).variablesTuple.elements.get(0).toString))
+										new TypeConstraint(outsourcedBody, Tuples.flatTupleOf(variable),
+											new EClassTransitiveInstancesKey(((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey))
+											
+										var PParameter p = new PParameter(variable.name, (((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey).name)
+										pq.addParameter(p)
+										pq.initializeBodies(pq.bodies)
+									}
+									//create negative pattern call on the outsourced pattern
+									var PVariable variable2 = body.getOrCreateVariableByName(filterParamWildCards(
+										(constraint as TypeConstraint).variablesTuple.elements.get(0).toString))	
+						            new NegativePatternCall(body, new FlatTuple(variable2), outsourcedQueries.get(outsourcedPatternName));	
+						            
+						            //remove Parameter Type
+						            var int index = -1
+						            var PParameter p 
+						            for (param : parameters) {
+						            	if(param.name == eobjVar.name){					            		
+											p = new PParameter(param.name)
+											index = parameters.indexOf(param)
+						            	}
+						            }
+						            if (index >=0) {
+						            	parameters.remove(index)
+						            	parameters.add(p)
+						            }
+								 
+								}
+								else /*if((constraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey)*/{
+									var String outsourcedPatternName = ((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name
+									println("__________________________________________")
+									println(outsourcedPatternName)
+								}
+
+							} else {
+								if((constraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey){								
+									var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(
+										(constraint as TypeConstraint).variablesTuple.elements.get(0).toString))
+									new TypeConstraint(body, Tuples.flatTupleOf(variable),
+										new EClassTransitiveInstancesKey(((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey)) 
+								}				
+								else if((constraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey){
+									var List<PVariable> variables = newArrayList
+									for (readVariable : (constraint as TypeConstraint).variablesTuple.elements) {
+										var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
+										variables.add(variable)
+									}						
+									var String packageUriName =  ((((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey as ETypedElement).EType.EPackage.nsURI.toString)					
+									var String className = ((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.containerClass.typeName.split("\\.").last
+									var String featureName = ((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name
+									new TypeConstraint(body, Tuples.flatTupleOf(variables.toArray), new EStructuralFeatureInstancesKey(
+												getFeatureLiteral(packageUriName, className, featureName)))	
+								}									    
+							}
 						}
 						
 						// PositivePatternCall
 						if (constraint.class == PositivePatternCall) {
-								var List<PVariable> variables = newArrayList
-								for (readVariable : (constraint as PositivePatternCall).variablesTuple.elements) {
-									var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
-									variables.add(variable)
-								}				
+							var List<PVariable> variables = newArrayList
+							for (readVariable : (constraint as PositivePatternCall).variablesTuple.elements) {
+								var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
+								variables.add(variable)
+							}				
+							if (constraintToNegate != null && constraint.toString == constraintToNegate.toString) {
+								new NegativePatternCall(body, new FlatTuple(variables.toArray), (constraint as PositivePatternCall).referredQuery);
+							} else {		
 					            new PositivePatternCall(body, new FlatTuple(variables.toArray), (constraint as PositivePatternCall).referredQuery);
+							}
 						}
 						
 						// NegativePatternCall
@@ -198,8 +279,12 @@ public final class PatternMutator {
 								for (readVariable : (constraint as NegativePatternCall).actualParametersTuple.elements) {
 									var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
 									variables.add(variable)
-								}				
-					            new NegativePatternCall(body, new FlatTuple(variables.toArray), (constraint as NegativePatternCall).referredQuery);
+								}
+								if (constraintToNegate != null && constraint.toString == constraintToNegate.toString) {
+									new PositivePatternCall(body, new FlatTuple(variables.toArray), (constraint as NegativePatternCall).referredQuery);
+								} else {		
+						            new NegativePatternCall(body, new FlatTuple(variables.toArray), (constraint as NegativePatternCall).referredQuery);
+								}							            
 						}
 						
 						// ConstantValue
@@ -212,16 +297,24 @@ public final class PatternMutator {
 						
 						// Equality
 						if (constraint.class == Equality) {
-							var PVariable who = body.getOrCreateVariableByName((constraint as Equality).who.toString)
+						    var PVariable who = body.getOrCreateVariableByName((constraint as Equality).who.toString)
 							var PVariable withWhom = body.getOrCreateVariableByName((constraint as Equality).withWhom.toString)
-							new Equality(body, who, withWhom)
+							if (constraintToNegate != null && constraint.toString == constraintToNegate.toString) {
+								new Inequality(body, who, withWhom)	
+							} else {		
+						    	new Equality(body, who, withWhom)
+							}
 						}
 						
 						// Inequality
 						if (constraint.class == Inequality) {
 							var PVariable who = body.getOrCreateVariableByName((constraint as Inequality).who.toString)
 							var PVariable withWhom = body.getOrCreateVariableByName((constraint as Inequality).withWhom.toString)
-							new Inequality(body, who, withWhom)
+							if (constraintToNegate != null && constraint.toString == constraintToNegate.toString) {
+								new Equality(body, who, withWhom)	
+							} else {		
+						    	new Inequality(body, who, withWhom)
+							}
 						}						
 					}//ENDFOR					
 				}//ENDIF
@@ -233,7 +326,7 @@ public final class PatternMutator {
 			}
 		}
 			
-		def copyPQuery(PQuery queryToCopy) throws QueryInitializationException{
+		def copyPQuery(PQuery queryToCopy, PConstraint constraintToCopy) throws QueryInitializationException{
 			try {
 				
 				// Copy Annotations: TODO
@@ -244,7 +337,6 @@ public final class PatternMutator {
 ////						
 ////					}
 //					this.addAnnotation(an)
-
 				}
 
 				//Copy Name:
@@ -252,13 +344,13 @@ public final class PatternMutator {
 				
 				//Copy Parameters:
 				for (parameter : queryToCopy.parameters) {
-					var PParameter p = new PParameter(parameter.name, parameter.typeName, parameter.declaredUnaryType, parameter.direction)
+					var PParameter p = new PParameter(parameter.name, parameter.typeName/* , parameter.declaredUnaryType, parameter.direction*/)
 					addParameter(p)
 				}
 				
 				// Copy Bodies:				
 				for (body : queryToCopy.disjunctBodies.bodies) {
-					copyBody(body)	
+					copyBody(body, constraintToCopy)	
 				}
 				
 			// to silence compiler error
@@ -292,7 +384,11 @@ public final class PatternMutator {
 		}
 
 		override getFullyQualifiedName() {
-			return name
+			if (version >= 0) {
+				return name + "V" + version
+			} else {
+				return name
+			}			 
 		}
 
 		override getParameters() {
@@ -331,7 +427,8 @@ public final class PatternMutator {
 //		var patternAnnotation = '''«FOR annotation : pquery.allAnnotations»@«annotation.name»(«FOR value : annotation.allValues SEPARATOR ', '»«IF value.key == "message" || value.key == "severity"»«value.key» = "«value.value»"«ENDIF»«IF value.key == "key"»«value.key» = «value.value»«ENDIF»«ENDFOR»)«ENDFOR»'''
 //		var patternAnnotation = '''«FOR annotation : pquery.allAnnotations»@«annotation.name»«ENDFOR»'''	
 		var patternName = pquery.fullyQualifiedName.split("\\.").last
-		var patternParams ='''(«FOR param : params SEPARATOR ', '»«param.name»: «param.typeName.split("\\.").last»«ENDFOR»)'''				
+		var patternParams ='''(«FOR param : params SEPARATOR ', '»«param.name»«IF param.typeName != null»:«param.typeName.split("\\.").last»«ENDIF»«ENDFOR»)'''		
+
 		var String text = ""				
 		text +=	'''
 «««		«patternAnnotation»«»
@@ -385,12 +482,12 @@ public final class PatternMutator {
 		return text
 	}
 	
-	static def mutate(List<? extends IQuerySpecification<?>> querySpecifications) {
+	def mutate(List<? extends IQuerySpecification<?>> querySpecifications) {
 		
 		var specifications = new ArrayList<IQuerySpecification<?>>
 		var pQueries = new HashSet<PQuery>
 		var HashSet<PQuery> workingSetQueries = new HashSet<PQuery>
-		var HashMap<String, PQuery> mutatedQueries = new HashMap<String, PQuery>
+		var HashMap<String, HashSet<PQuery>> mutatedQueries = new HashMap<String, HashSet<PQuery>>
 		
 		for (IQuerySpecification<?> specification : querySpecifications) {
 			specifications.add(specification);
@@ -399,18 +496,43 @@ public final class PatternMutator {
 		for (spec : specifications) {
 			pQueries.add(spec.internalQueryRepresentation)
 		}
-					
+	
 		for (query : pQueries) {
-			var PatternMutator.HelperPQuery p = new HelperPQuery(query)
-			workingSetQueries.add(p)
+						
+			var int cntr = 1;	
+//			var PatternMutator.HelperPQuery p = new HelperPQuery(query)
+//			workingSetQueries.add(p)
+			var normalizedPQuery = new PBodyNormalizer(EMFQueryMetaContext.DEFAULT).rewrite(query)
+			var boolean go = true
+			for (annotation : query.allAnnotations) {
+				if(annotation.name == "QueryBasedFeature")
+					go = false
+			}
+			if(go){
+				for (body : normalizedPQuery.bodies) {
+					for (constraint : body.constraints) {
+//						if (constraint.class != AggregatorConstraint && constraint.class != ExpressionEvaluation && constraint.class != ExportedParameter && constraint.class != PatternMatchCounter && constraint.class != TypeFilterConstraint && constraint.class != BinaryTransitiveClosure ) {
+
+							var p = new HelperPQuery(query, cntr, constraint)
+							println(getTextualRepresentationOfPQuery(p))
+							cntr++						
+//						}
+					}
+				}	
+			}
+			println(getTextualRepresentationOfPQuery(query))					
 		}
-		
+		println("//___________outsourcedQueries:____________")
+		for (outsourcedQuery: outsourcedQueries.entrySet) {
+				println(getTextualRepresentationOfPQuery(outsourcedQuery.value))
+		}
 		for (pquery : workingSetQueries) {
-			println(getTextualRepresentationOfPQuery(pquery))
+			//println("______________________________")
+			//println(getTextualRepresentationOfPQuery(pquery))
 		}
 					
 		for (pquery : pQueries) {
-			
+
 		}
 //				for (outsideParam : pquery.parameters) {
 //					var String name = outsideParam.typeName.split("\\.").last
