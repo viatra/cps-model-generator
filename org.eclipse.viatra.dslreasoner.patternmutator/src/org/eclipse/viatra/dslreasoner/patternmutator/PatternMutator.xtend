@@ -1,90 +1,50 @@
 package org.eclipse.viatra.dslreasoner.patternmutator
 
-import com.google.common.collect.Iterables
+import com.google.common.base.Preconditions
+import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import java.util.ArrayList
-import java.util.Collection
 import java.util.HashMap
 import java.util.HashSet
-import java.util.LinkedList
 import java.util.List
-import java.util.Map
 import java.util.Set
-import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.EEnum
-import org.eclipse.emf.ecore.EReference
+import org.eclipse.emf.ecore.EEnumLiteral
+import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EStructuralFeature
-import org.eclipse.emf.ecore.EcorePackage
-import org.eclipse.viatra.query.patternlanguage.emf.specification.GenericEMFPatternPQuery
-import org.eclipse.viatra.query.patternlanguage.emf.specification.GenericQuerySpecification
-import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Modifiers
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.AnnotationImpl
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.PatternImpl
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.PatternLanguageFactoryImpl
+import org.eclipse.emf.ecore.ETypedElement
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
-import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFPQuery
 import org.eclipse.viatra.query.runtime.emf.EMFQueryMetaContext
-import org.eclipse.viatra.query.runtime.emf.types.BaseEMFTypeKey
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey
-import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey
-import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext
-import org.eclipse.viatra.query.runtime.matchers.context.common.BaseInputKeyWrapper
-import org.eclipse.viatra.query.runtime.matchers.psystem.DeferredPConstraint
-import org.eclipse.viatra.query.runtime.matchers.psystem.EnumerablePConstraint
-import org.eclipse.viatra.query.runtime.matchers.psystem.KeyedEnumerablePConstraint
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
+import org.eclipse.viatra.query.runtime.matchers.psystem.InitializablePQuery
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable
-import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.ParameterReference
+import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Equality
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.BasePQuery
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PProblem
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PBodyNormalizer
-import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple1
-import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple
-import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples
-import org.eclipse.xtend.lib.annotations.Data
-import com.google.common.collect.Lists
-import org.eclipse.viatra.query.runtime.matchers.psystem.InitializablePQuery
-import com.google.common.base.Preconditions
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PProblem
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus
-import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation
-import java.util.Arrays
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter
-import org.eclipse.emf.ecore.EPackage
-import org.eclipse.emf.ecore.EEnumLiteral
-import org.eclipse.emf.ecore.ETypedElement
-import org.eclipse.emf.ecore.ENamedElement
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus
-import org.eclipse.emf.ecore.EObject
-import org.eclipse.emf.ecore.impl.EObjectImpl
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples
 
 //import hu.bme.mit.inf.dslreasoner.domains.transima.fam.patterns.Pattern
 //import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
@@ -176,67 +136,119 @@ public class PatternMutator {
 	    }
 		
 		def copyBody(PBody bodyToCopy, PConstraint constraintToNegate) throws QueryInitializationException{
-			try {
-				
-				if(!bodies.contains(bodyToCopy)){				
+			try {				
+				if(!bodies.contains(bodyToCopy)){	
+						
+					// Create new Body		
 					var PBody body = new PBody(this)
 					bodies.add(body)
+					
 					//TODO setSymbolicParameters...
+					
+					// Copy Constraints
 					for (constraint : bodyToCopy.constraints) {
 						
 						// TypeConstraint
-						if (constraint.class == TypeConstraint) {				
-										
-							if (constraintToNegate != null && constraint.toString == constraintToNegate.toString) {
-								var PVariable eobjVar = body.getOrCreateVariableByName(filterParamWildCards(
-											(constraint as TypeConstraint).variablesTuple.elements.get(0).toString))
-								new TypeConstraint(body, Tuples.flatTupleOf(eobjVar),
-											new EClassTransitiveInstancesKey(getClassifierLiteral("http://www.eclipse.org/emf/2002/Ecore", "EObject") as EClass))
+						if (constraint.class == TypeConstraint) {	
+							
+							// Mutate Selected constraint																		
+							if (constraintToNegate != null && constraint.toString == constraintToNegate.toString) {	
+																
+								var List<PVariable> variables = newArrayList
+								for (readVariable : (constraint as TypeConstraint).variablesTuple.elements) {
+									var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
+									variables.add(variable)
+								}	
+								for(variable : variables){
+									new TypeConstraint(body, Tuples.flatTupleOf(variable),
+										new EClassTransitiveInstancesKey(getClassifierLiteral("http://www.eclipse.org/emf/2002/Ecore", "EObject") as EClass))	
+								}
+																						
+								// Derive the name from the constraint	
+								var String outsourcedPatternName = ""
+								var List<String> nameBuilder = newArrayList
+								nameBuilder = bodyToCopy.pattern.fullyQualifiedName.split("\\.")		
+								nameBuilder.set(nameBuilder.size-1, "")
+								for(element : nameBuilder){
+									if(element != "")
+									outsourcedPatternName += element + "."
+								}
+																						
+								if((constraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey)
+									outsourcedPatternName = ((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey.name
+								else if((constraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey)
+									outsourcedPatternName += ((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.containerClass.typeName.split("\\.").last + "_" + ( (constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name.toFirstUpper
 								
-								if((constraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey){
-									var String outsourcedPatternName = ((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey.name
-									//outsource and create pattern from typeconstraint	
-									if(!outsourcedQueries.containsKey(outsourcedPatternName)){
-										var HelperPQuery pq = new HelperPQuery()
-										pq.name = outsourcedPatternName
-										outsourcedQueries.put(pq.name, pq)
-										var PBody outsourcedBody = new PBody(pq) 
-										pq.bodies.add(outsourcedBody)
-										var PVariable variable = outsourcedBody.getOrCreateVariableByName(filterParamWildCards(
-											(constraint as TypeConstraint).variablesTuple.elements.get(0).toString))
-										new TypeConstraint(outsourcedBody, Tuples.flatTupleOf(variable),
+								// Outsource and create pattern from typeconstraint	
+								if(outsourcedPatternName != null && !outsourcedQueries.containsKey(outsourcedPatternName)){
+									
+									var List<PVariable> outsourcedVariables = newArrayList
+									var HelperPQuery pq = new HelperPQuery()
+									var PBody outsourcedBody = new PBody(pq) 
+									pq.bodies.add(outsourcedBody)
+									
+									for (readVariable : (constraint as TypeConstraint).variablesTuple.elements) {
+											var PVariable variable = outsourcedBody.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
+											outsourcedVariables.add(variable)
+									}		
+									//Different Key Types
+									if((constraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey){
+										
+										for(variable : outsourcedVariables){
+											var PParameter p = new PParameter(variable.name, (((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey).name)
+											pq.addParameter(p)
+										}		
+														
+										new TypeConstraint(outsourcedBody, Tuples.flatTupleOf(outsourcedVariables.get(0)),
 											new EClassTransitiveInstancesKey(((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey))
-											
-										var PParameter p = new PParameter(variable.name, (((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey).name)
-										pq.addParameter(p)
-										pq.initializeBodies(pq.bodies)
-									}
-									//create negative pattern call on the outsourced pattern
-									var PVariable variable2 = body.getOrCreateVariableByName(filterParamWildCards(
-										(constraint as TypeConstraint).variablesTuple.elements.get(0).toString))	
-						            new NegativePatternCall(body, new FlatTuple(variable2), outsourcedQueries.get(outsourcedPatternName));	
-						            
-						            //remove Parameter Type
-						            var int index = -1
-						            var PParameter p 
-						            for (param : parameters) {
-						            	if(param.name == eobjVar.name){					            		
-											p = new PParameter(param.name)
-											index = parameters.indexOf(param)
-						            	}
-						            }
-						            if (index >=0) {
-						            	parameters.remove(index)
-						            	parameters.add(p)
-						            }
-								 
+										
+									}else if((constraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey){
+										
+										for(variable : outsourcedVariables){
+											var String typeName
+											//find the type name from the parameters
+											for(param : bodyToCopy.pattern.parameters){
+												if(param.name == variable.name)
+													typeName = param.typeName 
+											}									
+											var PParameter p = new PParameter(variable.name, typeName)
+											pq.addParameter(p)
+										}		
+										
+										var String packageUriName =  ((((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey as ETypedElement).EType.EPackage.nsURI.toString)					
+										var String className = ((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.containerClass.typeName.split("\\.").last
+										var String featureName = ((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name
+										
+										new TypeConstraint(outsourcedBody, Tuples.flatTupleOf(outsourcedVariables.toArray), new EStructuralFeatureInstancesKey(
+											getFeatureLiteral(packageUriName, className, featureName)))	
+									}																				
+									pq.name = outsourcedPatternName
+									outsourcedQueries.put(pq.name, pq)																																									
+									pq.initializeBodies(pq.bodies)
 								}
-								else /*if((constraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey)*/{
-									var String outsourcedPatternName = ((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name
-									println("__________________________________________")
-									println(outsourcedPatternName)
-								}
+																
+								//create negative pattern call on the outsourced pattern
+								new NegativePatternCall(body, new FlatTuple(variables.toArray), outsourcedQueries.get(outsourcedPatternName));	
 
+								//remove Parameter Type for mutated queries
+								var List<Integer> indexesOfParametersToMutate = newArrayList
+					            for (param : parameters) {
+					            	var boolean match = false
+					            	for (variable : variables) {
+						            	if(param.name == variable.name)					            		
+											match = true
+		            
+					            	}
+					            	if(match == true){
+					            		indexesOfParametersToMutate.add(parameters.indexOf(param))
+					            	}
+					            }
+						        for (index : indexesOfParametersToMutate) {
+						        	var p = new PParameter(parameters.get(index).name)
+						        	parameters.set(index, p)
+						        }
+
+	
 							} else {
 								if((constraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey){								
 									var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(
@@ -275,16 +287,16 @@ public class PatternMutator {
 						
 						// NegativePatternCall
 						if (constraint.class == NegativePatternCall) {
-								var List<PVariable> variables = newArrayList
-								for (readVariable : (constraint as NegativePatternCall).actualParametersTuple.elements) {
-									var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
-									variables.add(variable)
-								}
-								if (constraintToNegate != null && constraint.toString == constraintToNegate.toString) {
-									new PositivePatternCall(body, new FlatTuple(variables.toArray), (constraint as NegativePatternCall).referredQuery);
-								} else {		
-						            new NegativePatternCall(body, new FlatTuple(variables.toArray), (constraint as NegativePatternCall).referredQuery);
-								}							            
+							var List<PVariable> variables = newArrayList
+							for (readVariable : (constraint as NegativePatternCall).actualParametersTuple.elements) {
+								var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
+								variables.add(variable)
+							}
+							if (constraintToNegate != null && constraint.toString == constraintToNegate.toString) {
+								new PositivePatternCall(body, new FlatTuple(variables.toArray), (constraint as NegativePatternCall).referredQuery);
+							} else {		
+					            new NegativePatternCall(body, new FlatTuple(variables.toArray), (constraint as NegativePatternCall).referredQuery);
+							}							            
 						}
 						
 						// ConstantValue
@@ -348,8 +360,9 @@ public class PatternMutator {
 					addParameter(p)
 				}
 				
-				// Copy Bodies:				
-				for (body : queryToCopy.disjunctBodies.bodies) {
+				// Copy Bodies:	
+				var normalizedPquery = new PBodyNormalizer(EMFQueryMetaContext.DEFAULT).rewrite(queryToCopy)				
+				for (body : normalizedPquery.bodies) {
 					copyBody(body, constraintToCopy)	
 				}
 				
@@ -457,8 +470,8 @@ public class PatternMutator {
 			«ENDIF»
 «««			NegativePatternCall:
 			«IF constraint.class == NegativePatternCall»
-			neg find «(constraint as NegativePatternCall).referredQuery.fullyQualifiedName.split("\\.").last»(«
-			FOR param : (constraint as NegativePatternCall).actualParametersTuple.elements SEPARATOR ', '»«filterParamWildCards(param.toString)»«ENDFOR»);	
+			neg find «IF (constraint as NegativePatternCall).referredQuery != null»«(constraint as NegativePatternCall).referredQuery.fullyQualifiedName.split("\\.").last»«ENDIF»(«
+			FOR param : (constraint as NegativePatternCall).actualParametersTuple.elements SEPARATOR ', '»«IF param != null»«filterParamWildCards(param.toString)»«ENDIF»«ENDFOR»);	
 			«ENDIF»
 «««			ConstantValue:
 «««         TODO: check if supplier is enum before casting...
@@ -487,7 +500,7 @@ public class PatternMutator {
 		var specifications = new ArrayList<IQuerySpecification<?>>
 		var pQueries = new HashSet<PQuery>
 		var HashSet<PQuery> workingSetQueries = new HashSet<PQuery>
-		var HashMap<String, HashSet<PQuery>> mutatedQueries = new HashMap<String, HashSet<PQuery>>
+		var HashSet<PQuery> mutatedQueries = new HashSet<PQuery>
 		
 		for (IQuerySpecification<?> specification : querySpecifications) {
 			specifications.add(specification);
@@ -497,71 +510,48 @@ public class PatternMutator {
 			pQueries.add(spec.internalQueryRepresentation)
 		}
 	
-		for (query : pQueries) {
-						
-			var int cntr = 1;	
-//			var PatternMutator.HelperPQuery p = new HelperPQuery(query)
-//			workingSetQueries.add(p)
-			var normalizedPQuery = new PBodyNormalizer(EMFQueryMetaContext.DEFAULT).rewrite(query)
+		for (query : pQueries) {				
 			var boolean go = true
 			for (annotation : query.allAnnotations) {
 				if(annotation.name == "QueryBasedFeature")
 					go = false
 			}
 			if(go){
-				for (body : normalizedPQuery.bodies) {
-					for (constraint : body.constraints) {
-//						if (constraint.class != AggregatorConstraint && constraint.class != ExpressionEvaluation && constraint.class != ExportedParameter && constraint.class != PatternMatchCounter && constraint.class != TypeFilterConstraint && constraint.class != BinaryTransitiveClosure ) {
-
-							var p = new HelperPQuery(query, cntr, constraint)
-							println(getTextualRepresentationOfPQuery(p))
-							cntr++						
-//						}
-					}
-				}	
+				workingSetQueries.add(query)
 			}
-			println(getTextualRepresentationOfPQuery(query))					
+							
 		}
+		
+		for (workingQuery : workingSetQueries) {
+			var int cntr = 1;	
+			var normalizedPQuery = new PBodyNormalizer(EMFQueryMetaContext.DEFAULT).rewrite(workingQuery)
+			println("//_______________________")
+			println(getTextualRepresentationOfPQuery(workingQuery))	
+			for (body : normalizedPQuery.bodies) {
+				for (constraint : body.constraints) {
+					if (constraint.class != AggregatorConstraint && constraint.class != ExpressionEvaluation && constraint.class != ExportedParameter && constraint.class != PatternMatchCounter && constraint.class != TypeFilterConstraint && constraint.class != BinaryTransitiveClosure ) {
+						var p = new HelperPQuery(workingQuery, cntr, constraint)
+						println(getTextualRepresentationOfPQuery(p))
+						cntr++						
+					}
+				}
+			}	
+		}
+		for (mutatedQuery : mutatedQueries) {
+			
+		}
+		
 		println("//___________outsourcedQueries:____________")
+		
 		for (outsourcedQuery: outsourcedQueries.entrySet) {
 				println(getTextualRepresentationOfPQuery(outsourcedQuery.value))
 		}
-		for (pquery : workingSetQueries) {
-			//println("______________________________")
-			//println(getTextualRepresentationOfPQuery(pquery))
-		}
+
 					
 		for (pquery : pQueries) {
 
 		}
-//				for (outsideParam : pquery.parameters) {
-//					var String name = outsideParam.typeName.split("\\.").last
-//					var boolean notContained = true;
-//					for (element : alreadyOutsourcedParam) {
-//						if (name.equals(element)) {
-//							notContained = false	
-//						}												
-//					}
-//					if (notContained) {						
-//						//if we haven't outsourced the parameter yet 
-//						alreadyOutsourcedParam.add(name)
-//						rebuiltQuery +=  '''
-//						pattern «name»(var){
-//							«name»(var)
-//						}
-//						
-//						'''
-//						//check if parameter already included in a constraint, if not then add
-//						var boolean alreadyAdded = false
-//						for (body :  normalizedPquery.bodies) {
-//							for (const : body.constraints) {
-//								if (const.class == TypeConstraint && (const as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey
-//									&& ((const as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).wrappedKey.name == name
-//								) {
-//									println("already added ")
-//									alreadyAdded = true
-//								} 
-//
+
 //«««						«patternAnnotation»«»
 //							pattern «patternName»V«cntr»«patternParams» {				
 //							«FOR body : normalizedPquery.bodies SEPARATOR ' or {'»				
@@ -643,8 +633,6 @@ public class PatternMutator {
 //							«ENDFOR»
 //							
 //							'''					
-
-
 	}
 
 }

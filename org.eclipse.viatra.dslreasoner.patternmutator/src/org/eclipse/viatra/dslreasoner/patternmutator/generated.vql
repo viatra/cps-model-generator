@@ -1,0 +1,245 @@
+package org.eclipse.viatra.dslreasoner.patternmutator
+//
+//import epackage "FAM";
+//import "http://www.eclipse.org/emf/2002/Ecore"
+////_______________________
+//pattern terminatorAndInformation(T:FAMTerminator, I:InformationLink) {				
+//	InformationLink.to(I, In);		
+//	FunctionalData.terminator(In, T);		
+//} or {
+//	FunctionalOutput.outgoingLinks(Out, I);		
+//	FunctionalData.terminator(Out, T);		
+//}
+//
+//pattern terminatorAndInformationV1(T:FAMTerminator, I) {				
+//	EObject(I);
+//	neg find FunctionalOutput_OutgoingLinks(Out, I);	
+//	FunctionalData.terminator(Out, T);		
+//} or {
+//	InformationLink.to(I, In);		
+//	FunctionalData.terminator(In, T);		
+//}
+//
+//pattern terminatorAndInformationV2(T, I:InformationLink) {				
+//	FunctionalOutput.outgoingLinks(Out, I);		
+//	EObject(T);
+//	neg find FunctionalData_Terminator(Out, T);	
+//} or {
+//	InformationLink.to(I, In);		
+//	FunctionalData.terminator(In, T);		
+//}
+//
+//pattern terminatorAndInformationV3(T:FAMTerminator, I) {				
+//	FunctionalOutput.outgoingLinks(Out, I);		
+//	FunctionalData.terminator(Out, T);		
+//} or {
+//	EObject(I);
+//	neg find InformationLink_To(I, In);	
+//	FunctionalData.terminator(In, T);		
+//}
+//
+//pattern terminatorAndInformationV4(T, I:InformationLink) {				
+//	InformationLink.to(I, In);		
+//	EObject(T);
+//	neg find FunctionalData_Terminator(In, T);	
+//} or {
+//	FunctionalOutput.outgoingLinks(Out, I);		
+//	FunctionalData.terminator(Out, T);		
+//}
+//
+////_______________________
+//pattern noRoot(fam:FunctionalArchitectureModel) {				
+//	FunctionalArchitectureModel(fam);
+//	neg find hasRoot(_);	
+//}
+//
+//pattern noRootV1(fam) {				
+//	EObject(fam);
+//	neg find FunctionalArchitectureModel(fam);	
+//	neg find hasRoot(_);	
+//}
+//
+//pattern noRootV2(fam:FunctionalArchitectureModel) {				
+//	FunctionalArchitectureModel(fam);
+//	find hasRoot(_);	
+//}
+//
+////_______________________
+//pattern parent(Func:Function, Par:Function) {				
+//	Function(Func);
+//	FunctionalElement.parent(Func, Par);		
+//}
+//
+//pattern parentV1(Func, Par:Function) {				
+//	neg find Function(Func);	
+//	FunctionalElement.parent(Func, Par);		
+//}
+//
+//pattern parentV2(Func, Par) {				
+//	Function(Func);
+//	EObject(Par);
+//	neg find FunctionalElement_Parent(Func, Par);	
+//}
+//
+////_______________________
+//pattern hasInt(F:Function) {				
+//	Function(F);
+//	neg find parent(_Child, F);	
+//	neg find rootElements(_Model, F);	
+//}
+//
+//pattern hasIntV1(F) {				
+//	EObject(F);
+//	neg find Function(F);	
+//	neg find parent(_Child, F);	
+//	neg find rootElements(_Model, F);	
+//}
+//
+//pattern hasIntV2(F:Function) {				
+//	find parent(_Child, F);	
+//	neg find rootElements(_Model, F);	
+//}
+//
+//pattern hasIntV3(F:Function) {				
+//	neg find parent(_Child, F);	
+//	find rootElements(_Model, F);	
+//}
+//
+////_______________________
+//pattern noInt(fam:FunctionalArchitectureModel) {				
+//	FunctionalArchitectureModel(fam);
+//	neg find hasInt(_);	
+//}
+//
+//pattern noIntV1(fam) {				
+//	EObject(fam);
+//	neg find FunctionalArchitectureModel(fam);	
+//	neg find hasInt(_);	
+//}
+//
+//pattern noIntV2(fam:FunctionalArchitectureModel) {				
+//	FunctionalArchitectureModel(fam);
+//	find hasInt(_);	
+//}
+//
+////_______________________
+//pattern rootElements(Model:FunctionalArchitectureModel, Root:Function) {				
+//	Function(Root);
+//	FunctionalArchitectureModel.rootElements(Model, Root);		
+//}
+//
+//pattern rootElementsV1(Model:FunctionalArchitectureModel, Root) {				
+//	neg find Function(Root);	
+//	FunctionalArchitectureModel.rootElements(Model, Root);		
+//}
+//
+//pattern rootElementsV2(Model, Root) {				
+//	Function(Root);
+//	EObject(Model);
+//	neg find FunctionalArchitectureModel_RootElements(Model, Root);	
+//}
+//
+////_______________________
+//pattern noLeaf(fam:FunctionalArchitectureModel) {				
+//	FunctionalArchitectureModel(fam);
+//	neg find hasLeaf(_);	
+//}
+//
+//pattern noLeafV1(fam) {				
+//	EObject(fam);
+//	neg find FunctionalArchitectureModel(fam);	
+//	neg find hasLeaf(_);	
+//}
+//
+//pattern noLeafV2(fam:FunctionalArchitectureModel) {				
+//	FunctionalArchitectureModel(fam);
+//	find hasLeaf(_);	
+//}
+//
+////_______________________
+//pattern interfaceData(FI:FunctionalInterface, FD:FunctionalData) {				
+//	FunctionalInterface.data(FI, FD);		
+//}
+//
+//pattern interfaceDataV1(FI, FD) {				
+//	EObject(FI);
+//	EObject(FD);
+//	neg find FunctionalInterface_Data(FI, FD);	
+//}
+//
+////_______________________
+//pattern hasRoot(F:Function) {				
+//	find rootElements(_Model, F);	
+//}
+//
+//pattern hasRootV1(F:Function) {				
+//	neg find rootElements(_Model, F);	
+//}
+//
+////_______________________
+//pattern hasLeaf(F:Function) {				
+//	find parent(F, _Par);	
+//	find parent(_Child, F);	
+//}
+//
+//pattern hasLeafV1(F:Function) {				
+//	neg find parent(F, _Par);	
+//	find parent(_Child, F);	
+//}
+//
+//pattern hasLeafV2(F:Function) {				
+//	find parent(F, _Par);	
+//	neg find parent(_Child, F);	
+//}
+//
+////___________outsourcedQueries:____________
+//pattern FunctionalElement_Parent(Func:Function, Par:Function) {				
+//	FunctionalElement.parent(Func, Par);		
+//}
+//
+//pattern FunctionalArchitectureModel_RootElements(Model:FunctionalArchitectureModel, Root:Function) {				
+//	FunctionalArchitectureModel.rootElements(Model, Root);		
+//}
+//
+//pattern Function(Func:Function) {				
+//	Function(Func);
+//}
+//
+//pattern InformationLink_To(I:InformationLink, In) {				
+//	InformationLink.to(I, In);		
+//}
+//
+//pattern FunctionalOutput_OutgoingLinks(Out, I:InformationLink) {				
+//	FunctionalOutput.outgoingLinks(Out, I);		
+//}
+//
+//pattern FunctionalArchitectureModel(fam:FunctionalArchitectureModel) {				
+//	FunctionalArchitectureModel(fam);
+//}
+//
+//pattern FunctionalInterface_Data(FI:FunctionalInterface, FD:FunctionalData) {				
+//	FunctionalInterface.data(FI, FD);		
+//}
+//
+//pattern FunctionalData_Terminator(Out, T:FAMTerminator) {				
+//	FunctionalData.terminator(Out, T);		
+//}
+//
+//
+//
+//
+//
+///* 
+//import "http://www.eclipse.org/emf/2002/Ecore"
+//
+//pattern FunctionalOutput(T){
+//	 FunctionalOutput(T);
+//}
+//
+//pattern testp(T1){
+//	EObject(T1);
+//	neg find FunctionalOutput(T1);
+//}
+//
+//
+//*/
