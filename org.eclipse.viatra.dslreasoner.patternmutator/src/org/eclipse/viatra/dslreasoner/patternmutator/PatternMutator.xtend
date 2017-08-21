@@ -51,10 +51,11 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples
 public class PatternMutator {
 	
 	static protected var HashMap<String ,PQuery> outsourcedQueries = newHashMap
-		
-	new() {}
-
 	
+/**
+ * Helper class which extends the BasePQuery. Adds copying and mutating abilities.
+ *
+ */		
 	static class HelperPQuery extends BasePQuery implements InitializablePQuery {
 
 		var String name = "NoName"
@@ -62,9 +63,8 @@ public class PatternMutator {
 		//var PAnnotation annotation
 		var List<PParameter> parameters = Lists.newArrayList()
 		var Set<PBody> bodies = Sets.newLinkedHashSet()
-
-		
-		new(){} // Added Bodies Must be initialized later!
+	
+		private new(){} // Added Bodies Must be initialized later!
 		
 		new(PQuery queryToCopy) {
 			copyPQuery(queryToCopy, null)
@@ -134,222 +134,232 @@ public class PatternMutator {
 	                    "Query refers to missing enumeration literal.", this);
 	        return literal;
 	    }
-		
-		def copyBody(PBody bodyToCopy, PConstraint constraintToNegate) throws QueryInitializationException{
-			try {				
-				if(!bodies.contains(bodyToCopy)){	
-						
-					// Create new Body		
-					var PBody body = new PBody(this)
-					bodies.add(body)
+/**
+ * Copies the values of the given TypeConstraints and creates a new one from them. The created constraint gets added to the provided PBody. 
+ *  Used by {@link #copyBody(PBody, PConstraint) copyBody}.
+ *
+ */	    
+	    def private void createTypeConstraintFrom(PBody body, TypeConstraint baseConstraint){
+			if((baseConstraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey){								
+				var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(
+					(baseConstraint as TypeConstraint).variablesTuple.elements.get(0).toString))
+				new TypeConstraint(body, Tuples.flatTupleOf(variable),
+					new EClassTransitiveInstancesKey(((baseConstraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey)) 
+			}				
+			else if((baseConstraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey){
+				var List<PVariable> variables = newArrayList
+				for (readVariable : (baseConstraint as TypeConstraint).variablesTuple.elements) {
+					var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
+					variables.add(variable)
+				}						
+				var String packageUriName =  ((((baseConstraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey as ETypedElement).EType.EPackage.nsURI.toString)					
+				var String className = ((baseConstraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.containerClass.typeName.split("\\.").last
+				var String featureName = ((baseConstraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name
+				new TypeConstraint(body, Tuples.flatTupleOf(variables.toArray), new EStructuralFeatureInstancesKey(
+					getFeatureLiteral(packageUriName, className, featureName)))	
+			}		
+	    }
+	    
+/**
+ * Copies the values of the given <b>TypeConstraints</b> and creates a <b>NegativePatternCall</b> based on the specified type. 
+ * The created constraint gets added to the provided PBody. A helper pattern must be created which is referenced by the <b>NegativePatternCall</b>.
+ * The helper pattern is a <b>HelperPQuery</b> which is added to the <b>HashMap</b>
+ * Used by {@link #copyBody(PBody, PConstraint) copyBody}.
+ *
+ */	    	    
+		def private void negateTypeConstraint(PBody body, TypeConstraint baseConstraint, HashMap<String ,PQuery> outsourcedQueries){											
+			var List<PVariable> variables = newArrayList
+			for (readVariable : (baseConstraint as TypeConstraint).variablesTuple.elements) {
+				var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
+				variables.add(variable)
+			}	
+			for(variable : variables){
+				new TypeConstraint(body, Tuples.flatTupleOf(variable),
+					new EClassTransitiveInstancesKey(getClassifierLiteral("http://www.eclipse.org/emf/2002/Ecore", "EObject") as EClass))	
+			}																					
+			// Derive the name from the constraint	
+			var String outsourcedPatternName = ""
+			var List<String> nameBuilder = newArrayList
+			nameBuilder = baseConstraint.PSystem.pattern.fullyQualifiedName.split("\\.")		
+			nameBuilder.set(nameBuilder.size-1, "")
+			for(element : nameBuilder){
+				if(element != "")
+				outsourcedPatternName += element + "."
+			}
+																	
+			if((baseConstraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey)
+				outsourcedPatternName = ((baseConstraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey.name
+			else if((baseConstraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey)
+				outsourcedPatternName += ((baseConstraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.containerClass.typeName.split("\\.").last + "_" + ( (baseConstraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name.toFirstUpper
+			
+			// Outsource and create pattern from typeconstraint	
+			if(outsourcedPatternName != null && !outsourcedQueries.containsKey(outsourcedPatternName)){
+				
+				var List<PVariable> outsourcedVariables = newArrayList
+				var HelperPQuery pq = new HelperPQuery()
+				var PBody outsourcedBody = new PBody(pq) 
+				pq.bodies.add(outsourcedBody)
+				
+				for (readVariable : (baseConstraint as TypeConstraint).variablesTuple.elements) {
+						var PVariable variable = outsourcedBody.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
+						outsourcedVariables.add(variable)
+				}		
+				//Different Key Types
+				if((baseConstraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey){
 					
-					//TODO setSymbolicParameters...
+					for(variable : outsourcedVariables){
+						var PParameter p = new PParameter(variable.name, (((baseConstraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey).name)
+						pq.addParameter(p)
+					}		
+									
+					new TypeConstraint(outsourcedBody, Tuples.flatTupleOf(outsourcedVariables.get(0)),
+						new EClassTransitiveInstancesKey(((baseConstraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey))
 					
-					// Copy Constraints
-					for (constraint : bodyToCopy.constraints) {
-						
-						// TypeConstraint
-						if (constraint.class == TypeConstraint) {	
-							
-							// Mutate Selected constraint																		
-							if (constraintToNegate != null && constraint.toString == constraintToNegate.toString) {	
-																
-								var List<PVariable> variables = newArrayList
-								for (readVariable : (constraint as TypeConstraint).variablesTuple.elements) {
-									var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
-									variables.add(variable)
-								}	
-								for(variable : variables){
-									new TypeConstraint(body, Tuples.flatTupleOf(variable),
-										new EClassTransitiveInstancesKey(getClassifierLiteral("http://www.eclipse.org/emf/2002/Ecore", "EObject") as EClass))	
-								}
-																						
-								// Derive the name from the constraint	
-								var String outsourcedPatternName = ""
-								var List<String> nameBuilder = newArrayList
-								nameBuilder = bodyToCopy.pattern.fullyQualifiedName.split("\\.")		
-								nameBuilder.set(nameBuilder.size-1, "")
-								for(element : nameBuilder){
-									if(element != "")
-									outsourcedPatternName += element + "."
-								}
-																						
-								if((constraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey)
-									outsourcedPatternName = ((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey.name
-								else if((constraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey)
-									outsourcedPatternName += ((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.containerClass.typeName.split("\\.").last + "_" + ( (constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name.toFirstUpper
-								
-								// Outsource and create pattern from typeconstraint	
-								if(outsourcedPatternName != null && !outsourcedQueries.containsKey(outsourcedPatternName)){
-									
-									var List<PVariable> outsourcedVariables = newArrayList
-									var HelperPQuery pq = new HelperPQuery()
-									var PBody outsourcedBody = new PBody(pq) 
-									pq.bodies.add(outsourcedBody)
-									
-									for (readVariable : (constraint as TypeConstraint).variablesTuple.elements) {
-											var PVariable variable = outsourcedBody.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
-											outsourcedVariables.add(variable)
-									}		
-									//Different Key Types
-									if((constraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey){
-										
-										for(variable : outsourcedVariables){
-											var PParameter p = new PParameter(variable.name, (((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey).name)
-											pq.addParameter(p)
-										}		
-														
-										new TypeConstraint(outsourcedBody, Tuples.flatTupleOf(outsourcedVariables.get(0)),
-											new EClassTransitiveInstancesKey(((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey))
-										
-									}else if((constraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey){
-										
-										for(variable : outsourcedVariables){
-											var String typeName
-											//find the type name from the parameters
-											for(param : bodyToCopy.pattern.parameters){
-												if(param.name == variable.name)
-													typeName = param.typeName 
-											}									
-											var PParameter p = new PParameter(variable.name, typeName)
-											pq.addParameter(p)
-										}		
-										
-										var String packageUriName =  ((((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey as ETypedElement).EType.EPackage.nsURI.toString)					
-										var String className = ((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.containerClass.typeName.split("\\.").last
-										var String featureName = ((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name
-										
-										new TypeConstraint(outsourcedBody, Tuples.flatTupleOf(outsourcedVariables.toArray), new EStructuralFeatureInstancesKey(
-											getFeatureLiteral(packageUriName, className, featureName)))	
-									}																				
-									pq.name = outsourcedPatternName
-									outsourcedQueries.put(pq.name, pq)																																									
-									pq.initializeBodies(pq.bodies)
-								}
-																
-								//create negative pattern call on the outsourced pattern
-								new NegativePatternCall(body, new FlatTuple(variables.toArray), outsourcedQueries.get(outsourcedPatternName));	
+				}else if((baseConstraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey){
+					
+					for(variable : outsourcedVariables){
+						var String typeName
+						//find the type name from the parameters
+						for(param : baseConstraint.PSystem.pattern.parameters){
+							if(param.name == variable.name)
+								typeName = param.typeName 
+						}									
+						var PParameter p = new PParameter(variable.name, typeName)
+						pq.addParameter(p)
+					}		
+					
+					var String packageUriName =  ((((baseConstraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey as ETypedElement).EType.EPackage.nsURI.toString)					
+					var String className = ((baseConstraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.containerClass.typeName.split("\\.").last
+					var String featureName = ((baseConstraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name
+					
+					new TypeConstraint(outsourcedBody, Tuples.flatTupleOf(outsourcedVariables.toArray), new EStructuralFeatureInstancesKey(
+						getFeatureLiteral(packageUriName, className, featureName)))	
+				}																				
+				pq.name = outsourcedPatternName
+				outsourcedQueries.put(pq.name, pq)																																									
+				pq.initializeBodies(pq.bodies)
+			}
+											
+			//create negative pattern call on the outsourced pattern
+			new NegativePatternCall(body, new FlatTuple(variables.toArray), outsourcedQueries.get(outsourcedPatternName));	
 
-								//remove Parameter Type for mutated queries
-								var List<Integer> indexesOfParametersToMutate = newArrayList
-					            for (param : parameters) {
-					            	var boolean match = false
-					            	for (variable : variables) {
-						            	if(param.name == variable.name)					            		
-											match = true
-		            
-					            	}
-					            	if(match == true){
-					            		indexesOfParametersToMutate.add(parameters.indexOf(param))
-					            	}
-					            }
-						        for (index : indexesOfParametersToMutate) {
-						        	var p = new PParameter(parameters.get(index).name)
-						        	parameters.set(index, p)
-						        }
+			//remove Parameter Type for mutated queries
+			var List<Integer> indexesOfParametersToMutate = newArrayList
+            for (param : parameters) {
+            	var boolean match = false
+            	for (variable : variables) {
+	            	if(param.name == variable.name)					            		
+						match = true
 
-	
-							} else {
-								if((constraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey){								
-									var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(
-										(constraint as TypeConstraint).variablesTuple.elements.get(0).toString))
-									new TypeConstraint(body, Tuples.flatTupleOf(variable),
-										new EClassTransitiveInstancesKey(((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey)) 
-								}				
-								else if((constraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey){
-									var List<PVariable> variables = newArrayList
-									for (readVariable : (constraint as TypeConstraint).variablesTuple.elements) {
-										var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
-										variables.add(variable)
-									}						
-									var String packageUriName =  ((((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey as ETypedElement).EType.EPackage.nsURI.toString)					
-									var String className = ((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.containerClass.typeName.split("\\.").last
-									var String featureName = ((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name
-									new TypeConstraint(body, Tuples.flatTupleOf(variables.toArray), new EStructuralFeatureInstancesKey(
-												getFeatureLiteral(packageUriName, className, featureName)))	
-								}									    
-							}
+            	}
+            	if(match == true){
+            		indexesOfParametersToMutate.add(parameters.indexOf(param))
+            	}
+            }
+	        for (index : indexesOfParametersToMutate) {
+	        	var p = new PParameter(parameters.get(index).name)
+	        	parameters.set(index, p)
+	        }
+		}
+
+/**
+ * Creates a new body for this pattern by copying the provided PBody. The passed PConstraint gets negated in the newly created body.
+ * Used by {@link #copyPQuery(PBody, PConstraint) copyPQuery}.
+ *
+ */		
+		def private void copyBody(PBody bodyToCopy, PConstraint constraintToNegate) throws QueryInitializationException{
+			try { if(bodies.contains(bodyToCopy)){ return }				
+				//TODO setSymbolicParameters...																		
+				// Create new Body		
+				var PBody body = new PBody(this)
+				bodies.add(body)				
+				// Copy Constraints
+				for (constraint : bodyToCopy.constraints) {						
+					switch (constraint.class) {
+						case TypeConstraint: {	
+							// Negate original																				
+							if (constraintToNegate != null && constraint.toString == constraintToNegate.toString) { 																
+								negateTypeConstraint(body, constraint as TypeConstraint, outsourcedQueries)
+							} else { // Just create new from original	
+								createTypeConstraintFrom(body, constraint as TypeConstraint)  
+							}						
 						}
-						
-						// PositivePatternCall
-						if (constraint.class == PositivePatternCall) {
+						case PositivePatternCall: {
 							var List<PVariable> variables = newArrayList
 							for (readVariable : (constraint as PositivePatternCall).variablesTuple.elements) {
 								var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
 								variables.add(variable)
-							}				
-							if (constraintToNegate != null && constraint.toString == constraintToNegate.toString) {
+							}			
+							// Negate original	
+							if (constraintToNegate != null && constraint.toString == constraintToNegate.toString) { // Negate original
 								new NegativePatternCall(body, new FlatTuple(variables.toArray), (constraint as PositivePatternCall).referredQuery);
-							} else {		
+							} else { // Just create new from original		
 					            new PositivePatternCall(body, new FlatTuple(variables.toArray), (constraint as PositivePatternCall).referredQuery);
-							}
+							}	
 						}
-						
-						// NegativePatternCall
-						if (constraint.class == NegativePatternCall) {
+						case NegativePatternCall: {
 							var List<PVariable> variables = newArrayList
 							for (readVariable : (constraint as NegativePatternCall).actualParametersTuple.elements) {
 								var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
 								variables.add(variable)
 							}
-							if (constraintToNegate != null && constraint.toString == constraintToNegate.toString) {
+							// Negate original
+							if (constraintToNegate != null && constraint.toString == constraintToNegate.toString) { 
 								new PositivePatternCall(body, new FlatTuple(variables.toArray), (constraint as NegativePatternCall).referredQuery);
-							} else {		
+							} else { // Just create new from original			
 					            new NegativePatternCall(body, new FlatTuple(variables.toArray), (constraint as NegativePatternCall).referredQuery);
-							}							            
+							}								
 						}
-						
-						// ConstantValue
-						if (constraint.class == ConstantValue) {
-//			            	TODO: check if supplier is enum before casting...
+						case ConstantValue: {
+							//TODO negate
 							var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(
 								(constraint as ConstantValue).variablesTuple.get(0) .toString))
-							new ConstantValue(body, variable, (constraint as ConstantValue).supplierKey)									
+							new ConstantValue(body, variable, (constraint as ConstantValue).supplierKey)															
 						}
-						
-						// Equality
-						if (constraint.class == Equality) {
+						case Equality: {
 						    var PVariable who = body.getOrCreateVariableByName((constraint as Equality).who.toString)
 							var PVariable withWhom = body.getOrCreateVariableByName((constraint as Equality).withWhom.toString)
+							// Negate original
 							if (constraintToNegate != null && constraint.toString == constraintToNegate.toString) {
 								new Inequality(body, who, withWhom)	
-							} else {		
+							} else { // Just create new from original		
 						    	new Equality(body, who, withWhom)
-							}
+							}						
 						}
-						
-						// Inequality
-						if (constraint.class == Inequality) {
+						case Inequality: {
 							var PVariable who = body.getOrCreateVariableByName((constraint as Inequality).who.toString)
+							// Negate original
 							var PVariable withWhom = body.getOrCreateVariableByName((constraint as Inequality).withWhom.toString)
-							if (constraintToNegate != null && constraint.toString == constraintToNegate.toString) {
+							if (constraintToNegate != null && constraint.toString == constraintToNegate.toString) { 
 								new Equality(body, who, withWhom)	
-							} else {		
+							} else { // Just create new from original			
 						    	new Inequality(body, who, withWhom)
 							}
-						}						
-					}//ENDFOR					
-				}//ENDIF
-					
+						}
+						default: {
+							throw new ViatraQueryException("Error", "Constraint is not Supported");
+						}
+					}			
+				}//ENDFOR										
 			// to silence compiler error
 			if(false) throw new ViatraQueryException("Never", "happens");
 			} catch (ViatraQueryException ex) {
 					throw (ex);
 			}
 		}
-			
-		def copyPQuery(PQuery queryToCopy, PConstraint constraintToCopy) throws QueryInitializationException{
-			try {
-				
-				// Copy Annotations: TODO
-				for (annotation : queryToCopy.allAnnotations) {
-//					var PAnnotation an = new PAnnotation(annotation.name)
-////					for (attribute : annotation.allValues) {
-////						an.addAttribute(attribute.key.toString, (attribute.value as Object[]).clone)
-////						
-////					}
-//					this.addAnnotation(an)
-				}
+
+/**
+ * Builds this <b>HelperPQuery</b> by copying the values of the provided <b>PQuery</b>
+ * The passed PConstraint gets negated. See {@link copyBody(PBody, PConstraint) copyBody}.
+ * Throws a QueryInitializationException if called after this HelperPQuery has been initialized.
+ * Used by the <b>constructors</b>.
+ *
+ */					
+		def private copyPQuery(PQuery queryToCopy, PConstraint constraintToNegate) throws QueryInitializationException{
+			try {			
+//				for (annotation : queryToCopy.allAnnotations) {
+//					//TODO
+//				}
 
 				//Copy Name:
 				this.name = queryToCopy.fullyQualifiedName.toString
@@ -363,7 +373,7 @@ public class PatternMutator {
 				// Copy Bodies:	
 				var normalizedPquery = new PBodyNormalizer(EMFQueryMetaContext.DEFAULT).rewrite(queryToCopy)				
 				for (body : normalizedPquery.bodies) {
-					copyBody(body, constraintToCopy)	
+					copyBody(body, constraintToNegate)	
 				}
 				
 			// to silence compiler error
@@ -373,16 +383,6 @@ public class PatternMutator {
 			}
 		}
 		
-//			def createBody() throws QueryInitializationException{
-//				try { // TODO
-//					var PBody body = new PBody(this);
-//					// to silence compiler error
-//					if(false) throw new ViatraQueryException("Never", "happens");
-//				} catch (ViatraQueryException ex) {
-//					throw (ex);
-//				}
-//			}
-
 		def void addParameter(PParameter parameter) {
 			this.parameters.add(parameter)
 		}
@@ -422,21 +422,15 @@ public class PatternMutator {
 			Preconditions.checkState(isMutable() || getStatus().equals(PQueryStatus.ERROR),
 				"Errors can only be added to unitialized or erroneous queries.");
 			super.addError(problem);
-		}
-		
-	}
+		}		
 	
-	static public def String filterParamWildCards(String parameter) {
-		if (parameter.matches("_<[0-9]+>")) {
-			return "_"
-		}
-		return parameter
 	}
 	
 	static public def String getTextualRepresentationOfPQuery(PQuery pquery){		
 		//TODO explain why it is okay to normalize
 		var normalizedPquery = new PBodyNormalizer(EMFQueryMetaContext.DEFAULT).rewrite(pquery)	
 		var params = pquery.parameters
+		//TODO annotations
 //		var patternAnnotation = '''«FOR annotation : pquery.allAnnotations»@«annotation.name»(«FOR value : annotation.allValues SEPARATOR ', '»«IF value.key == "message" || value.key == "severity"»«value.key» = "«value.value»"«ENDIF»«IF value.key == "key"»«value.key» = «value.value»«ENDIF»«ENDFOR»)«ENDFOR»'''
 //		var patternAnnotation = '''«FOR annotation : pquery.allAnnotations»@«annotation.name»«ENDFOR»'''	
 		var patternName = pquery.fullyQualifiedName.split("\\.").last
@@ -453,25 +447,25 @@ public class PatternMutator {
 			«IF constraint.class ==  TypeConstraint»
 			«IF(constraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey»
 			«FOR param : (constraint as TypeConstraint).variablesTuple.elements»
-			«((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).wrappedKey.name»(«filterParamWildCards(param.toString)»);
+			«((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).wrappedKey.name»(«HelperPQuery.filterParamWildCards(param.toString)»);
 			«ENDFOR»
 			«ENDIF»
 «««			TypeConstraint with EStructuralFeatureInstancesKey:
 			«IF(constraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey»
 			«((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.containerClass.typeName.split("\\.").last».«
 			((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name»(«
-			FOR param : (constraint as TypeConstraint).variablesTuple.elements SEPARATOR ', '»«filterParamWildCards(param.toString)»«ENDFOR»);		
+			FOR param : (constraint as TypeConstraint).variablesTuple.elements SEPARATOR ', '»«HelperPQuery.filterParamWildCards(param.toString)»«ENDFOR»);		
 			«ENDIF»
 			«ENDIF»
 «««			PositivePatternCall:
 			«IF constraint.class == PositivePatternCall»
 			find «(constraint as PositivePatternCall).referredQuery.fullyQualifiedName.split("\\.").last»(«
-			FOR param : (constraint as PositivePatternCall).getVariablesTuple.elements SEPARATOR ', '»«filterParamWildCards(param.toString)»«ENDFOR»);	
+			FOR param : (constraint as PositivePatternCall).getVariablesTuple.elements SEPARATOR ', '»«HelperPQuery.filterParamWildCards(param.toString)»«ENDFOR»);	
 			«ENDIF»
 «««			NegativePatternCall:
 			«IF constraint.class == NegativePatternCall»
 			neg find «IF (constraint as NegativePatternCall).referredQuery != null»«(constraint as NegativePatternCall).referredQuery.fullyQualifiedName.split("\\.").last»«ENDIF»(«
-			FOR param : (constraint as NegativePatternCall).actualParametersTuple.elements SEPARATOR ', '»«IF param != null»«filterParamWildCards(param.toString)»«ENDIF»«ENDFOR»);	
+			FOR param : (constraint as NegativePatternCall).actualParametersTuple.elements SEPARATOR ', '»«IF param != null»«HelperPQuery.filterParamWildCards(param.toString)»«ENDIF»«ENDFOR»);	
 			«ENDIF»
 «««			ConstantValue:
 «««         TODO: check if supplier is enum before casting...
@@ -500,7 +494,6 @@ public class PatternMutator {
 		var specifications = new ArrayList<IQuerySpecification<?>>
 		var pQueries = new HashSet<PQuery>
 		var HashSet<PQuery> workingSetQueries = new HashSet<PQuery>
-		var HashSet<PQuery> mutatedQueries = new HashSet<PQuery>
 		
 		for (IQuerySpecification<?> specification : querySpecifications) {
 			specifications.add(specification);
@@ -518,10 +511,9 @@ public class PatternMutator {
 			}
 			if(go){
 				workingSetQueries.add(query)
-			}
-							
+			}							
 		}
-		
+				
 		for (workingQuery : workingSetQueries) {
 			var int cntr = 1;	
 			var normalizedPQuery = new PBodyNormalizer(EMFQueryMetaContext.DEFAULT).rewrite(workingQuery)
@@ -537,104 +529,12 @@ public class PatternMutator {
 				}
 			}	
 		}
-		for (mutatedQuery : mutatedQueries) {
-			
-		}
 		
-		println("//___________outsourcedQueries:____________")
-		
+		println("//___________outsourcedQueries:____________")		
 		for (outsourcedQuery: outsourcedQueries.entrySet) {
 				println(getTextualRepresentationOfPQuery(outsourcedQuery.value))
 		}
-
-					
-		for (pquery : pQueries) {
-
-		}
-
-//«««						«patternAnnotation»«»
-//							pattern «patternName»V«cntr»«patternParams» {				
-//							«FOR body : normalizedPquery.bodies SEPARATOR ' or {'»				
-//								«FOR constraint : body.constraints»
-//«««									«constraint.class»
-//«««									TypeConstraint with EClassTransitiveInstancesKey:
-//								«IF constraint.class ==  TypeConstraint»
-//								«IF constraint  != outsideConstraint»
-//								«IF(constraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey»
-//								«FOR param : (constraint as TypeConstraint).variablesTuple.elements»
-//								«((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).wrappedKey.name»(«filterParamWildCards(param.toString)»);
-//								«ENDFOR»	
-//								«ENDIF»															
-//								«IF constraint  == outsideConstraint»
-//								«ENDIF»
-//								«ENDIF»
-//«««									TypeConstraint with EStructuralFeatureInstancesKey:
-//								«IF(constraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey»
-//								«((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.containerClass.typeName.split("\\.").last».«
-//								((constraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name»(«
-//								FOR param : (constraint as TypeConstraint).variablesTuple.elements SEPARATOR ', '»«filterParamWildCards(param.toString)»«ENDFOR»);		
-//								«ENDIF»
-//								«ENDIF»
-//«««									PositivePatternCall:
-//								«IF constraint.class == PositivePatternCall»
-//								«IF outsideConstraint != constraint»
-//								find «(constraint as PositivePatternCall).referredQuery.fullyQualifiedName.split("\\.").last»(«
-//								FOR param : (constraint as PositivePatternCall).getVariablesTuple.elements SEPARATOR ', '»«filterParamWildCards(param.toString)»«ENDFOR»);	
-//								«ENDIF»
-//								«IF outsideConstraint == constraint»
-//								neg find «(constraint as PositivePatternCall).referredQuery.fullyQualifiedName.split("\\.").last»(«
-//								FOR param : (constraint as PositivePatternCall).getVariablesTuple.elements SEPARATOR ', '»«filterParamWildCards(param.toString)»«ENDFOR»);
-//								«ENDIF»
-//								«ENDIF»
-//«««									NegativePatternCall:
-//								«IF constraint.class == NegativePatternCall»
-//								«IF outsideConstraint != constraint»
-//								neg find «(constraint as NegativePatternCall).referredQuery.fullyQualifiedName.split("\\.").last»(«
-//								FOR param : (constraint as NegativePatternCall).actualParametersTuple.elements SEPARATOR ', '»«filterParamWildCards(param.toString)»«ENDFOR»);	
-//								«ENDIF»
-//								«IF outsideConstraint == constraint»
-//								find «(constraint as NegativePatternCall).referredQuery.fullyQualifiedName.split("\\.").last»(«
-//								FOR param : (constraint as NegativePatternCall).actualParametersTuple.elements SEPARATOR ', '»«filterParamWildCards(param.toString)»«ENDFOR»);	
-//								«ENDIF»
-//								«ENDIF»
-//«««									ConstantValue:
-//«««					            	TODO: check if supplier is enum before casting...
-//								«IF constraint.class == ConstantValue»
-//								«IF outsideConstraint != constraint»
-//								«(constraint as ConstantValue).variablesTuple.get(0)» == «
-//								(((constraint as ConstantValue).supplierKey)as Enum).declaringClass.name.split("\\.").last»::«
-//								(constraint as ConstantValue).supplierKey»;
-//								«ENDIF»									
-//								«IF outsideConstraint == constraint»
-//								«(constraint as ConstantValue).variablesTuple.get(0)» != «
-//								(((constraint as ConstantValue).supplierKey)as Enum).declaringClass.name.split("\\.").last»::«
-//								(constraint as ConstantValue).supplierKey»;
-//								«ENDIF»
-//								«ENDIF»
-//«««									Equality:
-//								«IF constraint.class == Equality»
-//								«IF outsideConstraint != constraint»
-//								«(constraint as Equality).who» == «(constraint as Equality).withWhom»;
-//								«ENDIF»
-//								«IF outsideConstraint == constraint»«(constraint as Equality).who» != «(constraint as Equality).withWhom»;
-//								«ENDIF»
-//								«ENDIF»
-//«««									Inequality:
-//								«IF constraint.class == Inequality»
-//								«IF outsideConstraint != constraint»
-//								«(constraint as Inequality).who» != «(constraint as Inequality).withWhom»;
-//								«ENDIF»
-//								«IF outsideConstraint == constraint»
-//								«(constraint as Inequality).who» == «(constraint as Inequality).withWhom»;
-//								«ENDIF»
-//								«ENDIF»
-//								«ENDFOR»
-//							}
-//							«ENDFOR»
-//							
-//							'''					
 	}
-
 }
 
 	
