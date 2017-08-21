@@ -1,8 +1,6 @@
 package org.eclipse.viatra.dslreasoner.patternmutator
 
 import com.google.common.base.Preconditions
-import com.google.common.collect.Lists
-import com.google.common.collect.Sets
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.HashSet
@@ -46,23 +44,20 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PBodyNormaliz
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples
 
-//import hu.bme.mit.inf.dslreasoner.domains.transima.fam.patterns.Pattern
-//import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 public class PatternMutator {
 	
 	static protected var HashMap<String ,PQuery> outsourcedQueries = newHashMap
 	
-/**
- * Helper class which extends the BasePQuery. Adds copying and mutating abilities.
- *
- */		
+	/**
+	 * Helper class which extends the BasePQuery. Adds copying and mutating abilities.
+	 *
+	 */		
 	static class HelperPQuery extends BasePQuery implements InitializablePQuery {
 
 		var String name = "NoName"
 		var int version = -1
-		//var PAnnotation annotation
-		var List<PParameter> parameters = Lists.newArrayList()
-		var Set<PBody> bodies = Sets.newLinkedHashSet()
+		var List<PParameter> parameters = newArrayList()
+		var Set<PBody> bodies = newLinkedHashSet()
 	
 		private new(){} // Added Bodies Must be initialized later!
 		
@@ -134,42 +129,46 @@ public class PatternMutator {
 	                    "Query refers to missing enumeration literal.", this);
 	        return literal;
 	    }
-/**
- * Copies the values of the given TypeConstraints and creates a new one from them. The created constraint gets added to the provided PBody. 
- *  Used by {@link #copyBody(PBody, PConstraint) copyBody}.
- *
- */	    
+	    
+		/**
+		 * Copies the values of the given TypeConstraints and creates a new one from them. The created constraint gets added to the provided PBody. 
+		 *  Used by {@link #copyBody(PBody, PConstraint) copyBody}.
+		 *
+		 */	    
 	    def private void createTypeConstraintFrom(PBody body, TypeConstraint baseConstraint){
-			if((baseConstraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey){								
+			if(baseConstraint.supplierKey.class == EClassTransitiveInstancesKey){								
 				var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(
-					(baseConstraint as TypeConstraint).variablesTuple.elements.get(0).toString))
+					baseConstraint.variablesTuple.elements.get(0).toString))
 				new TypeConstraint(body, Tuples.flatTupleOf(variable),
-					new EClassTransitiveInstancesKey(((baseConstraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey)) 
+					new EClassTransitiveInstancesKey((baseConstraint.supplierKey as EClassTransitiveInstancesKey).emfKey)) 
 			}				
-			else if((baseConstraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey){
+			else if(baseConstraint.supplierKey.class == EStructuralFeatureInstancesKey){
 				var List<PVariable> variables = newArrayList
-				for (readVariable : (baseConstraint as TypeConstraint).variablesTuple.elements) {
+				for (readVariable : baseConstraint.variablesTuple.elements) {
 					var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
 					variables.add(variable)
-				}						
-				var String packageUriName =  ((((baseConstraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey as ETypedElement).EType.EPackage.nsURI.toString)					
-				var String className = ((baseConstraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.containerClass.typeName.split("\\.").last
-				var String featureName = ((baseConstraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name
+				}	
+									
+				val wrappedKey = (baseConstraint.supplierKey as EStructuralFeatureInstancesKey).wrappedKey
+				var String packageUriName =  (wrappedKey as ETypedElement).EType.EPackage.nsURI.toString					
+				var String className = wrappedKey.containerClass.typeName.split("\\.").last
+				var String featureName = wrappedKey.name
+					
 				new TypeConstraint(body, Tuples.flatTupleOf(variables.toArray), new EStructuralFeatureInstancesKey(
 					getFeatureLiteral(packageUriName, className, featureName)))	
 			}		
 	    }
 	    
-/**
- * Copies the values of the given <b>TypeConstraints</b> and creates a <b>NegativePatternCall</b> based on the specified type. 
- * The created constraint gets added to the provided PBody. A helper pattern must be created which is referenced by the <b>NegativePatternCall</b>.
- * The helper pattern is a <b>HelperPQuery</b> which is added to the <b>HashMap</b>
- * Used by {@link #copyBody(PBody, PConstraint) copyBody}.
- *
- */	    	    
+		/**
+		 * Copies the values of the given <b>TypeConstraints</b> and creates a <b>NegativePatternCall</b> based on the specified type. 
+		 * The created constraint gets added to the provided PBody. A helper pattern must be created which is referenced by the <b>NegativePatternCall</b>.
+		 * The helper pattern is a <b>HelperPQuery</b> which is added to the <b>HashMap</b>
+		 * Used by {@link #copyBody(PBody, PConstraint) copyBody}.
+		 *
+		 */	    	    
 		def private void negateTypeConstraint(PBody body, TypeConstraint baseConstraint, HashMap<String ,PQuery> outsourcedQueries){											
 			var List<PVariable> variables = newArrayList
-			for (readVariable : (baseConstraint as TypeConstraint).variablesTuple.elements) {
+			for (readVariable : baseConstraint.variablesTuple.elements) {
 				var PVariable variable = body.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
 				variables.add(variable)
 			}	
@@ -178,19 +177,15 @@ public class PatternMutator {
 					new EClassTransitiveInstancesKey(getClassifierLiteral("http://www.eclipse.org/emf/2002/Ecore", "EObject") as EClass))	
 			}																					
 			// Derive the name from the constraint	
-			var String outsourcedPatternName = ""
-			var List<String> nameBuilder = newArrayList
-			nameBuilder = baseConstraint.PSystem.pattern.fullyQualifiedName.split("\\.")		
-			nameBuilder.set(nameBuilder.size-1, "")
-			for(element : nameBuilder){
-				if(element != "")
-				outsourcedPatternName += element + "."
-			}
+			val fqn = baseConstraint.PSystem.pattern.fullyQualifiedName
+			var String outsourcedPatternName = fqn.substring(0, fqn.lastIndexOf(".") + 1)
 																	
-			if((baseConstraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey)
-				outsourcedPatternName = ((baseConstraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey.name
-			else if((baseConstraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey)
-				outsourcedPatternName += ((baseConstraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.containerClass.typeName.split("\\.").last + "_" + ( (baseConstraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name.toFirstUpper
+			if(baseConstraint.supplierKey.class == EClassTransitiveInstancesKey)
+				outsourcedPatternName = (baseConstraint.supplierKey as EClassTransitiveInstancesKey).emfKey.name
+			else if(baseConstraint.supplierKey.class == EStructuralFeatureInstancesKey) {
+				val wrappedKey = (baseConstraint.supplierKey as EStructuralFeatureInstancesKey).wrappedKey
+				outsourcedPatternName += wrappedKey.containerClass.typeName.split("\\.").last + "_" + wrappedKey.name.toFirstUpper
+			}
 			
 			// Outsource and create pattern from typeconstraint	
 			if(outsourcedPatternName != null && !outsourcedQueries.containsKey(outsourcedPatternName)){
@@ -200,22 +195,22 @@ public class PatternMutator {
 				var PBody outsourcedBody = new PBody(pq) 
 				pq.bodies.add(outsourcedBody)
 				
-				for (readVariable : (baseConstraint as TypeConstraint).variablesTuple.elements) {
+				for (readVariable : baseConstraint.variablesTuple.elements) {
 						var PVariable variable = outsourcedBody.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
 						outsourcedVariables.add(variable)
 				}		
 				//Different Key Types
-				if((baseConstraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey){
+				if(baseConstraint.supplierKey.class == EClassTransitiveInstancesKey){
 					
 					for(variable : outsourcedVariables){
-						var PParameter p = new PParameter(variable.name, (((baseConstraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey).name)
+						var PParameter p = new PParameter(variable.name, ((baseConstraint.supplierKey as EClassTransitiveInstancesKey).emfKey).name)
 						pq.addParameter(p)
 					}		
 									
 					new TypeConstraint(outsourcedBody, Tuples.flatTupleOf(outsourcedVariables.get(0)),
-						new EClassTransitiveInstancesKey(((baseConstraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).emfKey))
+						new EClassTransitiveInstancesKey((baseConstraint.supplierKey as EClassTransitiveInstancesKey).emfKey))
 					
-				}else if((baseConstraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey){
+				}else if(baseConstraint.supplierKey.class == EStructuralFeatureInstancesKey){
 					
 					for(variable : outsourcedVariables){
 						var String typeName
@@ -228,9 +223,10 @@ public class PatternMutator {
 						pq.addParameter(p)
 					}		
 					
-					var String packageUriName =  ((((baseConstraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey as ETypedElement).EType.EPackage.nsURI.toString)					
-					var String className = ((baseConstraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.containerClass.typeName.split("\\.").last
-					var String featureName = ((baseConstraint as TypeConstraint).supplierKey as EStructuralFeatureInstancesKey).wrappedKey.name
+					val wrappedKey = (baseConstraint.supplierKey as EStructuralFeatureInstancesKey).wrappedKey
+					var String packageUriName =  (wrappedKey as ETypedElement).EType.EPackage.nsURI.toString					
+					var String className = wrappedKey.containerClass.typeName.split("\\.").last
+					var String featureName = wrappedKey.name
 					
 					new TypeConstraint(outsourcedBody, Tuples.flatTupleOf(outsourcedVariables.toArray), new EStructuralFeatureInstancesKey(
 						getFeatureLiteral(packageUriName, className, featureName)))	
@@ -241,18 +237,12 @@ public class PatternMutator {
 			}
 											
 			//create negative pattern call on the outsourced pattern
-			new NegativePatternCall(body, new FlatTuple(variables.toArray), outsourcedQueries.get(outsourcedPatternName));	
+			new NegativePatternCall(body, Tuples.flatTupleOf(variables.toArray), outsourcedQueries.get(outsourcedPatternName));	
 
 			//remove Parameter Type for mutated queries
 			var List<Integer> indexesOfParametersToMutate = newArrayList
-            for (param : parameters) {
-            	var boolean match = false
-            	for (variable : variables) {
-	            	if(param.name == variable.name)					            		
-						match = true
-
-            	}
-            	if(match == true){
+            for (param : parameters) {            	          	            	
+            	if(variables.exists[it.name == param.name]) {
             		indexesOfParametersToMutate.add(parameters.indexOf(param))
             	}
             }
@@ -262,11 +252,11 @@ public class PatternMutator {
 	        }
 		}
 
-/**
- * Creates a new body for this pattern by copying the provided PBody. The passed PConstraint gets negated in the newly created body.
- * Used by {@link #copyPQuery(PBody, PConstraint) copyPQuery}.
- *
- */		
+		/**
+		 * Creates a new body for this pattern by copying the provided PBody. The passed PConstraint gets negated in the newly created body.
+		 * Used by {@link #copyPQuery(PBody, PConstraint) copyPQuery}.
+		 *
+		 */		
 		def private void copyBody(PBody bodyToCopy, PConstraint constraintToNegate) throws QueryInitializationException{
 			try { if(bodies.contains(bodyToCopy)){ return }				
 				//TODO setSymbolicParameters...																		
@@ -341,20 +331,18 @@ public class PatternMutator {
 						}
 					}			
 				}//ENDFOR										
-			// to silence compiler error
-			if(false) throw new ViatraQueryException("Never", "happens");
 			} catch (ViatraQueryException ex) {
 					throw (ex);
 			}
 		}
 
-/**
- * Builds this <b>HelperPQuery</b> by copying the values of the provided <b>PQuery</b>
- * The passed PConstraint gets negated. See {@link copyBody(PBody, PConstraint) copyBody}.
- * Throws a QueryInitializationException if called after this HelperPQuery has been initialized.
- * Used by the <b>constructors</b>.
- *
- */					
+		/**
+		 * Builds this <b>HelperPQuery</b> by copying the values of the provided <b>PQuery</b>
+		 * The passed PConstraint gets negated. See {@link copyBody(PBody, PConstraint) copyBody}.
+		 * Throws a QueryInitializationException if called after this HelperPQuery has been initialized.
+		 * Used by the <b>constructors</b>.
+		 *
+		 */					
 		def private copyPQuery(PQuery queryToCopy, PConstraint constraintToNegate) throws QueryInitializationException{
 			try {			
 //				for (annotation : queryToCopy.allAnnotations) {
