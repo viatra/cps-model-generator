@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><plugin>
+  <extension id="org.eclipse.viatra.dslreasoner.patternmutator.OutsourcedQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.dslreasoner.patternmutator.OutsourcedQueries" id="org.eclipse.viatra.dslreasoner.patternmutator.OutsourcedQueries">
+      <query-specification fqn="org.eclipse.viatra.dslreasoner.patternmutator.ApplicationInstance_Type"/>
+      <query-specification fqn="org.eclipse.viatra.dslreasoner.patternmutator.State"/>
+      <query-specification fqn="org.eclipse.viatra.dslreasoner.patternmutator.StateMachine_States"/>
+      <query-specification fqn="org.eclipse.viatra.dslreasoner.patternmutator.Transition_TargetState"/>
+      <query-specification fqn="org.eclipse.viatra.dslreasoner.patternmutator.ApplicationInstance_AllocatedTo"/>
+      <query-specification fqn="org.eclipse.viatra.dslreasoner.patternmutator.HostInstance_CommunicateWith"/>
+      <query-specification fqn="org.eclipse.viatra.dslreasoner.patternmutator.State_OutgoingTransitions"/>
+      <query-specification fqn="org.eclipse.viatra.dslreasoner.patternmutator.HostInstance"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.dslreasoner.patternmutator.Pattern" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.dslreasoner.patternmutator.Pattern" id="org.eclipse.viatra.dslreasoner.patternmutator.Pattern">
+      <query-specification fqn="org.eclipse.viatra.dslreasoner.patternmutator.statemachineState"/>
+      <query-specification fqn="org.eclipse.viatra.dslreasoner.patternmutator.transitionWithoutTargetState"/>
+      <query-specification fqn="org.eclipse.viatra.dslreasoner.patternmutator.stateTransition"/>
+      <query-specification fqn="org.eclipse.viatra.dslreasoner.patternmutator.targetStateNotContainedBySameStateMachine"/>
+      <query-specification fqn="org.eclipse.viatra.dslreasoner.patternmutator.multipleApplicationInstanceInCommunicationGroup"/>
+      <query-specification fqn="org.eclipse.viatra.dslreasoner.patternmutator.appTypeInstanceAndHost"/>
+      <query-specification fqn="org.eclipse.viatra.dslreasoner.patternmutator.hostCommunication"/>
+      <query-specification fqn="org.eclipse.viatra.dslreasoner.patternmutator.reachableHosts"/>
+      <query-specification fqn="org.eclipse.viatra.dslreasoner.patternmutator.reachableAppInstance"/>
+    </group>
+  </extension>
+</plugin>

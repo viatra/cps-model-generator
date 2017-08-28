@@ -94,11 +94,11 @@ public class PatternMutator {
 		def EClassifier getClassifierLiteral(String packageUri,
 			String classifierName) throws QueryInitializationException {
 			var EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(packageUri);
-			if (ePackage == null)
+			if (ePackage === null)
 				throw new QueryInitializationException("Query refers to EPackage {1} not found in EPackage Registry.",
 					#{packageUri}, "Query refers to missing EPackage.", this);
 			var EClassifier literal = ePackage.getEClassifier(classifierName);
-			if (literal == null)
+			if (literal === null)
 				throw new QueryInitializationException("Query refers to classifier {1} not found in EPackage {2}.",
 					#{classifierName, packageUri}, "Query refers to missing type in EPackage.", this);
 			return literal;
@@ -112,7 +112,7 @@ public class PatternMutator {
 	                    #{className, packageUri}, 
 	                    "Query refers to missing EClass.", this);
 	        var EStructuralFeature feature = (container as EClass).getEStructuralFeature(featureName);
-	        if (feature == null) 
+	        if (feature === null) 
 	            throw new QueryInitializationException(
 	                    "Query refers to feature {1} not found in EClass {2}.", 
 	                    #{featureName, className}, 
@@ -128,7 +128,7 @@ public class PatternMutator {
 	                    #{enumName, packageUri}, 
 	                    "Query refers to missing enumeration type.", this);
 	        var EEnumLiteral literal = (enumContainer as EEnum).getEEnumLiteral(literalName);
-	        if (literal == null) 
+	        if (literal === null) 
 	            throw new QueryInitializationException(
 	                    "Query refers to enumeration literal {1} not found in EEnum {2}.", 
 	                    #{literalName, enumName}, 
@@ -231,7 +231,7 @@ public class PatternMutator {
 				outsourcedPatternName += wrappedKey.containerClass.typeName.split("\\.").last + "_" + wrappedKey.name.toFirstUpper
 			}			
 			// Outsource and create pattern from typeconstraint	
-			if(outsourcedPatternName != null && !outsourcedQueries.containsKey(outsourcedPatternName)){	
+			if(outsourcedPatternName !== null && !outsourcedQueries.containsKey(outsourcedPatternName)){	
 				var List<PVariable> outsourcedVariables = newArrayList
 				var HelperPQuery pq = new HelperPQuery()
 				var PBody outsourcedBody = new PBody(pq) 
@@ -303,7 +303,7 @@ public class PatternMutator {
 				// Copy Constraints
 				for (constraint : bodyToCopy.constraints) {	
 					var List<PVariable> variables = copyAndCreateVars(body, constraint)		
-					var boolean negate = (constraintToNegate != null && constraint.toString == constraintToNegate.toString)			
+					var boolean negate = (constraintToNegate !== null && constraint.toString == constraintToNegate.toString)			
 					switch (constraint.class) {
 						case TypeConstraint: {																			
 							if (negate) { 			
@@ -333,7 +333,7 @@ public class PatternMutator {
 							}								
 						}
 						case ConstantValue: {
-							//TODO negate
+							//TODO negate?
 							new ConstantValue(body, variables.get(0), (constraint as ConstantValue).supplierKey)															
 						}
 						case Equality: {
@@ -385,8 +385,6 @@ public class PatternMutator {
 				for (body : normalizedPquery.bodies) {
 					copyBody(body, constraintToNegate)	
 				}				
-			// to silence compiler error
-			if(false) throw new ViatraQueryException("Never", "happens");
 			} catch (ViatraQueryException ex) {
 				throw (ex);
 			}
@@ -472,10 +470,10 @@ public class PatternMutator {
 			«ENDIF»
 «««			NegativePatternCall:
 			«IF constraint.class == NegativePatternCall»
-			neg find «IF (constraint as NegativePatternCall).referredQuery != null
+			neg find «IF (constraint as NegativePatternCall).referredQuery !== null
 			»«(constraint as NegativePatternCall).referredQuery.fullyQualifiedName.split("\\.").last»«ENDIF»(«
 			FOR param : (constraint as NegativePatternCall).actualParametersTuple.elements SEPARATOR ', '»«
-			IF param != null»«HelperPQuery.filterParamWildCards(param.toString)»«ENDIF»«ENDFOR»);	
+			IF param !== null»«HelperPQuery.filterParamWildCards(param.toString)»«ENDIF»«ENDFOR»);	
 			«ENDIF»
 «««			ConstantValue:
 «««         TODO: check if supplier is enum before casting...
@@ -499,26 +497,13 @@ public class PatternMutator {
 		return text
 	}
 	
-	def mutate(List<? extends IQuerySpecification<?>> querySpecifications) {
+	def mutate(List<? extends IQuerySpecification<?>> querySpecifications, String packageOfVqls, String importsInVqls, String outputFolder) {
 		
 		var specifications = new ArrayList<IQuerySpecification<?>>
 		var pQueries = new HashSet<PQuery>
 		var HashSet<PQuery> workingSetQueries = new HashSet<PQuery>
-		var HashMap<Integer, String> mutationIterations = new HashMap<Integer, String>
-		var HashMap<Integer, HashMap<String ,String>> referredQueriesRepresentation = new HashMap<Integer, HashMap<String ,String>>
+		var HashMap<String, String> mutatedQueries = new HashMap<String, String>
 		var String outsourcedRepresentation = ""
-		var String outputFolder = "src/org/eclipse/viatra/dslreasoner/patternmutator/"
-		var String package=
-		'''
-		package org.eclipse.viatra.dslreasoner.patternmutator
-		
-		'''
-		var String imports = 
-		'''
-		import "http://org.eclipse.viatra/model/cps"
-		import "http://www.eclipse.org/emf/2002/Ecore"		
-		
-		'''
 		
 		for (IQuerySpecification<?> specification : querySpecifications) {
 			specifications.add(specification);
@@ -549,38 +534,13 @@ public class PatternMutator {
 				for (constraint : body.constraints) {
 					if (constraint.class != AggregatorConstraint && constraint.class != ExpressionEvaluation && constraint.class != ExportedParameter && constraint.class != PatternMatchCounter && constraint.class != TypeFilterConstraint && constraint.class != BinaryTransitiveClosure ) {
 						var p = new HelperPQuery(workingQuery, cntr, constraint)
-						var temp = mutationIterations.get(cntr)
-						if(temp == null){
-							representation = (getTextualRepresentationOfPQuery(p, false))
-						} else {
-							representation = mutationIterations.get(cntr) + (getTextualRepresentationOfPQuery(p, false))	
-						}							
-						mutationIterations.put(cntr, representation)
-						
-//						if(referredQueriesRepresentation.get(cntr) == null){
-//							var HashMap<String ,String> refQueriesMap = new HashMap<String ,String>
-//							referredQueriesRepresentation.put(cntr, refQueriesMap)
-//						} else {
-//							for (referredQuery : p.allReferredQueries) {								
-//								var refQueriesInThisIteration = referredQueriesRepresentation.get(cntr)
-//								if (!refQueriesInThisIteration.containsKey(referredQuery.fullyQualifiedName)) {
-//									var String referredQTextRep = getTextualRepresentationOfPQuery(referredQuery, true)
-//									refQueriesInThisIteration.put(referredQuery.fullyQualifiedName, referredQTextRep)
-//								}
-//							}
-//						}
+						representation = getTextualRepresentationOfPQuery(p, false)
+						mutatedQueries.put(p.name + cntr, representation)
 						cntr++						
 					}
 				}
 			}			
 		}
-		
-//		for(key : referredQueriesRepresentation.keySet){
-//			println("_______________" + key + "______________")	
-//			for (query : referredQueriesRepresentation.get(key).values) {
-//				println(query)
-//			}		
-//		}
 		
 		for (outsourcedQuery: outsourcedQueries.entrySet) {
 				outsourcedRepresentation += (getTextualRepresentationOfPQuery(outsourcedQuery.value, false))
@@ -593,31 +553,31 @@ public class PatternMutator {
 		file = new File(outputFolder + "outsourcedQueries.vql");
 	    try {
 	        writer = new FileWriter(file)	  
-	        vqlFile += package
-	        vqlFile += imports
+	        vqlFile += packageOfVqls
+	        vqlFile += importsInVqls
 	        vqlFile += outsourcedRepresentation
 	        writer.write(vqlFile)
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    } finally {
-	        if (writer != null) try { writer.close(); } catch (IOException ignore) {}
+	        if (writer !== null) try { writer.close(); } catch (IOException ignore) {}
 	    }	    
 		System.out.printf("File is located at %s%n", file.getAbsolutePath());
 	
 	
-		for (key : mutationIterations.keySet) {    		
-			file = new File(outputFolder + "mutatedQuerySet_" + key + ".vql");
+		for (key : mutatedQueries.keySet) {    		
+			file = new File(outputFolder + key.split("\\.").last + ".vql");
 			vqlFile = ""
 		    try {
 		        writer = new FileWriter(file);		  
-		        vqlFile += package
-		        vqlFile += imports
-		        vqlFile += mutationIterations.get(key)		
+		        vqlFile += packageOfVqls
+		        vqlFile += importsInVqls
+		        vqlFile += mutatedQueries.get(key)		
 		        writer.write(vqlFile);
 		    } catch (IOException e) {
 		        e.printStackTrace(); 
 		    } finally {
-		        if (writer != null) try { writer.close(); } catch (IOException ignore) {}
+		        if (writer !== null) try { writer.close(); } catch (IOException ignore) {}
 		    }	    
   			System.out.printf("File is located at %s%n", file.getAbsolutePath());
 		}		
