@@ -1,0 +1,10 @@
+package mutatedpatterns
+
+import "http://org.eclipse.viatra/model/cps"
+import "http://www.eclipse.org/emf/2002/Ecore"		
+
+pattern statemachineStateV1(statemachine:EObject, state:EObject) {				
+	EObject(statemachine);
+	EObject(state);
+	neg find StateMachine_States(statemachine, state);	
+}

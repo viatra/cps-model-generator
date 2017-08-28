@@ -1,16 +1,117 @@
 <?xml version="1.0" encoding="UTF-8"?><plugin>
-  <extension id="cpsgen.patterns.Pattern" point="org.eclipse.viatra.query.runtime.queryspecification">
-    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:cpsgen.patterns.Pattern" id="cpsgen.patterns.Pattern">
-      <query-specification fqn="cpsgen.patterns.notAllocatedButRunning"/>
-      <query-specification fqn="cpsgen.patterns.initialStateNotContainedByStateMachine"/>
-      <query-specification fqn="cpsgen.patterns.transitionWithoutTargetState"/>
-      <query-specification fqn="cpsgen.patterns.targetStateNotContainedBySameStateMachine"/>
-      <query-specification fqn="cpsgen.patterns.multipleTransitionsWithSameAction"/>
-      <query-specification fqn="cpsgen.patterns.multipleApplicationInstanceInCommunicationGroup"/>
-      <query-specification fqn="cpsgen.patterns.appTypeInstanceAndHost"/>
-      <query-specification fqn="cpsgen.patterns.hostCommunication"/>
-      <query-specification fqn="cpsgen.patterns.reachableHosts"/>
-      <query-specification fqn="cpsgen.patterns.reachableAppInstance"/>
+  <extension id="mutatedpatterns.AppTypeInstanceAndHost1" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.AppTypeInstanceAndHost1" id="mutatedpatterns.AppTypeInstanceAndHost1">
+      <query-specification fqn="mutatedpatterns.appTypeInstanceAndHostV1"/>
+    </group>
+  </extension>
+  <extension id="mutatedpatterns.AppTypeInstanceAndHost2" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.AppTypeInstanceAndHost2" id="mutatedpatterns.AppTypeInstanceAndHost2">
+      <query-specification fqn="mutatedpatterns.appTypeInstanceAndHostV2"/>
+    </group>
+  </extension>
+  <extension id="mutatedpatterns.HostCommunication1" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.HostCommunication1" id="mutatedpatterns.HostCommunication1">
+      <query-specification fqn="mutatedpatterns.hostCommunicationV1"/>
+    </group>
+  </extension>
+  <extension id="mutatedpatterns.HostCommunication2" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.HostCommunication2" id="mutatedpatterns.HostCommunication2">
+      <query-specification fqn="mutatedpatterns.hostCommunicationV2"/>
+    </group>
+  </extension>
+  <extension id="mutatedpatterns.MultipleApplicationInstanceInCommunicationGroup1" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.MultipleApplicationInstanceInCommunicationGroup1" id="mutatedpatterns.MultipleApplicationInstanceInCommunicationGroup1">
+      <query-specification fqn="mutatedpatterns.multipleApplicationInstanceInCommunicationGroupV1"/>
+    </group>
+  </extension>
+  <extension id="mutatedpatterns.MultipleApplicationInstanceInCommunicationGroup2" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.MultipleApplicationInstanceInCommunicationGroup2" id="mutatedpatterns.MultipleApplicationInstanceInCommunicationGroup2">
+      <query-specification fqn="mutatedpatterns.multipleApplicationInstanceInCommunicationGroupV2"/>
+    </group>
+  </extension>
+  <extension id="mutatedpatterns.MultipleApplicationInstanceInCommunicationGroup3" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.MultipleApplicationInstanceInCommunicationGroup3" id="mutatedpatterns.MultipleApplicationInstanceInCommunicationGroup3">
+      <query-specification fqn="mutatedpatterns.multipleApplicationInstanceInCommunicationGroupV3"/>
+    </group>
+  </extension>
+  <extension id="mutatedpatterns.OutsourcedQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.OutsourcedQueries" id="mutatedpatterns.OutsourcedQueries">
+      <query-specification fqn="mutatedpatterns.ApplicationInstance_Type"/>
+      <query-specification fqn="mutatedpatterns.State"/>
+      <query-specification fqn="mutatedpatterns.StateMachine_States"/>
+      <query-specification fqn="mutatedpatterns.Transition_TargetState"/>
+      <query-specification fqn="mutatedpatterns.ApplicationInstance_AllocatedTo"/>
+      <query-specification fqn="mutatedpatterns.HostInstance_CommunicateWith"/>
+      <query-specification fqn="mutatedpatterns.State_OutgoingTransitions"/>
+      <query-specification fqn="mutatedpatterns.HostInstance"/>
+    </group>
+  </extension>
+  <extension id="mutatedpatterns.Pattern" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.Pattern" id="mutatedpatterns.Pattern">
+      <query-specification fqn="mutatedpatterns.statemachineState"/>
+      <query-specification fqn="mutatedpatterns.transitionWithoutTargetState"/>
+      <query-specification fqn="mutatedpatterns.stateTransition"/>
+      <query-specification fqn="mutatedpatterns.targetStateNotContainedBySameStateMachine"/>
+      <query-specification fqn="mutatedpatterns.multipleApplicationInstanceInCommunicationGroup"/>
+      <query-specification fqn="mutatedpatterns.appTypeInstanceAndHost"/>
+      <query-specification fqn="mutatedpatterns.hostCommunication"/>
+      <query-specification fqn="mutatedpatterns.reachableHosts"/>
+      <query-specification fqn="mutatedpatterns.reachableAppInstance"/>
+    </group>
+  </extension>
+  <extension id="mutatedpatterns.ReachableAppInstance1" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.ReachableAppInstance1" id="mutatedpatterns.ReachableAppInstance1">
+      <query-specification fqn="mutatedpatterns.reachableAppInstanceV1"/>
+    </group>
+  </extension>
+  <extension id="mutatedpatterns.ReachableAppInstance2" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.ReachableAppInstance2" id="mutatedpatterns.ReachableAppInstance2">
+      <query-specification fqn="mutatedpatterns.reachableAppInstanceV2"/>
+    </group>
+  </extension>
+  <extension id="mutatedpatterns.StateTransition1" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.StateTransition1" id="mutatedpatterns.StateTransition1">
+      <query-specification fqn="mutatedpatterns.stateTransitionV1"/>
+    </group>
+  </extension>
+  <extension id="mutatedpatterns.StateTransition2" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.StateTransition2" id="mutatedpatterns.StateTransition2">
+      <query-specification fqn="mutatedpatterns.stateTransitionV2"/>
+    </group>
+  </extension>
+  <extension id="mutatedpatterns.StateTransition3" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.StateTransition3" id="mutatedpatterns.StateTransition3">
+      <query-specification fqn="mutatedpatterns.stateTransitionV3"/>
+    </group>
+  </extension>
+  <extension id="mutatedpatterns.StatemachineState1" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.StatemachineState1" id="mutatedpatterns.StatemachineState1">
+      <query-specification fqn="mutatedpatterns.statemachineStateV1"/>
+    </group>
+  </extension>
+  <extension id="mutatedpatterns.TargetStateNotContainedBySameStateMachine1" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.TargetStateNotContainedBySameStateMachine1" id="mutatedpatterns.TargetStateNotContainedBySameStateMachine1">
+      <query-specification fqn="mutatedpatterns.targetStateNotContainedBySameStateMachineV1"/>
+    </group>
+  </extension>
+  <extension id="mutatedpatterns.TargetStateNotContainedBySameStateMachine2" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.TargetStateNotContainedBySameStateMachine2" id="mutatedpatterns.TargetStateNotContainedBySameStateMachine2">
+      <query-specification fqn="mutatedpatterns.targetStateNotContainedBySameStateMachineV2"/>
+    </group>
+  </extension>
+  <extension id="mutatedpatterns.TargetStateNotContainedBySameStateMachine3" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.TargetStateNotContainedBySameStateMachine3" id="mutatedpatterns.TargetStateNotContainedBySameStateMachine3">
+      <query-specification fqn="mutatedpatterns.targetStateNotContainedBySameStateMachineV3"/>
+    </group>
+  </extension>
+  <extension id="mutatedpatterns.TransitionWithoutTargetState1" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.TransitionWithoutTargetState1" id="mutatedpatterns.TransitionWithoutTargetState1">
+      <query-specification fqn="mutatedpatterns.transitionWithoutTargetStateV1"/>
+    </group>
+  </extension>
+  <extension id="mutatedpatterns.TransitionWithoutTargetState2" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:mutatedpatterns.TransitionWithoutTargetState2" id="mutatedpatterns.TransitionWithoutTargetState2">
+      <query-specification fqn="mutatedpatterns.transitionWithoutTargetStateV2"/>
     </group>
   </extension>
 </plugin>

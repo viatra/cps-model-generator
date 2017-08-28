@@ -1,0 +1,11 @@
+package mutatedpatterns
+
+import "http://org.eclipse.viatra/model/cps"
+import "http://www.eclipse.org/emf/2002/Ecore"		
+
+pattern transitionWithoutTargetStateV1(transition:EObject) {				
+	EObject(source);
+	EObject(transition);
+	neg find State_OutgoingTransitions(source, transition);	
+	neg find stateTransition(source, transition, _);	
+}

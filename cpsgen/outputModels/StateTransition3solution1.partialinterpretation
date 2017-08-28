@@ -1,0 +1,896 @@
+<?xml version="1.0" encoding="ASCII"?>
+<partialinterpretation:PartialInterpretation xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore2logicannotations="http://www.bme.hu/mit/inf/dslreasoner/logic/model/language/ecore2logicannotation" xmlns:language="http://www.bme.hu/mit/inf/dslreasoner/logic/model/language" xmlns:partialinterpretation="http://www.bme.hu/mit/inf/dslreasoner/viatrasolver/partialinterpretationlanguage" xmlns:viatra2logicannotations="http://www.bme.hu/mit/inf/dslreasoner/logic/model/language/viatra2logicannotation" problem="//@problemConainer" maxNewIntegers="-1" maxNewReals="-1" maxNewStrings="-1">
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.0" param1="//@problemConainer/@relations.0/@parameters.0" param2="//@problemConainer/@relations.0/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@problemConainer/@elements.2" param2="//@newElements.0"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@problemConainer/@elements.2" param2="//@newElements.7"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@problemConainer/@elements.2" param2="//@newElements.9"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@problemConainer/@elements.2" param2="//@newElements.28"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@problemConainer/@elements.2" param2="//@newElements.39"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.1" param1="//@problemConainer/@relations.1/@parameters.0" param2="//@problemConainer/@relations.1/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@problemConainer/@elements.2" param2="//@newElements.5"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@problemConainer/@elements.2" param2="//@newElements.16"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@problemConainer/@elements.2" param2="//@newElements.19"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@problemConainer/@elements.2" param2="//@newElements.37"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.2" param1="//@problemConainer/@relations.2/@parameters.0" param2="//@problemConainer/@relations.2/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@problemConainer/@elements.2" param2="//@newElements.4"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@problemConainer/@elements.2" param2="//@newElements.17"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@problemConainer/@elements.2" param2="//@newElements.23"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.3" param1="//@problemConainer/@relations.3/@parameters.0" param2="//@problemConainer/@relations.3/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.0" param2="//@newElements.3"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.7" param2="//@newElements.8"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.0" param2="//@newElements.11"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.0" param2="//@newElements.13"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.0" param2="//@newElements.32"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.0" param2="//@newElements.38"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.4" param1="//@problemConainer/@relations.4/@parameters.0" param2="//@problemConainer/@relations.4/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.0" param2="//@problemConainer/@elements.2"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.7" param2="//@problemConainer/@elements.2"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.9" param2="//@problemConainer/@elements.2"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.28" param2="//@problemConainer/@elements.2"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.39" param2="//@problemConainer/@elements.2"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.5" param1="//@problemConainer/@relations.5/@parameters.0" param2="//@problemConainer/@relations.5/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.0" param2="//@newElements.2"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.7" param2="//@newElements.18"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.7" param2="//@newElements.21"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.9" param2="//@newElements.29"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.7" param2="//@newElements.36"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.6" param1="//@problemConainer/@relations.6/@parameters.0" param2="//@problemConainer/@relations.6/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.0" param2="//@newElements.1"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.7" param2="//@newElements.22"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.9" param2="//@newElements.26"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.28" param2="//@newElements.34"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.7" param1="//@problemConainer/@relations.7/@parameters.0" param2="//@problemConainer/@relations.7/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.4" param2="//@problemConainer/@elements.2"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.17" param2="//@problemConainer/@elements.2"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.23" param2="//@problemConainer/@elements.2"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.8" param1="//@problemConainer/@relations.8/@parameters.0" param2="//@problemConainer/@relations.8/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.4" param2="//@newElements.6"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.4" param2="//@newElements.10"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.4" param2="//@newElements.12"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.17" param2="//@newElements.20"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.23" param2="//@newElements.33"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.9" param1="//@problemConainer/@relations.9/@parameters.0" param2="//@problemConainer/@relations.9/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.3" param2="//@newElements.4"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.11" param2="//@newElements.17"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.13" param2="//@newElements.4"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.8" param2="//@newElements.17"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.32" param2="//@newElements.4"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.38" param2="//@newElements.4"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.10" param1="//@problemConainer/@relations.10/@parameters.0" param2="//@problemConainer/@relations.10/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.20" param2="//@newElements.2"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.10" param2="//@newElements.18"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.12" param2="//@newElements.21"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.6" param2="//@newElements.29"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.6" param2="//@newElements.36"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.11" param1="//@problemConainer/@relations.11/@parameters.0" param2="//@problemConainer/@relations.11/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.6" param2="//@newElements.6"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.12" param2="//@newElements.6"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.6" param2="//@newElements.20"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.20" param2="//@newElements.12"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.6" param2="//@newElements.12"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.20" param2="//@newElements.20"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.20" param2="//@newElements.10"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.12" param2="//@newElements.10"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.10" param2="//@newElements.10"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.10" param2="//@newElements.33"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.12" param2="//@newElements.33"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.33" param2="//@newElements.33"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.12" param2="//@newElements.20"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.20" param2="//@newElements.33"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.10" param2="//@newElements.6"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.33" param2="//@newElements.20"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.12" param1="//@problemConainer/@relations.12/@parameters.0" param2="//@problemConainer/@relations.12/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.2" param2="//@newElements.20"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.18" param2="//@newElements.10"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.21" param2="//@newElements.12"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.29" param2="//@newElements.6"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.36" param2="//@newElements.6"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.13" param1="//@problemConainer/@relations.13/@parameters.0" param2="//@problemConainer/@relations.13/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.2" param2="//@newElements.2"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.18" param2="//@newElements.18"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.18" param2="//@newElements.2"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.21" param2="//@newElements.18"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.21" param2="//@newElements.21"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.18" param2="//@newElements.29"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.2" param2="//@newElements.29"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.2" param2="//@newElements.36"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.36" param2="//@newElements.2"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.14" param1="//@problemConainer/@relations.14/@parameters.0" param2="//@problemConainer/@relations.14/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.2" param2="//@newElements.0"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.18" param2="//@newElements.7"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.21" param2="//@newElements.7"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.29" param2="//@newElements.9"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.36" param2="//@newElements.7"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.15" param1="//@problemConainer/@relations.15/@parameters.0" param2="//@problemConainer/@relations.15/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.5" param2="//@newElements.15"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.16" param2="//@newElements.24"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.16" param2="//@newElements.27"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.16" param2="//@newElements.35"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.16" param1="//@problemConainer/@relations.16/@parameters.0" param2="//@problemConainer/@relations.16/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.15" param2="//@newElements.5"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.24" param2="//@newElements.16"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.27" param2="//@newElements.16"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.35" param2="//@newElements.16"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.17" param1="//@problemConainer/@relations.17/@parameters.0" param2="//@problemConainer/@relations.17/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.15" param2="//@newElements.0"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.24" param2="//@newElements.9"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.27" param2="//@newElements.28"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.35" param2="//@newElements.28"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.18" param1="//@problemConainer/@relations.18/@parameters.0" param2="//@problemConainer/@relations.18/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.15" param2="//@newElements.18"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.15" param2="//@newElements.21"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.24" param2="//@newElements.18"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.15" param2="//@newElements.2"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.24" param2="//@newElements.21"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.27" param2="//@newElements.21"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.27" param2="//@newElements.2"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.15" param2="//@newElements.29"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.35" param2="//@newElements.21"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.35" param2="//@newElements.29"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.27" param2="//@newElements.36"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.35" param2="//@newElements.2"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.19" param1="//@problemConainer/@relations.19/@parameters.0" param2="//@problemConainer/@relations.19/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.1" param2="//@newElements.14"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.1" param2="//@newElements.31"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.20" param1="//@problemConainer/@relations.20/@parameters.0" param2="//@problemConainer/@relations.20/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.1" param2="//@newElements.14"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.22" param2="//@newElements.14"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.34" param2="//@newElements.14"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.21" param1="//@problemConainer/@relations.21/@parameters.0" param2="//@problemConainer/@relations.21/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.14" param2="//@newElements.25"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.14" param2="//@newElements.30"/>
+  </partialrelationinterpretation>
+  <partialrelationinterpretation interpretationOf="//@problemConainer/@relations.22" param1="//@problemConainer/@relations.22/@parameters.0" param2="//@problemConainer/@relations.22/@parameters.1">
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.25" param2="//@newElements.14"/>
+    <relationlinks xsi:type="partialinterpretation:BinaryElementRelationLink" param1="//@newElements.30" param2="//@newElements.14"/>
+  </partialrelationinterpretation>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <newElements/>
+  <partialtypeinterpratation interpretationOf="//@problemConainer/@types.0" elements="//@problemConainer/@elements.2 //@newElements.0 //@newElements.1 //@newElements.2 //@newElements.3 //@newElements.4 //@newElements.5 //@newElements.6 //@newElements.7 //@newElements.8 //@newElements.9 //@newElements.10 //@newElements.11 //@newElements.12 //@newElements.13 //@newElements.14 //@newElements.15 //@newElements.16 //@newElements.17 //@newElements.18 //@newElements.19 //@newElements.20 //@newElements.21 //@newElements.22 //@newElements.23 //@newElements.24 //@newElements.25 //@newElements.26 //@newElements.27 //@newElements.28 //@newElements.29 //@newElements.30 //@newElements.31 //@newElements.32 //@newElements.33 //@newElements.34 //@newElements.35 //@newElements.36 //@newElements.37 //@newElements.38 //@newElements.39"/>
+  <partialtypeinterpratation interpretationOf="//@problemConainer/@types.1" elements="//@problemConainer/@elements.2" supertypeInterpretation="//@partialtypeinterpratation.0"/>
+  <partialtypeinterpratation interpretationOf="//@problemConainer/@types.2" elements="//@newElements.0 //@newElements.7 //@newElements.9 //@newElements.28 //@newElements.39" supertypeInterpretation="//@partialtypeinterpratation.0 //@partialtypeinterpratation.13"/>
+  <partialtypeinterpratation interpretationOf="//@problemConainer/@types.3" elements="//@newElements.4 //@newElements.17 //@newElements.23" supertypeInterpretation="//@partialtypeinterpratation.0 //@partialtypeinterpratation.13"/>
+  <partialtypeinterpratation interpretationOf="//@problemConainer/@types.4" elements="//@newElements.3 //@newElements.8 //@newElements.11 //@newElements.13 //@newElements.32 //@newElements.38" supertypeInterpretation="//@partialtypeinterpratation.0 //@partialtypeinterpratation.13"/>
+  <partialtypeinterpratation interpretationOf="//@problemConainer/@types.5" elements="//@newElements.6 //@newElements.10 //@newElements.12 //@newElements.20 //@newElements.33" supertypeInterpretation="//@partialtypeinterpratation.0 //@partialtypeinterpratation.13"/>
+  <partialtypeinterpratation interpretationOf="//@problemConainer/@types.6" elements="//@newElements.2 //@newElements.18 //@newElements.21 //@newElements.29 //@newElements.36" supertypeInterpretation="//@partialtypeinterpratation.0 //@partialtypeinterpratation.13"/>
+  <partialtypeinterpratation interpretationOf="//@problemConainer/@types.7" elements="//@newElements.5 //@newElements.16 //@newElements.19 //@newElements.37" supertypeInterpretation="//@partialtypeinterpratation.0 //@partialtypeinterpratation.13"/>
+  <partialtypeinterpratation interpretationOf="//@problemConainer/@types.8" elements="//@newElements.15 //@newElements.24 //@newElements.27 //@newElements.35" supertypeInterpretation="//@partialtypeinterpratation.0 //@partialtypeinterpratation.13"/>
+  <partialtypeinterpratation interpretationOf="//@problemConainer/@types.9" elements="//@newElements.1 //@newElements.22 //@newElements.26 //@newElements.34" supertypeInterpretation="//@partialtypeinterpratation.0 //@partialtypeinterpratation.13"/>
+  <partialtypeinterpratation interpretationOf="//@problemConainer/@types.10" elements="//@newElements.14 //@newElements.31" supertypeInterpretation="//@partialtypeinterpratation.0 //@partialtypeinterpratation.13"/>
+  <partialtypeinterpratation interpretationOf="//@problemConainer/@types.11" elements="//@newElements.25 //@newElements.30" supertypeInterpretation="//@partialtypeinterpratation.0 //@partialtypeinterpratation.13"/>
+  <partialtypeinterpratation interpretationOf="//@problemConainer/@types.12"/>
+  <partialtypeinterpratation interpretationOf="//@problemConainer/@types.15" elements="//@newElements.0 //@newElements.1 //@newElements.2 //@newElements.3 //@newElements.4 //@newElements.5 //@newElements.6 //@newElements.7 //@newElements.8 //@newElements.9 //@newElements.10 //@newElements.11 //@newElements.12 //@newElements.13 //@newElements.14 //@newElements.15 //@newElements.16 //@newElements.17 //@newElements.18 //@newElements.19 //@newElements.20 //@newElements.21 //@newElements.22 //@newElements.23 //@newElements.24 //@newElements.25 //@newElements.26 //@newElements.27 //@newElements.28 //@newElements.29 //@newElements.30 //@newElements.31 //@newElements.32 //@newElements.33 //@newElements.34 //@newElements.35 //@newElements.36 //@newElements.37 //@newElements.38 //@newElements.39" supertypeInterpretation="//@partialtypeinterpratation.0"/>
+  <partialtypeinterpratation interpretationOf="//@problemConainer/@types.17" supertypeInterpretation="//@partialtypeinterpratation.1 //@partialtypeinterpratation.0 //@partialtypeinterpratation.13"/>
+  <openWorldElementPrototypes name="Symbolic New Element"/>
+  <problemConainer>
+    <types xsi:type="language:TypeDeclaration" name="Identifiable class" subtypes="//@problemConainer/@types.1 //@problemConainer/@types.2 //@problemConainer/@types.3 //@problemConainer/@types.4 //@problemConainer/@types.5 //@problemConainer/@types.6 //@problemConainer/@types.7 //@problemConainer/@types.8 //@problemConainer/@types.9 //@problemConainer/@types.10 //@problemConainer/@types.11 //@problemConainer/@types.14 //@problemConainer/@types.15" isAbstract="true"/>
+    <types xsi:type="language:TypeDeclaration" name="CyberPhysicalSystem class" subtypes="//@problemConainer/@types.16 //@problemConainer/@types.17" supertypes="//@problemConainer/@types.0" isAbstract="true"/>
+    <types xsi:type="language:TypeDeclaration" name="ApplicationType class" supertypes="//@problemConainer/@types.0 //@problemConainer/@types.15"/>
+    <types xsi:type="language:TypeDeclaration" name="HostType class" supertypes="//@problemConainer/@types.0 //@problemConainer/@types.15"/>
+    <types xsi:type="language:TypeDeclaration" name="ResourceRequirement class" supertypes="//@problemConainer/@types.0 //@problemConainer/@types.15"/>
+    <types xsi:type="language:TypeDeclaration" name="HostInstance class" supertypes="//@problemConainer/@types.0 //@problemConainer/@types.15"/>
+    <types xsi:type="language:TypeDeclaration" name="ApplicationInstance class" supertypes="//@problemConainer/@types.0 //@problemConainer/@types.15"/>
+    <types xsi:type="language:TypeDeclaration" name="Request class" supertypes="//@problemConainer/@types.0 //@problemConainer/@types.15"/>
+    <types xsi:type="language:TypeDeclaration" name="Requirement class" supertypes="//@problemConainer/@types.0 //@problemConainer/@types.15"/>
+    <types xsi:type="language:TypeDeclaration" name="StateMachine class" supertypes="//@problemConainer/@types.0 //@problemConainer/@types.15"/>
+    <types xsi:type="language:TypeDeclaration" name="State class" supertypes="//@problemConainer/@types.0 //@problemConainer/@types.15"/>
+    <types xsi:type="language:TypeDeclaration" name="Transition class" supertypes="//@problemConainer/@types.0 //@problemConainer/@types.15"/>
+    <types xsi:type="language:TypeDeclaration" name="EObject class"/>
+    <types xsi:type="language:TypeDefinition" name="AppState enum" elements="//@problemConainer/@elements.0 //@problemConainer/@elements.1"/>
+    <types xsi:type="language:TypeDefinition" name="Identifiable class DefinedPart" subtypes="//@problemConainer/@types.16" supertypes="//@problemConainer/@types.0" isAbstract="true" elements="//@problemConainer/@elements.2"/>
+    <types xsi:type="language:TypeDeclaration" name="Identifiable class UndefinedPart" subtypes="//@problemConainer/@types.17 //@problemConainer/@types.2 //@problemConainer/@types.3 //@problemConainer/@types.4 //@problemConainer/@types.5 //@problemConainer/@types.6 //@problemConainer/@types.7 //@problemConainer/@types.8 //@problemConainer/@types.9 //@problemConainer/@types.10 //@problemConainer/@types.11" supertypes="//@problemConainer/@types.0" isAbstract="true"/>
+    <types xsi:type="language:TypeDefinition" name="CyberPhysicalSystem class DefinedPart" supertypes="//@problemConainer/@types.1 //@problemConainer/@types.14" elements="//@problemConainer/@elements.2"/>
+    <types xsi:type="language:TypeDeclaration" name="CyberPhysicalSystem class UndefinedPart" supertypes="//@problemConainer/@types.1 //@problemConainer/@types.15"/>
+    <assertions name="lowerMultiplicity cps ApplicationType" annotations="//@problemConainer/@annotations.0">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.2"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Exists">
+          <quantifiedVariables name="trg 1">
+            <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.1"/>
+          </quantifiedVariables>
+          <expression xsi:type="language:And">
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.4">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.0/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.0/@value/@expression/@quantifiedVariables.0"/>
+            </operands>
+          </expression>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="upperMultiplicity cps ApplicationType" annotations="//@problemConainer/@annotations.1">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.2"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 1">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.1"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 2">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.1"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Impl">
+          <leftOperand xsi:type="language:And">
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.4">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.1/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.1/@value/@quantifiedVariables.1"/>
+            </operands>
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.4">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.1/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.1/@value/@quantifiedVariables.2"/>
+            </operands>
+          </leftOperand>
+          <rightOperand xsi:type="language:Not">
+            <operand xsi:type="language:Distinct">
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.1/@value/@quantifiedVariables.1"/>
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.1/@value/@quantifiedVariables.2"/>
+            </operand>
+          </rightOperand>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="upperMultiplicity behavior ApplicationType" annotations="//@problemConainer/@annotations.2">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.2"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 1">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.9"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 2">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.9"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Impl">
+          <leftOperand xsi:type="language:And">
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.6">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.2/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.2/@value/@quantifiedVariables.1"/>
+            </operands>
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.6">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.2/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.2/@value/@quantifiedVariables.2"/>
+            </operands>
+          </leftOperand>
+          <rightOperand xsi:type="language:Not">
+            <operand xsi:type="language:Distinct">
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.2/@value/@quantifiedVariables.1"/>
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.2/@value/@quantifiedVariables.2"/>
+            </operand>
+          </rightOperand>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="lowerMultiplicity cps HostType" annotations="//@problemConainer/@annotations.3">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.3"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Exists">
+          <quantifiedVariables name="trg 1">
+            <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.1"/>
+          </quantifiedVariables>
+          <expression xsi:type="language:And">
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.7">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.3/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.3/@value/@expression/@quantifiedVariables.0"/>
+            </operands>
+          </expression>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="upperMultiplicity cps HostType" annotations="//@problemConainer/@annotations.4">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.3"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 1">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.1"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 2">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.1"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Impl">
+          <leftOperand xsi:type="language:And">
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.7">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.4/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.4/@value/@quantifiedVariables.1"/>
+            </operands>
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.7">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.4/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.4/@value/@quantifiedVariables.2"/>
+            </operands>
+          </leftOperand>
+          <rightOperand xsi:type="language:Not">
+            <operand xsi:type="language:Distinct">
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.4/@value/@quantifiedVariables.1"/>
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.4/@value/@quantifiedVariables.2"/>
+            </operand>
+          </rightOperand>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="lowerMultiplicity type ResourceRequirement" annotations="//@problemConainer/@annotations.5">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.4"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Exists">
+          <quantifiedVariables name="trg 1">
+            <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.3"/>
+          </quantifiedVariables>
+          <expression xsi:type="language:And">
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.9">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.5/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.5/@value/@expression/@quantifiedVariables.0"/>
+            </operands>
+          </expression>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="upperMultiplicity type ResourceRequirement" annotations="//@problemConainer/@annotations.6">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.4"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 1">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.3"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 2">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.3"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Impl">
+          <leftOperand xsi:type="language:And">
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.9">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.6/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.6/@value/@quantifiedVariables.1"/>
+            </operands>
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.9">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.6/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.6/@value/@quantifiedVariables.2"/>
+            </operands>
+          </leftOperand>
+          <rightOperand xsi:type="language:Not">
+            <operand xsi:type="language:Distinct">
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.6/@value/@quantifiedVariables.1"/>
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.6/@value/@quantifiedVariables.2"/>
+            </operand>
+          </rightOperand>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="upperMultiplicity allocatedTo ApplicationInstance" annotations="//@problemConainer/@annotations.7">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.6"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 1">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.5"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 2">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.5"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Impl">
+          <leftOperand xsi:type="language:And">
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.12">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.7/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.7/@value/@quantifiedVariables.1"/>
+            </operands>
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.12">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.7/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.7/@value/@quantifiedVariables.2"/>
+            </operands>
+          </leftOperand>
+          <rightOperand xsi:type="language:Not">
+            <operand xsi:type="language:Distinct">
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.7/@value/@quantifiedVariables.1"/>
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.7/@value/@quantifiedVariables.2"/>
+            </operand>
+          </rightOperand>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="lowerMultiplicity type ApplicationInstance" annotations="//@problemConainer/@annotations.8">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.6"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Exists">
+          <quantifiedVariables name="trg 1">
+            <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.2"/>
+          </quantifiedVariables>
+          <expression xsi:type="language:And">
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.14">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.8/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.8/@value/@expression/@quantifiedVariables.0"/>
+            </operands>
+          </expression>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="upperMultiplicity type ApplicationInstance" annotations="//@problemConainer/@annotations.9">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.6"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 1">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.2"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 2">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.2"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Impl">
+          <leftOperand xsi:type="language:And">
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.14">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.9/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.9/@value/@quantifiedVariables.1"/>
+            </operands>
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.14">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.9/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.9/@value/@quantifiedVariables.2"/>
+            </operands>
+          </leftOperand>
+          <rightOperand xsi:type="language:Not">
+            <operand xsi:type="language:Distinct">
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.9/@value/@quantifiedVariables.1"/>
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.9/@value/@quantifiedVariables.2"/>
+            </operand>
+          </rightOperand>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="lowerMultiplicity request Requirement" annotations="//@problemConainer/@annotations.10">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.8"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Exists">
+          <quantifiedVariables name="trg 1">
+            <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.7"/>
+          </quantifiedVariables>
+          <expression xsi:type="language:And">
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.16">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.10/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.10/@value/@expression/@quantifiedVariables.0"/>
+            </operands>
+          </expression>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="upperMultiplicity request Requirement" annotations="//@problemConainer/@annotations.11">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.8"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 1">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.7"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 2">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.7"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Impl">
+          <leftOperand xsi:type="language:And">
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.16">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.11/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.11/@value/@quantifiedVariables.1"/>
+            </operands>
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.16">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.11/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.11/@value/@quantifiedVariables.2"/>
+            </operands>
+          </leftOperand>
+          <rightOperand xsi:type="language:Not">
+            <operand xsi:type="language:Distinct">
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.11/@value/@quantifiedVariables.1"/>
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.11/@value/@quantifiedVariables.2"/>
+            </operand>
+          </rightOperand>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="lowerMultiplicity type Requirement" annotations="//@problemConainer/@annotations.12">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.8"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Exists">
+          <quantifiedVariables name="trg 1">
+            <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.2"/>
+          </quantifiedVariables>
+          <expression xsi:type="language:And">
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.17">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.12/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.12/@value/@expression/@quantifiedVariables.0"/>
+            </operands>
+          </expression>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="upperMultiplicity type Requirement" annotations="//@problemConainer/@annotations.13">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.8"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 1">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.2"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 2">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.2"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Impl">
+          <leftOperand xsi:type="language:And">
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.17">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.13/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.13/@value/@quantifiedVariables.1"/>
+            </operands>
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.17">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.13/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.13/@value/@quantifiedVariables.2"/>
+            </operands>
+          </leftOperand>
+          <rightOperand xsi:type="language:Not">
+            <operand xsi:type="language:Distinct">
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.13/@value/@quantifiedVariables.1"/>
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.13/@value/@quantifiedVariables.2"/>
+            </operand>
+          </rightOperand>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="upperMultiplicity initial StateMachine" annotations="//@problemConainer/@annotations.14">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.9"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 1">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.10"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 2">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.10"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Impl">
+          <leftOperand xsi:type="language:And">
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.20">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.14/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.14/@value/@quantifiedVariables.1"/>
+            </operands>
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.20">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.14/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.14/@value/@quantifiedVariables.2"/>
+            </operands>
+          </leftOperand>
+          <rightOperand xsi:type="language:Not">
+            <operand xsi:type="language:Distinct">
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.14/@value/@quantifiedVariables.1"/>
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.14/@value/@quantifiedVariables.2"/>
+            </operand>
+          </rightOperand>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="upperMultiplicity targetState Transition" annotations="//@problemConainer/@annotations.15">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.11"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 1">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.10"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg 2">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.10"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Impl">
+          <leftOperand xsi:type="language:And">
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.22">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.15/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.15/@value/@quantifiedVariables.1"/>
+            </operands>
+            <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.22">
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.15/@value/@quantifiedVariables.0"/>
+              <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.15/@value/@quantifiedVariables.2"/>
+            </operands>
+          </leftOperand>
+          <rightOperand xsi:type="language:Not">
+            <operand xsi:type="language:Distinct">
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.15/@value/@quantifiedVariables.1"/>
+              <operands xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.15/@value/@quantifiedVariables.2"/>
+            </operand>
+          </rightOperand>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="oppositeReference appTypes CyberPhysicalSystem" annotations="//@problemConainer/@annotations.16">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.1"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.2"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Iff">
+          <leftOperand xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.0">
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.16/@value/@quantifiedVariables.0"/>
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.16/@value/@quantifiedVariables.1"/>
+          </leftOperand>
+          <rightOperand xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.4">
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.16/@value/@quantifiedVariables.1"/>
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.16/@value/@quantifiedVariables.0"/>
+          </rightOperand>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="oppositeReference hostTypes CyberPhysicalSystem" annotations="//@problemConainer/@annotations.17">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.1"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.3"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Iff">
+          <leftOperand xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.2">
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.17/@value/@quantifiedVariables.0"/>
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.17/@value/@quantifiedVariables.1"/>
+          </leftOperand>
+          <rightOperand xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.7">
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.17/@value/@quantifiedVariables.1"/>
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.17/@value/@quantifiedVariables.0"/>
+          </rightOperand>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="oppositeReference instances ApplicationType" annotations="//@problemConainer/@annotations.18">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.2"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.6"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Iff">
+          <leftOperand xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.5">
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.18/@value/@quantifiedVariables.0"/>
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.18/@value/@quantifiedVariables.1"/>
+          </leftOperand>
+          <rightOperand xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.14">
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.18/@value/@quantifiedVariables.1"/>
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.18/@value/@quantifiedVariables.0"/>
+          </rightOperand>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="oppositeReference applications HostInstance" annotations="//@problemConainer/@annotations.19">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.5"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.6"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Iff">
+          <leftOperand xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.10">
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.19/@value/@quantifiedVariables.0"/>
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.19/@value/@quantifiedVariables.1"/>
+          </leftOperand>
+          <rightOperand xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.12">
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.19/@value/@quantifiedVariables.1"/>
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.19/@value/@quantifiedVariables.0"/>
+          </rightOperand>
+        </expression>
+      </value>
+    </assertions>
+    <assertions name="oppositeReference requirements Request" annotations="//@problemConainer/@annotations.20">
+      <value xsi:type="language:Forall">
+        <quantifiedVariables name="src">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.7"/>
+        </quantifiedVariables>
+        <quantifiedVariables name="trg">
+          <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.8"/>
+        </quantifiedVariables>
+        <expression xsi:type="language:Iff">
+          <leftOperand xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.15">
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.20/@value/@quantifiedVariables.0"/>
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.20/@value/@quantifiedVariables.1"/>
+          </leftOperand>
+          <rightOperand xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.16">
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.20/@value/@quantifiedVariables.1"/>
+            <parameterSubstitutions xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@assertions.20/@value/@quantifiedVariables.0"/>
+          </rightOperand>
+        </expression>
+      </value>
+    </assertions>
+    <relations xsi:type="language:RelationDeclaration" name="appTypes reference CyberPhysicalSystem">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.1"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.2"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="requests reference CyberPhysicalSystem">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.1"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.7"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="hostTypes reference CyberPhysicalSystem">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.1"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.3"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="requirements reference ApplicationType">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.2"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.4"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="cps reference ApplicationType">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.2"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.1"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="instances reference ApplicationType">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.2"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.6"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="behavior reference ApplicationType">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.2"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.9"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="cps reference HostType">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.3"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.1"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="instances reference HostType">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.3"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.5"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="type reference ResourceRequirement">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.4"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.3"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="applications reference HostInstance">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.5"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.6"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="communicateWith reference HostInstance">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.5"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.5"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="allocatedTo reference ApplicationInstance">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.6"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.5"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="dependOn reference ApplicationInstance">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.6"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.6"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="type reference ApplicationInstance">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.6"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.2"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="requirements reference Request">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.7"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.8"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="request reference Requirement">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.8"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.7"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="type reference Requirement">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.8"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.2"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="applications reference Requirement">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.8"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.6"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="states reference StateMachine">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.9"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.10"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="initial reference StateMachine">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.9"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.10"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="outgoingTransitions reference State">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.10"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.11"/>
+    </relations>
+    <relations xsi:type="language:RelationDeclaration" name="targetState reference Transition">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.11"/>
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.10"/>
+    </relations>
+    <relations xsi:type="language:RelationDefinition" name="pattern mutatedpatterns State" annotations="//@problemConainer/@annotations.21">
+      <parameters xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.10"/>
+      <variables name="parameter target">
+        <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.10"/>
+      </variables>
+      <value xsi:type="language:Or">
+        <operands xsi:type="language:And">
+          <operands xsi:type="language:InstanceOf">
+            <value xsi:type="language:SymbolicValue" symbolicReference="//@problemConainer/@relations.23/@variables.0"/>
+            <range xsi:type="language:ComplexTypeReference" referred="//@problemConainer/@types.10"/>
+          </operands>
+        </operands>
+      </value>
+    </relations>
+    <elements name="Running literal AppState" definedInType="//@problemConainer/@types.13"/>
+    <elements name="Stopped literal AppState" definedInType="//@problemConainer/@types.13"/>
+    <elements name="o 1" definedInType="//@problemConainer/@types.14 //@problemConainer/@types.16"/>
+    <containmentHierarchies typesOrderedInHierarchy="//@problemConainer/@types.1 //@problemConainer/@types.3 //@problemConainer/@types.9 //@problemConainer/@types.5 //@problemConainer/@types.2 //@problemConainer/@types.4 //@problemConainer/@types.6 //@problemConainer/@types.12 //@problemConainer/@types.0 //@problemConainer/@types.7 //@problemConainer/@types.11 //@problemConainer/@types.8 //@problemConainer/@types.10" containmentRelations="//@problemConainer/@relations.0 //@problemConainer/@relations.1 //@problemConainer/@relations.2 //@problemConainer/@relations.3 //@problemConainer/@relations.5 //@problemConainer/@relations.6 //@problemConainer/@relations.8 //@problemConainer/@relations.15 //@problemConainer/@relations.19 //@problemConainer/@relations.21"/>
+    <annotations xsi:type="ecore2logicannotations:LowerMultiplicityAssertion" target="//@problemConainer/@assertions.0" relation="//@problemConainer/@relations.4" lower="1"/>
+    <annotations xsi:type="ecore2logicannotations:UpperMultiplicityAssertion" target="//@problemConainer/@assertions.1" relation="//@problemConainer/@relations.4" upper="1"/>
+    <annotations xsi:type="ecore2logicannotations:UpperMultiplicityAssertion" target="//@problemConainer/@assertions.2" relation="//@problemConainer/@relations.6" upper="1"/>
+    <annotations xsi:type="ecore2logicannotations:LowerMultiplicityAssertion" target="//@problemConainer/@assertions.3" relation="//@problemConainer/@relations.7" lower="1"/>
+    <annotations xsi:type="ecore2logicannotations:UpperMultiplicityAssertion" target="//@problemConainer/@assertions.4" relation="//@problemConainer/@relations.7" upper="1"/>
+    <annotations xsi:type="ecore2logicannotations:LowerMultiplicityAssertion" target="//@problemConainer/@assertions.5" relation="//@problemConainer/@relations.9" lower="1"/>
+    <annotations xsi:type="ecore2logicannotations:UpperMultiplicityAssertion" target="//@problemConainer/@assertions.6" relation="//@problemConainer/@relations.9" upper="1"/>
+    <annotations xsi:type="ecore2logicannotations:UpperMultiplicityAssertion" target="//@problemConainer/@assertions.7" relation="//@problemConainer/@relations.12" upper="1"/>
+    <annotations xsi:type="ecore2logicannotations:LowerMultiplicityAssertion" target="//@problemConainer/@assertions.8" relation="//@problemConainer/@relations.14" lower="1"/>
+    <annotations xsi:type="ecore2logicannotations:UpperMultiplicityAssertion" target="//@problemConainer/@assertions.9" relation="//@problemConainer/@relations.14" upper="1"/>
+    <annotations xsi:type="ecore2logicannotations:LowerMultiplicityAssertion" target="//@problemConainer/@assertions.10" relation="//@problemConainer/@relations.16" lower="1"/>
+    <annotations xsi:type="ecore2logicannotations:UpperMultiplicityAssertion" target="//@problemConainer/@assertions.11" relation="//@problemConainer/@relations.16" upper="1"/>
+    <annotations xsi:type="ecore2logicannotations:LowerMultiplicityAssertion" target="//@problemConainer/@assertions.12" relation="//@problemConainer/@relations.17" lower="1"/>
+    <annotations xsi:type="ecore2logicannotations:UpperMultiplicityAssertion" target="//@problemConainer/@assertions.13" relation="//@problemConainer/@relations.17" upper="1"/>
+    <annotations xsi:type="ecore2logicannotations:UpperMultiplicityAssertion" target="//@problemConainer/@assertions.14" relation="//@problemConainer/@relations.20" upper="1"/>
+    <annotations xsi:type="ecore2logicannotations:UpperMultiplicityAssertion" target="//@problemConainer/@assertions.15" relation="//@problemConainer/@relations.22" upper="1"/>
+    <annotations xsi:type="ecore2logicannotations:InverseRelationAssertion" target="//@problemConainer/@assertions.16" inverseA="//@problemConainer/@relations.0" inverseB="//@problemConainer/@relations.4"/>
+    <annotations xsi:type="ecore2logicannotations:InverseRelationAssertion" target="//@problemConainer/@assertions.17" inverseA="//@problemConainer/@relations.2" inverseB="//@problemConainer/@relations.7"/>
+    <annotations xsi:type="ecore2logicannotations:InverseRelationAssertion" target="//@problemConainer/@assertions.18" inverseA="//@problemConainer/@relations.5" inverseB="//@problemConainer/@relations.14"/>
+    <annotations xsi:type="ecore2logicannotations:InverseRelationAssertion" target="//@problemConainer/@assertions.19" inverseA="//@problemConainer/@relations.10" inverseB="//@problemConainer/@relations.12"/>
+    <annotations xsi:type="ecore2logicannotations:InverseRelationAssertion" target="//@problemConainer/@assertions.20" inverseA="//@problemConainer/@relations.15" inverseB="//@problemConainer/@relations.16"/>
+    <annotations xsi:type="viatra2logicannotations:TransfomedViatraQuery" target="//@problemConainer/@relations.23" patternFullyQualifiedName="mutatedpatterns.State"/>
+  </problemConainer>
+  <booleanelements name="true" valueSet="true" value="true"/>
+  <booleanelements name="false" valueSet="true"/>
+</partialinterpretation:PartialInterpretation>

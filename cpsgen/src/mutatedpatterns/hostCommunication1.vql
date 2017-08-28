@@ -1,0 +1,11 @@
+package mutatedpatterns
+
+import "http://org.eclipse.viatra/model/cps"
+import "http://www.eclipse.org/emf/2002/Ecore"		
+
+pattern hostCommunicationV1(fromHost:EObject, toHost:EObject) {				
+	EObject(fromHost);
+	EObject(toHost);
+	neg find HostInstance_CommunicateWith(fromHost, toHost);	
+	HostInstance(toHost);
+}

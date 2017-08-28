@@ -1,0 +1,2148 @@
+import epackage "http://www.bme.hu/mit/inf/dslreasoner/viatrasolver/partialinterpretationlanguage"
+import epackage "http://www.bme.hu/mit/inf/dslreasoner/logic/model/problem"
+import epackage "http://www.bme.hu/mit/inf/dslreasoner/logic/model/language"
+
+//////////
+// 0. Util
+//////////
+private pattern interpretation(problem:LogicProblem, interpetation:PartialInterpretation) {
+	PartialInterpretation.problem(interpetation,problem);
+}
+	
+/////////////////////////
+// 0.1 Existence
+/////////////////////////
+private pattern mustExist(problem:LogicProblem, interpetation:PartialInterpretation, element:DefinedElement) {
+	find interpretation(problem,interpetation);
+	LogicProblem.elements(problem,element);
+} or {
+	find interpretation(problem,interpetation);
+	PartialInterpretation.newElements(interpetation,element);
+} or {
+	find interpretation(problem,interpetation);
+	PartialInterpretation.booleanelements(interpetation,element);
+} or {
+	find interpretation(problem,interpetation);
+	PartialInterpretation.integerelements(interpetation,element);
+} or {
+	find interpretation(problem,interpetation);
+	PartialInterpretation.realelements(interpetation,element);
+} or {
+	find interpretation(problem,interpetation);
+	PartialInterpretation.stringelements(interpetation,element);
+}
+
+private pattern mayExist(problem:LogicProblem, interpetation:PartialInterpretation, element:DefinedElement) {
+    find mustExist(problem,interpetation,element);
+} or {
+    find interpretation(problem,interpetation);
+    neg find elementCloseWorld(interpetation);
+    PartialInterpretation.openWorldElementPrototypes(interpetation,element);
+} or {
+	find interpretation(problem,interpetation);
+	neg find integerCloseWorld(interpetation);
+	PartialInterpretation.newIntegers(interpetation,element);
+} or {
+	find interpretation(problem,interpetation);
+	neg find realCloseWorld(interpetation);
+	PartialInterpretation.newReals(interpetation,element);
+} or {
+	find interpretation(problem,interpetation);
+	neg find stringCloseWorld(interpetation);
+	PartialInterpretation.newStrings(interpetation,element);
+}
+
+private pattern elementCloseWorld(interpetation:PartialInterpretation) {
+    PartialInterpretation.maxNewElements(interpetation,0);
+}
+private pattern integerCloseWorld(interpetation:PartialInterpretation) {
+    PartialInterpretation.maxNewIntegers(interpetation,0);
+}
+private pattern realCloseWorld(interpetation:PartialInterpretation) {
+    PartialInterpretation.maxNewReals(interpetation,0);
+}
+private pattern stringCloseWorld(interpetation:PartialInterpretation) {
+    PartialInterpretation.maxNewStrings(interpetation,0);
+}
+
+////////////////////////
+// 0.2 Equivalence
+////////////////////////
+pattern mayEquivalent(problem:LogicProblem, interpretation:PartialInterpretation, a: DefinedElement, b: DefinedElement) {
+	find mayExist(problem,interpretation,a);
+	find mayExist(problem,interpretation,b);
+	a == b;
+}
+
+////////////////////////
+// 0.3 Required Patterns by TypeIndexer
+////////////////////////
+private pattern typeInterpretation(problem:LogicProblem, interpetation:PartialInterpretation, type:TypeDeclaration, typeInterpretation:PartialTypeInterpratation) {
+	find interpretation(problem,interpetation);
+	LogicProblem.types(problem,type);
+	PartialInterpretation.partialtypeinterpratation(interpetation,typeInterpretation);
+	PartialTypeInterpratation.interpretationOf(typeInterpretation,type);
+}
+
+private pattern directInstanceOf(problem:LogicProblem, interpetation:PartialInterpretation, element:DefinedElement, type:Type) {
+	find interpretation(problem,interpetation);
+	LogicProblem.types(problem,type);
+	TypeDefinition.elements(type,element);
+} or {
+	find interpretation(problem,interpetation);
+	find typeInterpretation(problem,interpetation,type,typeInterpretation);
+	PartialTypeInterpratation.elements(typeInterpretation,element);
+}
+
+//////////
+// 1. Problem-Specific Base Indexers
+//////////
+// 1.1 Type Indexers
+//////////
+// 1.1.1 primitive Type Indexers
+//////////
+pattern instanceofBoolean(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.booleanelements(interpretation,element);
+}
+pattern instanceofInteger(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.integerelements(interpretation,element);
+} or {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newIntegers(interpetation,element);
+}
+pattern instanceofReal(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.realelements(interpretation,element);
+} or {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newReals(interpetation,element);
+}
+pattern instanceofString(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.stringelements(interpretation,element);
+} or {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newStrings(interpetation,element);
+}
+
+//////////
+// 1.1.2 domain-specific Type Indexers
+//////////
+/**
+ * An element must be an instance of type "Identifiable class".
+ */
+private pattern mustInstanceOfIdentifiable_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	Type.name(type,"Identifiable class");
+	find directInstanceOf(problem,interpretation,element,type);
+}
+/**
+ * An element may be an instance of type "Identifiable class".
+ */
+private pattern mayInstanceOfIdentifiable_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfIdentifiable_class_UndefinedPart(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+} or {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.openWorldElementPrototypes(interpetation,element);
+} or
+{ find mustInstanceOfIdentifiable_class(problem,interpretation,element); }
+/**
+ * An element must be an instance of type "CyberPhysicalSystem class".
+ */
+private pattern mustInstanceOfCyberPhysicalSystem_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	Type.name(type,"CyberPhysicalSystem class");
+	find directInstanceOf(problem,interpretation,element,type);
+}
+/**
+ * An element may be an instance of type "CyberPhysicalSystem class".
+ */
+private pattern mayInstanceOfCyberPhysicalSystem_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfIdentifiable_class_UndefinedPart(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+} or {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.openWorldElementPrototypes(interpetation,element);
+} or
+{ find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element); }
+/**
+ * An element must be an instance of type "ApplicationType class".
+ */
+private pattern mustInstanceOfApplicationType_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	Type.name(type,"ApplicationType class");
+	find directInstanceOf(problem,interpretation,element,type);
+}
+/**
+ * An element may be an instance of type "ApplicationType class".
+ */
+private pattern mayInstanceOfApplicationType_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+} or {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.openWorldElementPrototypes(interpetation,element);
+} or
+{ find mustInstanceOfApplicationType_class(problem,interpretation,element); }
+/**
+ * An element must be an instance of type "HostType class".
+ */
+private pattern mustInstanceOfHostType_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	Type.name(type,"HostType class");
+	find directInstanceOf(problem,interpretation,element,type);
+}
+/**
+ * An element may be an instance of type "HostType class".
+ */
+private pattern mayInstanceOfHostType_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+} or {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.openWorldElementPrototypes(interpetation,element);
+} or
+{ find mustInstanceOfHostType_class(problem,interpretation,element); }
+/**
+ * An element must be an instance of type "ResourceRequirement class".
+ */
+private pattern mustInstanceOfResourceRequirement_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	Type.name(type,"ResourceRequirement class");
+	find directInstanceOf(problem,interpretation,element,type);
+}
+/**
+ * An element may be an instance of type "ResourceRequirement class".
+ */
+private pattern mayInstanceOfResourceRequirement_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+} or {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.openWorldElementPrototypes(interpetation,element);
+} or
+{ find mustInstanceOfResourceRequirement_class(problem,interpretation,element); }
+/**
+ * An element must be an instance of type "HostInstance class".
+ */
+private pattern mustInstanceOfHostInstance_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	Type.name(type,"HostInstance class");
+	find directInstanceOf(problem,interpretation,element,type);
+}
+/**
+ * An element may be an instance of type "HostInstance class".
+ */
+private pattern mayInstanceOfHostInstance_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+} or {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.openWorldElementPrototypes(interpetation,element);
+} or
+{ find mustInstanceOfHostInstance_class(problem,interpretation,element); }
+/**
+ * An element must be an instance of type "ApplicationInstance class".
+ */
+private pattern mustInstanceOfApplicationInstance_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	Type.name(type,"ApplicationInstance class");
+	find directInstanceOf(problem,interpretation,element,type);
+}
+/**
+ * An element may be an instance of type "ApplicationInstance class".
+ */
+private pattern mayInstanceOfApplicationInstance_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+} or {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.openWorldElementPrototypes(interpetation,element);
+} or
+{ find mustInstanceOfApplicationInstance_class(problem,interpretation,element); }
+/**
+ * An element must be an instance of type "Request class".
+ */
+private pattern mustInstanceOfRequest_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	Type.name(type,"Request class");
+	find directInstanceOf(problem,interpretation,element,type);
+}
+/**
+ * An element may be an instance of type "Request class".
+ */
+private pattern mayInstanceOfRequest_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+} or {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.openWorldElementPrototypes(interpetation,element);
+} or
+{ find mustInstanceOfRequest_class(problem,interpretation,element); }
+/**
+ * An element must be an instance of type "Requirement class".
+ */
+private pattern mustInstanceOfRequirement_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	Type.name(type,"Requirement class");
+	find directInstanceOf(problem,interpretation,element,type);
+}
+/**
+ * An element may be an instance of type "Requirement class".
+ */
+private pattern mayInstanceOfRequirement_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+} or {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.openWorldElementPrototypes(interpetation,element);
+} or
+{ find mustInstanceOfRequirement_class(problem,interpretation,element); }
+/**
+ * An element must be an instance of type "StateMachine class".
+ */
+private pattern mustInstanceOfStateMachine_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	Type.name(type,"StateMachine class");
+	find directInstanceOf(problem,interpretation,element,type);
+}
+/**
+ * An element may be an instance of type "StateMachine class".
+ */
+private pattern mayInstanceOfStateMachine_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+} or {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.openWorldElementPrototypes(interpetation,element);
+} or
+{ find mustInstanceOfStateMachine_class(problem,interpretation,element); }
+/**
+ * An element must be an instance of type "State class".
+ */
+private pattern mustInstanceOfState_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	Type.name(type,"State class");
+	find directInstanceOf(problem,interpretation,element,type);
+}
+/**
+ * An element may be an instance of type "State class".
+ */
+private pattern mayInstanceOfState_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+} or {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.openWorldElementPrototypes(interpetation,element);
+} or
+{ find mustInstanceOfState_class(problem,interpretation,element); }
+/**
+ * An element must be an instance of type "Transition class".
+ */
+private pattern mustInstanceOfTransition_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	Type.name(type,"Transition class");
+	find directInstanceOf(problem,interpretation,element,type);
+}
+/**
+ * An element may be an instance of type "Transition class".
+ */
+private pattern mayInstanceOfTransition_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+} or {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.openWorldElementPrototypes(interpetation,element);
+} or
+{ find mustInstanceOfTransition_class(problem,interpretation,element); }
+/**
+ * An element must be an instance of type "EObject class".
+ */
+private pattern mustInstanceOfEObject_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	Type.name(type,"EObject class");
+	find directInstanceOf(problem,interpretation,element,type);
+}
+/**
+ * An element may be an instance of type "EObject class".
+ */
+private pattern mayInstanceOfEObject_class(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfIdentifiable_class(problem,interpretation,element);
+} or {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.openWorldElementPrototypes(interpetation,element);
+} or
+{ find mustInstanceOfEObject_class(problem,interpretation,element); }
+/**
+ * An element must be an instance of type "AppState enum".
+ */
+private pattern mustInstanceOfAppState_enum(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	Type.name(type,"AppState enum");
+	find directInstanceOf(problem,interpretation,element,type);
+}
+/**
+ * An element may be an instance of type "AppState enum".
+ */
+private pattern mayInstanceOfAppState_enum(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement)
+{ find mustInstanceOfAppState_enum(problem,interpretation,element); }
+/**
+ * An element must be an instance of type "Identifiable class DefinedPart".
+ */
+private pattern mustInstanceOfIdentifiable_class_DefinedPart(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	Type.name(type,"Identifiable class DefinedPart");
+	find directInstanceOf(problem,interpretation,element,type);
+}
+/**
+ * An element may be an instance of type "Identifiable class DefinedPart".
+ */
+private pattern mayInstanceOfIdentifiable_class_DefinedPart(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement)
+{ find mustInstanceOfIdentifiable_class_DefinedPart(problem,interpretation,element); }
+/**
+ * An element must be an instance of type "Identifiable class UndefinedPart".
+ */
+private pattern mustInstanceOfIdentifiable_class_UndefinedPart(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	Type.name(type,"Identifiable class UndefinedPart");
+	find directInstanceOf(problem,interpretation,element,type);
+}
+/**
+ * An element may be an instance of type "Identifiable class UndefinedPart".
+ */
+private pattern mayInstanceOfIdentifiable_class_UndefinedPart(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+} or {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.openWorldElementPrototypes(interpetation,element);
+} or
+{ find mustInstanceOfIdentifiable_class_UndefinedPart(problem,interpretation,element); }
+/**
+ * An element must be an instance of type "CyberPhysicalSystem class DefinedPart".
+ */
+private pattern mustInstanceOfCyberPhysicalSystem_class_DefinedPart(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	Type.name(type,"CyberPhysicalSystem class DefinedPart");
+	find directInstanceOf(problem,interpretation,element,type);
+}
+/**
+ * An element may be an instance of type "CyberPhysicalSystem class DefinedPart".
+ */
+private pattern mayInstanceOfCyberPhysicalSystem_class_DefinedPart(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement)
+{ find mustInstanceOfCyberPhysicalSystem_class_DefinedPart(problem,interpretation,element); }
+/**
+ * An element must be an instance of type "CyberPhysicalSystem class UndefinedPart".
+ */
+private pattern mustInstanceOfCyberPhysicalSystem_class_UndefinedPart(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement) {
+	Type.name(type,"CyberPhysicalSystem class UndefinedPart");
+	find directInstanceOf(problem,interpretation,element,type);
+}
+/**
+ * An element may be an instance of type "CyberPhysicalSystem class UndefinedPart".
+ */
+private pattern mayInstanceOfCyberPhysicalSystem_class_UndefinedPart(problem:LogicProblem, interpretation:PartialInterpretation, element:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+} or {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.openWorldElementPrototypes(interpetation,element);
+} or
+{ find mustInstanceOfCyberPhysicalSystem_class_UndefinedPart(problem,interpretation,element); }
+
+//////////
+// 1.2 Relation Declaration Indexers
+//////////
+/**
+ * Matcher for detecting tuples t where []appTypes reference CyberPhysicalSystem(source,target)
+ */
+private pattern mustInRelationappTypes_reference_CyberPhysicalSystem(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"appTypes reference CyberPhysicalSystem");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>appTypes reference CyberPhysicalSystem(source,target)
+ */
+private pattern mayInRelationappTypes_reference_CyberPhysicalSystem(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfCyberPhysicalSystem_class(problem,interpretation,source);
+	find mayInstanceOfApplicationType_class(problem,interpretation,target);
+	// There are "numberOfExistingReferences" currently existing instances of the reference to the target,
+	// the upper bound of the opposite reference multiplicity should be considered.
+	numberOfExistingOppositeReferences == count find mustInRelationcps_reference_ApplicationType(problem,interpretation,target,_);
+	check(numberOfExistingOppositeReferences < 1);
+	// The reference is containment, then a new reference cannot be create if:
+	// 1. Multiple parents
+	neg find mustContains4(problem,interpretation,_,target);
+	// 2. Circle in the containment hierarchy
+	neg find mustTransitiveContains(source,target);
+} or {
+	find mustInRelationappTypes_reference_CyberPhysicalSystem(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []requests reference CyberPhysicalSystem(source,target)
+ */
+private pattern mustInRelationrequests_reference_CyberPhysicalSystem(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"requests reference CyberPhysicalSystem");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>requests reference CyberPhysicalSystem(source,target)
+ */
+private pattern mayInRelationrequests_reference_CyberPhysicalSystem(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfCyberPhysicalSystem_class(problem,interpretation,source);
+	find mayInstanceOfRequest_class(problem,interpretation,target);
+	// The reference is containment, then a new reference cannot be create if:
+	// 1. Multiple parents
+	neg find mustContains4(problem,interpretation,_,target);
+	// 2. Circle in the containment hierarchy
+	neg find mustTransitiveContains(source,target);
+} or {
+	find mustInRelationrequests_reference_CyberPhysicalSystem(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []hostTypes reference CyberPhysicalSystem(source,target)
+ */
+private pattern mustInRelationhostTypes_reference_CyberPhysicalSystem(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"hostTypes reference CyberPhysicalSystem");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>hostTypes reference CyberPhysicalSystem(source,target)
+ */
+private pattern mayInRelationhostTypes_reference_CyberPhysicalSystem(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfCyberPhysicalSystem_class(problem,interpretation,source);
+	find mayInstanceOfHostType_class(problem,interpretation,target);
+	// There are "numberOfExistingReferences" currently existing instances of the reference to the target,
+	// the upper bound of the opposite reference multiplicity should be considered.
+	numberOfExistingOppositeReferences == count find mustInRelationcps_reference_HostType(problem,interpretation,target,_);
+	check(numberOfExistingOppositeReferences < 1);
+	// The reference is containment, then a new reference cannot be create if:
+	// 1. Multiple parents
+	neg find mustContains4(problem,interpretation,_,target);
+	// 2. Circle in the containment hierarchy
+	neg find mustTransitiveContains(source,target);
+} or {
+	find mustInRelationhostTypes_reference_CyberPhysicalSystem(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []requirements reference ApplicationType(source,target)
+ */
+private pattern mustInRelationrequirements_reference_ApplicationType(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"requirements reference ApplicationType");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>requirements reference ApplicationType(source,target)
+ */
+private pattern mayInRelationrequirements_reference_ApplicationType(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfApplicationType_class(problem,interpretation,source);
+	find mayInstanceOfResourceRequirement_class(problem,interpretation,target);
+	// The reference is containment, then a new reference cannot be create if:
+	// 1. Multiple parents
+	neg find mustContains4(problem,interpretation,_,target);
+	// 2. Circle in the containment hierarchy
+	neg find mustTransitiveContains(source,target);
+} or {
+	find mustInRelationrequirements_reference_ApplicationType(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []cps reference ApplicationType(source,target)
+ */
+private pattern mustInRelationcps_reference_ApplicationType(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"cps reference ApplicationType");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>cps reference ApplicationType(source,target)
+ */
+private pattern mayInRelationcps_reference_ApplicationType(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfApplicationType_class(problem,interpretation,source);
+	find mayInstanceOfCyberPhysicalSystem_class(problem,interpretation,target);
+	// There are "numberOfExistingReferences" currently existing instances of the reference from the source,
+	// the upper bound of the multiplicity should be considered.
+	numberOfExistingReferences == count find mustInRelationcps_reference_ApplicationType(problem,interpretation,source,_);
+	check(numberOfExistingReferences < 1);
+	// The eOpposite of the reference is containment, then a referene cannot be created if
+	// 1. Multiple parents
+	neg find mustContains4(problem,interpretation,source,_);
+	// 2. Circle in the containment hierarchy
+	neg find mustTransitiveContains(source,target);
+} or {
+	find mustInRelationcps_reference_ApplicationType(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []instances reference ApplicationType(source,target)
+ */
+private pattern mustInRelationinstances_reference_ApplicationType(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"instances reference ApplicationType");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>instances reference ApplicationType(source,target)
+ */
+private pattern mayInRelationinstances_reference_ApplicationType(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfApplicationType_class(problem,interpretation,source);
+	find mayInstanceOfApplicationInstance_class(problem,interpretation,target);
+	// There are "numberOfExistingReferences" currently existing instances of the reference to the target,
+	// the upper bound of the opposite reference multiplicity should be considered.
+	numberOfExistingOppositeReferences == count find mustInRelationtype_reference_ApplicationInstance(problem,interpretation,target,_);
+	check(numberOfExistingOppositeReferences < 1);
+	// The reference is containment, then a new reference cannot be create if:
+	// 1. Multiple parents
+	neg find mustContains4(problem,interpretation,_,target);
+	// 2. Circle in the containment hierarchy
+	neg find mustTransitiveContains(source,target);
+} or {
+	find mustInRelationinstances_reference_ApplicationType(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []behavior reference ApplicationType(source,target)
+ */
+private pattern mustInRelationbehavior_reference_ApplicationType(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"behavior reference ApplicationType");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>behavior reference ApplicationType(source,target)
+ */
+private pattern mayInRelationbehavior_reference_ApplicationType(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfApplicationType_class(problem,interpretation,source);
+	find mayInstanceOfStateMachine_class(problem,interpretation,target);
+	// There are "numberOfExistingReferences" currently existing instances of the reference from the source,
+	// the upper bound of the multiplicity should be considered.
+	numberOfExistingReferences == count find mustInRelationbehavior_reference_ApplicationType(problem,interpretation,source,_);
+	check(numberOfExistingReferences < 1);
+	// The reference is containment, then a new reference cannot be create if:
+	// 1. Multiple parents
+	neg find mustContains4(problem,interpretation,_,target);
+	// 2. Circle in the containment hierarchy
+	neg find mustTransitiveContains(source,target);
+} or {
+	find mustInRelationbehavior_reference_ApplicationType(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []cps reference HostType(source,target)
+ */
+private pattern mustInRelationcps_reference_HostType(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"cps reference HostType");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>cps reference HostType(source,target)
+ */
+private pattern mayInRelationcps_reference_HostType(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfHostType_class(problem,interpretation,source);
+	find mayInstanceOfCyberPhysicalSystem_class(problem,interpretation,target);
+	// There are "numberOfExistingReferences" currently existing instances of the reference from the source,
+	// the upper bound of the multiplicity should be considered.
+	numberOfExistingReferences == count find mustInRelationcps_reference_HostType(problem,interpretation,source,_);
+	check(numberOfExistingReferences < 1);
+	// The eOpposite of the reference is containment, then a referene cannot be created if
+	// 1. Multiple parents
+	neg find mustContains4(problem,interpretation,source,_);
+	// 2. Circle in the containment hierarchy
+	neg find mustTransitiveContains(source,target);
+} or {
+	find mustInRelationcps_reference_HostType(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []instances reference HostType(source,target)
+ */
+private pattern mustInRelationinstances_reference_HostType(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"instances reference HostType");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>instances reference HostType(source,target)
+ */
+private pattern mayInRelationinstances_reference_HostType(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfHostType_class(problem,interpretation,source);
+	find mayInstanceOfHostInstance_class(problem,interpretation,target);
+	// The reference is containment, then a new reference cannot be create if:
+	// 1. Multiple parents
+	neg find mustContains4(problem,interpretation,_,target);
+	// 2. Circle in the containment hierarchy
+	neg find mustTransitiveContains(source,target);
+} or {
+	find mustInRelationinstances_reference_HostType(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []type reference ResourceRequirement(source,target)
+ */
+private pattern mustInRelationtype_reference_ResourceRequirement(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"type reference ResourceRequirement");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>type reference ResourceRequirement(source,target)
+ */
+private pattern mayInRelationtype_reference_ResourceRequirement(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfResourceRequirement_class(problem,interpretation,source);
+	find mayInstanceOfHostType_class(problem,interpretation,target);
+	// There are "numberOfExistingReferences" currently existing instances of the reference from the source,
+	// the upper bound of the multiplicity should be considered.
+	numberOfExistingReferences == count find mustInRelationtype_reference_ResourceRequirement(problem,interpretation,source,_);
+	check(numberOfExistingReferences < 1);
+} or {
+	find mustInRelationtype_reference_ResourceRequirement(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []applications reference HostInstance(source,target)
+ */
+private pattern mustInRelationapplications_reference_HostInstance(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"applications reference HostInstance");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>applications reference HostInstance(source,target)
+ */
+private pattern mayInRelationapplications_reference_HostInstance(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfHostInstance_class(problem,interpretation,source);
+	find mayInstanceOfApplicationInstance_class(problem,interpretation,target);
+	// There are "numberOfExistingReferences" currently existing instances of the reference to the target,
+	// the upper bound of the opposite reference multiplicity should be considered.
+	numberOfExistingOppositeReferences == count find mustInRelationallocatedTo_reference_ApplicationInstance(problem,interpretation,target,_);
+	check(numberOfExistingOppositeReferences < 1);
+} or {
+	find mustInRelationapplications_reference_HostInstance(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []communicateWith reference HostInstance(source,target)
+ */
+private pattern mustInRelationcommunicateWith_reference_HostInstance(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"communicateWith reference HostInstance");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>communicateWith reference HostInstance(source,target)
+ */
+private pattern mayInRelationcommunicateWith_reference_HostInstance(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfHostInstance_class(problem,interpretation,source);
+	find mayInstanceOfHostInstance_class(problem,interpretation,target);
+} or {
+	find mustInRelationcommunicateWith_reference_HostInstance(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []allocatedTo reference ApplicationInstance(source,target)
+ */
+private pattern mustInRelationallocatedTo_reference_ApplicationInstance(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"allocatedTo reference ApplicationInstance");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>allocatedTo reference ApplicationInstance(source,target)
+ */
+private pattern mayInRelationallocatedTo_reference_ApplicationInstance(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfApplicationInstance_class(problem,interpretation,source);
+	find mayInstanceOfHostInstance_class(problem,interpretation,target);
+	// There are "numberOfExistingReferences" currently existing instances of the reference from the source,
+	// the upper bound of the multiplicity should be considered.
+	numberOfExistingReferences == count find mustInRelationallocatedTo_reference_ApplicationInstance(problem,interpretation,source,_);
+	check(numberOfExistingReferences < 1);
+} or {
+	find mustInRelationallocatedTo_reference_ApplicationInstance(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []dependOn reference ApplicationInstance(source,target)
+ */
+private pattern mustInRelationdependOn_reference_ApplicationInstance(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"dependOn reference ApplicationInstance");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>dependOn reference ApplicationInstance(source,target)
+ */
+private pattern mayInRelationdependOn_reference_ApplicationInstance(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfApplicationInstance_class(problem,interpretation,source);
+	find mayInstanceOfApplicationInstance_class(problem,interpretation,target);
+} or {
+	find mustInRelationdependOn_reference_ApplicationInstance(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []type reference ApplicationInstance(source,target)
+ */
+private pattern mustInRelationtype_reference_ApplicationInstance(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"type reference ApplicationInstance");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>type reference ApplicationInstance(source,target)
+ */
+private pattern mayInRelationtype_reference_ApplicationInstance(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfApplicationInstance_class(problem,interpretation,source);
+	find mayInstanceOfApplicationType_class(problem,interpretation,target);
+	// There are "numberOfExistingReferences" currently existing instances of the reference from the source,
+	// the upper bound of the multiplicity should be considered.
+	numberOfExistingReferences == count find mustInRelationtype_reference_ApplicationInstance(problem,interpretation,source,_);
+	check(numberOfExistingReferences < 1);
+	// The eOpposite of the reference is containment, then a referene cannot be created if
+	// 1. Multiple parents
+	neg find mustContains4(problem,interpretation,source,_);
+	// 2. Circle in the containment hierarchy
+	neg find mustTransitiveContains(source,target);
+} or {
+	find mustInRelationtype_reference_ApplicationInstance(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []requirements reference Request(source,target)
+ */
+private pattern mustInRelationrequirements_reference_Request(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"requirements reference Request");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>requirements reference Request(source,target)
+ */
+private pattern mayInRelationrequirements_reference_Request(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfRequest_class(problem,interpretation,source);
+	find mayInstanceOfRequirement_class(problem,interpretation,target);
+	// There are "numberOfExistingReferences" currently existing instances of the reference to the target,
+	// the upper bound of the opposite reference multiplicity should be considered.
+	numberOfExistingOppositeReferences == count find mustInRelationrequest_reference_Requirement(problem,interpretation,target,_);
+	check(numberOfExistingOppositeReferences < 1);
+	// The reference is containment, then a new reference cannot be create if:
+	// 1. Multiple parents
+	neg find mustContains4(problem,interpretation,_,target);
+	// 2. Circle in the containment hierarchy
+	neg find mustTransitiveContains(source,target);
+} or {
+	find mustInRelationrequirements_reference_Request(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []request reference Requirement(source,target)
+ */
+private pattern mustInRelationrequest_reference_Requirement(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"request reference Requirement");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>request reference Requirement(source,target)
+ */
+private pattern mayInRelationrequest_reference_Requirement(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfRequirement_class(problem,interpretation,source);
+	find mayInstanceOfRequest_class(problem,interpretation,target);
+	// There are "numberOfExistingReferences" currently existing instances of the reference from the source,
+	// the upper bound of the multiplicity should be considered.
+	numberOfExistingReferences == count find mustInRelationrequest_reference_Requirement(problem,interpretation,source,_);
+	check(numberOfExistingReferences < 1);
+	// The eOpposite of the reference is containment, then a referene cannot be created if
+	// 1. Multiple parents
+	neg find mustContains4(problem,interpretation,source,_);
+	// 2. Circle in the containment hierarchy
+	neg find mustTransitiveContains(source,target);
+} or {
+	find mustInRelationrequest_reference_Requirement(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []type reference Requirement(source,target)
+ */
+private pattern mustInRelationtype_reference_Requirement(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"type reference Requirement");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>type reference Requirement(source,target)
+ */
+private pattern mayInRelationtype_reference_Requirement(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfRequirement_class(problem,interpretation,source);
+	find mayInstanceOfApplicationType_class(problem,interpretation,target);
+	// There are "numberOfExistingReferences" currently existing instances of the reference from the source,
+	// the upper bound of the multiplicity should be considered.
+	numberOfExistingReferences == count find mustInRelationtype_reference_Requirement(problem,interpretation,source,_);
+	check(numberOfExistingReferences < 1);
+} or {
+	find mustInRelationtype_reference_Requirement(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []applications reference Requirement(source,target)
+ */
+private pattern mustInRelationapplications_reference_Requirement(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"applications reference Requirement");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>applications reference Requirement(source,target)
+ */
+private pattern mayInRelationapplications_reference_Requirement(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfRequirement_class(problem,interpretation,source);
+	find mayInstanceOfApplicationInstance_class(problem,interpretation,target);
+} or {
+	find mustInRelationapplications_reference_Requirement(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []states reference StateMachine(source,target)
+ */
+private pattern mustInRelationstates_reference_StateMachine(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"states reference StateMachine");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>states reference StateMachine(source,target)
+ */
+private pattern mayInRelationstates_reference_StateMachine(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfStateMachine_class(problem,interpretation,source);
+	find mayInstanceOfState_class(problem,interpretation,target);
+	// The reference is containment, then a new reference cannot be create if:
+	// 1. Multiple parents
+	neg find mustContains4(problem,interpretation,_,target);
+	// 2. Circle in the containment hierarchy
+	neg find mustTransitiveContains(source,target);
+} or {
+	find mustInRelationstates_reference_StateMachine(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []initial reference StateMachine(source,target)
+ */
+private pattern mustInRelationinitial_reference_StateMachine(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"initial reference StateMachine");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>initial reference StateMachine(source,target)
+ */
+private pattern mayInRelationinitial_reference_StateMachine(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfStateMachine_class(problem,interpretation,source);
+	find mayInstanceOfState_class(problem,interpretation,target);
+	// There are "numberOfExistingReferences" currently existing instances of the reference from the source,
+	// the upper bound of the multiplicity should be considered.
+	numberOfExistingReferences == count find mustInRelationinitial_reference_StateMachine(problem,interpretation,source,_);
+	check(numberOfExistingReferences < 1);
+} or {
+	find mustInRelationinitial_reference_StateMachine(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []outgoingTransitions reference State(source,target)
+ */
+private pattern mustInRelationoutgoingTransitions_reference_State(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"outgoingTransitions reference State");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>outgoingTransitions reference State(source,target)
+ */
+private pattern mayInRelationoutgoingTransitions_reference_State(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfState_class(problem,interpretation,source);
+	find mayInstanceOfTransition_class(problem,interpretation,target);
+	// The reference is containment, then a new reference cannot be create if:
+	// 1. Multiple parents
+	neg find mustContains4(problem,interpretation,_,target);
+	// 2. Circle in the containment hierarchy
+	neg find mustTransitiveContains(source,target);
+} or {
+	find mustInRelationoutgoingTransitions_reference_State(problem,interpretation,source,target);
+}
+/**
+ * Matcher for detecting tuples t where []targetState reference Transition(source,target)
+ */
+private pattern mustInRelationtargetState_reference_Transition(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"targetState reference Transition");
+	PartialRelationInterpretation.relationlinks(relationIterpretation,link);
+	BinaryElementRelationLink.param1(link,source);
+	BinaryElementRelationLink.param2(link,target);
+}
+/**
+ * Matcher for detecting tuples t where <>targetState reference Transition(source,target)
+ */
+private pattern mayInRelationtargetState_reference_Transition(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	// The two endpoint of the link have to exist
+	find mayExist(problem, interpretation, source);
+	find mayExist(problem, interpretation, target);
+	// Type consistency
+	find mayInstanceOfTransition_class(problem,interpretation,source);
+	find mayInstanceOfState_class(problem,interpretation,target);
+	// There are "numberOfExistingReferences" currently existing instances of the reference from the source,
+	// the upper bound of the multiplicity should be considered.
+	numberOfExistingReferences == count find mustInRelationtargetState_reference_Transition(problem,interpretation,source,_);
+	check(numberOfExistingReferences < 1);
+} or {
+	find mustInRelationtargetState_reference_Transition(problem,interpretation,source,target);
+}
+
+//////////
+// 1.3 Relation Definition Indexers
+//////////
+// Must, May and Current queries for pattern mutatedpatterns statemachineState
+private pattern mustInRelation_pattern_mutatedpatterns_statemachineState(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	var_statemachine, var_state)
+{
+	find interpretation(problem,interpretation);
+	find mustInstanceOfStateMachine_class(problem,interpretation,var_statemachine);
+	find mustInstanceOfState_class(problem,interpretation,var_state);
+	// statemachine is exported
+	// state is exported
+	find mustInstanceOfStateMachine_class(problem,interpretation,var_statemachine);
+	find mustInRelationstates_reference_StateMachine(problem,interpretation,var_statemachine,var_virtual0);
+	find mustInstanceOfState_class(problem,interpretation,var_virtual0);
+	var_virtual0 == var_state;
+}
+private pattern mayInRelation_pattern_mutatedpatterns_statemachineState(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	var_statemachine, var_state)
+{
+	find interpretation(problem,interpretation);
+	find mayInstanceOfStateMachine_class(problem,interpretation,var_statemachine);
+	find mayInstanceOfState_class(problem,interpretation,var_state);
+	// statemachine is exported
+	// state is exported
+	find mayInstanceOfStateMachine_class(problem,interpretation,var_statemachine);
+	find mayInRelationstates_reference_StateMachine(problem,interpretation,var_statemachine,var_virtual0);
+	find mayInstanceOfState_class(problem,interpretation,var_virtual0);
+	find mayEquivalent(problem, interpretation, var_virtual0, var_state);
+}
+private pattern currentInRelation_pattern_mutatedpatterns_statemachineState(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	var_statemachine, var_state)
+{
+	find interpretation(problem,interpretation);
+	find mustInstanceOfStateMachine_class(problem,interpretation,var_statemachine);
+	find mustInstanceOfState_class(problem,interpretation,var_state);
+	// statemachine is exported
+	// state is exported
+	find mustInstanceOfStateMachine_class(problem,interpretation,var_statemachine);
+	find mustInRelationstates_reference_StateMachine(problem,interpretation,var_statemachine,var_virtual0);
+	find mustInstanceOfState_class(problem,interpretation,var_virtual0);
+	var_virtual0 == var_state;
+}
+// Must, May and Current queries for pattern mutatedpatterns stateTransition
+private pattern mustInRelation_pattern_mutatedpatterns_stateTransition(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	var_source, var_transition, var_target)
+{
+	find interpretation(problem,interpretation);
+	find mustInstanceOfState_class(problem,interpretation,var_source);
+	find mustInstanceOfTransition_class(problem,interpretation,var_transition);
+	find mustInstanceOfState_class(problem,interpretation,var_target);
+	// source is exported
+	// transition is exported
+	// target is exported
+	find mustInstanceOfState_class(problem,interpretation,var_source);
+	find mustInRelationoutgoingTransitions_reference_State(problem,interpretation,var_source,var_virtual0);
+	find mustInstanceOfTransition_class(problem,interpretation,var_virtual0);
+	var_virtual0 == var_transition;
+	find mustInstanceOfTransition_class(problem,interpretation,var_transition);
+	find mustInRelationtargetState_reference_Transition(problem,interpretation,var_transition,var_virtual1);
+	find mustInstanceOfState_class(problem,interpretation,var_virtual1);
+	var_virtual1 == var_target;
+}
+private pattern mayInRelation_pattern_mutatedpatterns_stateTransition(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	var_source, var_transition, var_target)
+{
+	find interpretation(problem,interpretation);
+	find mayInstanceOfState_class(problem,interpretation,var_source);
+	find mayInstanceOfTransition_class(problem,interpretation,var_transition);
+	find mayInstanceOfState_class(problem,interpretation,var_target);
+	// source is exported
+	// transition is exported
+	// target is exported
+	find mayInstanceOfState_class(problem,interpretation,var_source);
+	find mayInRelationoutgoingTransitions_reference_State(problem,interpretation,var_source,var_virtual0);
+	find mayInstanceOfTransition_class(problem,interpretation,var_virtual0);
+	find mayEquivalent(problem, interpretation, var_virtual0, var_transition);
+	find mayInstanceOfTransition_class(problem,interpretation,var_transition);
+	find mayInRelationtargetState_reference_Transition(problem,interpretation,var_transition,var_virtual1);
+	find mayInstanceOfState_class(problem,interpretation,var_virtual1);
+	find mayEquivalent(problem, interpretation, var_virtual1, var_target);
+}
+private pattern currentInRelation_pattern_mutatedpatterns_stateTransition(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	var_source, var_transition, var_target)
+{
+	find interpretation(problem,interpretation);
+	find mustInstanceOfState_class(problem,interpretation,var_source);
+	find mustInstanceOfTransition_class(problem,interpretation,var_transition);
+	find mustInstanceOfState_class(problem,interpretation,var_target);
+	// source is exported
+	// transition is exported
+	// target is exported
+	find mustInstanceOfState_class(problem,interpretation,var_source);
+	find mustInRelationoutgoingTransitions_reference_State(problem,interpretation,var_source,var_virtual0);
+	find mustInstanceOfTransition_class(problem,interpretation,var_virtual0);
+	var_virtual0 == var_transition;
+	find mustInstanceOfTransition_class(problem,interpretation,var_transition);
+	find mustInRelationtargetState_reference_Transition(problem,interpretation,var_transition,var_virtual1);
+	find mustInstanceOfState_class(problem,interpretation,var_virtual1);
+	var_virtual1 == var_target;
+}
+
+//////////
+// 1.4 Containment Indexer
+//////////
+private pattern mustContains2(source: DefinedElement, target: DefinedElement) {
+	find mustContains4(_,_,source,target);
+}
+	
+private pattern mustContains4(problem:LogicProblem, interpretation:PartialInterpretation,
+	source: DefinedElement, target: DefinedElement)
+	{ find mustInRelationappTypes_reference_CyberPhysicalSystem(problem,interpretation,source,target); }or
+	
+	{ find mustInRelationrequests_reference_CyberPhysicalSystem(problem,interpretation,source,target); }or
+	
+	{ find mustInRelationhostTypes_reference_CyberPhysicalSystem(problem,interpretation,source,target); }or
+	
+	{ find mustInRelationrequirements_reference_ApplicationType(problem,interpretation,source,target); }or
+	
+	{ find mustInRelationinstances_reference_ApplicationType(problem,interpretation,source,target); }or
+	
+	{ find mustInRelationbehavior_reference_ApplicationType(problem,interpretation,source,target); }or
+	
+	{ find mustInRelationinstances_reference_HostType(problem,interpretation,source,target); }or
+	
+	{ find mustInRelationrequirements_reference_Request(problem,interpretation,source,target); }or
+	
+	{ find mustInRelationstates_reference_StateMachine(problem,interpretation,source,target); }or
+	
+	{ find mustInRelationoutgoingTransitions_reference_State(problem,interpretation,source,target); }
+
+private pattern mustTransitiveContains(source,target) {
+	find mustContains2+(source,target);
+}
+
+//////////
+// 2. Invalidation Indexers
+//////////
+// 2.1 Invalidated by WF Queries
+//////////
+
+//////////
+// 3. Unfinishedness Indexers
+//////////
+// 3.1 Unfinishedness Measured by Multiplicity
+//////////
+pattern unfinishedLowerMultiplicity_cps_reference_ApplicationType(problem:LogicProblem, interpretation:PartialInterpretation, relationIterpretation:PartialRelationInterpretation, object:DefinedElement,missingMultiplicity) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"cps reference ApplicationType");
+	find mustInstanceOfApplicationType_class(problem,interpretation,object);
+	numberOfExistingReferences == count find mustInRelationcps_reference_ApplicationType(problem,interpretation,object,_);
+	check(numberOfExistingReferences < 1);
+	missingMultiplicity == eval(1-numberOfExistingReferences);
+}
+pattern unfinishedLowerMultiplicity_cps_reference_HostType(problem:LogicProblem, interpretation:PartialInterpretation, relationIterpretation:PartialRelationInterpretation, object:DefinedElement,missingMultiplicity) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"cps reference HostType");
+	find mustInstanceOfHostType_class(problem,interpretation,object);
+	numberOfExistingReferences == count find mustInRelationcps_reference_HostType(problem,interpretation,object,_);
+	check(numberOfExistingReferences < 1);
+	missingMultiplicity == eval(1-numberOfExistingReferences);
+}
+pattern unfinishedLowerMultiplicity_type_reference_ResourceRequirement(problem:LogicProblem, interpretation:PartialInterpretation, relationIterpretation:PartialRelationInterpretation, object:DefinedElement,missingMultiplicity) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"type reference ResourceRequirement");
+	find mustInstanceOfResourceRequirement_class(problem,interpretation,object);
+	numberOfExistingReferences == count find mustInRelationtype_reference_ResourceRequirement(problem,interpretation,object,_);
+	check(numberOfExistingReferences < 1);
+	missingMultiplicity == eval(1-numberOfExistingReferences);
+}
+pattern unfinishedLowerMultiplicity_type_reference_ApplicationInstance(problem:LogicProblem, interpretation:PartialInterpretation, relationIterpretation:PartialRelationInterpretation, object:DefinedElement,missingMultiplicity) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"type reference ApplicationInstance");
+	find mustInstanceOfApplicationInstance_class(problem,interpretation,object);
+	numberOfExistingReferences == count find mustInRelationtype_reference_ApplicationInstance(problem,interpretation,object,_);
+	check(numberOfExistingReferences < 1);
+	missingMultiplicity == eval(1-numberOfExistingReferences);
+}
+pattern unfinishedLowerMultiplicity_request_reference_Requirement(problem:LogicProblem, interpretation:PartialInterpretation, relationIterpretation:PartialRelationInterpretation, object:DefinedElement,missingMultiplicity) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"request reference Requirement");
+	find mustInstanceOfRequirement_class(problem,interpretation,object);
+	numberOfExistingReferences == count find mustInRelationrequest_reference_Requirement(problem,interpretation,object,_);
+	check(numberOfExistingReferences < 1);
+	missingMultiplicity == eval(1-numberOfExistingReferences);
+}
+pattern unfinishedLowerMultiplicity_type_reference_Requirement(problem:LogicProblem, interpretation:PartialInterpretation, relationIterpretation:PartialRelationInterpretation, object:DefinedElement,missingMultiplicity) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"type reference Requirement");
+	find mustInstanceOfRequirement_class(problem,interpretation,object);
+	numberOfExistingReferences == count find mustInRelationtype_reference_Requirement(problem,interpretation,object,_);
+	check(numberOfExistingReferences < 1);
+	missingMultiplicity == eval(1-numberOfExistingReferences);
+}
+
+//////////
+// 3.2 Unfinishedness Measured by WF Queries
+//////////
+
+//////////
+// 4. Refinement Indexers
+//////////
+// 4.1 Object constructors
+//////////
+pattern createObject_State_class_by_states_reference_StateMachine(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	relationInterpretation:PartialRelationInterpretation, typeInterpretation:PartialTypeInterpratation,
+	container:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialtypeinterpratation(interpretation,typeInterpretation);
+	PartialTypeInterpratation.interpretationOf.name(typeInterpretation,"State class");
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationInterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationInterpretation,"states reference StateMachine");
+	find mustInstanceOfStateMachine_class(problem,interpretation,container);
+	find mayInstanceOfState_class(problem,interpretation,newObject);
+	find mayInRelationstates_reference_StateMachine(problem,interpretation,container,newObject);
+	find mustExist(problem, interpretation, container);
+	neg find mustExist(problem, interpretation, newObject);
+}
+pattern createObject_Requirement_class_by_requirements_reference_Request_with_request_reference_Requirement(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	relationInterpretation:PartialRelationInterpretation, inverseInterpretation:PartialRelationInterpretation, typeInterpretation:PartialTypeInterpratation,
+	container:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialtypeinterpratation(interpretation,typeInterpretation);
+	PartialTypeInterpratation.interpretationOf.name(typeInterpretation,"Requirement class");
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationInterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationInterpretation,"requirements reference Request");
+	PartialInterpretation.partialrelationinterpretation(interpretation,inverseInterpretation);
+	PartialRelationInterpretation.interpretationOf.name(inverseInterpretation,"request reference Requirement");
+	find mustInstanceOfRequest_class(problem,interpretation,container);
+	find mayInstanceOfRequirement_class(problem,interpretation,newObject);
+	find mayInRelationrequirements_reference_Request(problem,interpretation,container,newObject);
+	find mustExist(problem, interpretation, container);
+	neg find mustExist(problem, interpretation, newObject);
+}
+pattern createObject_Request_class_by_requests_reference_CyberPhysicalSystem(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	relationInterpretation:PartialRelationInterpretation, typeInterpretation:PartialTypeInterpratation,
+	container:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialtypeinterpratation(interpretation,typeInterpretation);
+	PartialTypeInterpratation.interpretationOf.name(typeInterpretation,"Request class");
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationInterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationInterpretation,"requests reference CyberPhysicalSystem");
+	find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,container);
+	find mayInstanceOfRequest_class(problem,interpretation,newObject);
+	find mayInRelationrequests_reference_CyberPhysicalSystem(problem,interpretation,container,newObject);
+	find mustExist(problem, interpretation, container);
+	neg find mustExist(problem, interpretation, newObject);
+}
+pattern createObject_ApplicationInstance_class_by_instances_reference_ApplicationType_with_type_reference_ApplicationInstance(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	relationInterpretation:PartialRelationInterpretation, inverseInterpretation:PartialRelationInterpretation, typeInterpretation:PartialTypeInterpratation,
+	container:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialtypeinterpratation(interpretation,typeInterpretation);
+	PartialTypeInterpratation.interpretationOf.name(typeInterpretation,"ApplicationInstance class");
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationInterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationInterpretation,"instances reference ApplicationType");
+	PartialInterpretation.partialrelationinterpretation(interpretation,inverseInterpretation);
+	PartialRelationInterpretation.interpretationOf.name(inverseInterpretation,"type reference ApplicationInstance");
+	find mustInstanceOfApplicationType_class(problem,interpretation,container);
+	find mayInstanceOfApplicationInstance_class(problem,interpretation,newObject);
+	find mayInRelationinstances_reference_ApplicationType(problem,interpretation,container,newObject);
+	find mustExist(problem, interpretation, container);
+	neg find mustExist(problem, interpretation, newObject);
+}
+pattern createObject_HostType_class_by_hostTypes_reference_CyberPhysicalSystem_with_cps_reference_HostType(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	relationInterpretation:PartialRelationInterpretation, inverseInterpretation:PartialRelationInterpretation, typeInterpretation:PartialTypeInterpratation,
+	container:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialtypeinterpratation(interpretation,typeInterpretation);
+	PartialTypeInterpratation.interpretationOf.name(typeInterpretation,"HostType class");
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationInterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationInterpretation,"hostTypes reference CyberPhysicalSystem");
+	PartialInterpretation.partialrelationinterpretation(interpretation,inverseInterpretation);
+	PartialRelationInterpretation.interpretationOf.name(inverseInterpretation,"cps reference HostType");
+	find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,container);
+	find mayInstanceOfHostType_class(problem,interpretation,newObject);
+	find mayInRelationhostTypes_reference_CyberPhysicalSystem(problem,interpretation,container,newObject);
+	find mustExist(problem, interpretation, container);
+	neg find mustExist(problem, interpretation, newObject);
+}
+pattern createObject_StateMachine_class_by_behavior_reference_ApplicationType(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	relationInterpretation:PartialRelationInterpretation, typeInterpretation:PartialTypeInterpratation,
+	container:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialtypeinterpratation(interpretation,typeInterpretation);
+	PartialTypeInterpratation.interpretationOf.name(typeInterpretation,"StateMachine class");
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationInterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationInterpretation,"behavior reference ApplicationType");
+	find mustInstanceOfApplicationType_class(problem,interpretation,container);
+	find mayInstanceOfStateMachine_class(problem,interpretation,newObject);
+	find mayInRelationbehavior_reference_ApplicationType(problem,interpretation,container,newObject);
+	find mustExist(problem, interpretation, container);
+	neg find mustExist(problem, interpretation, newObject);
+}
+pattern createObject_HostInstance_class_by_instances_reference_HostType(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	relationInterpretation:PartialRelationInterpretation, typeInterpretation:PartialTypeInterpratation,
+	container:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialtypeinterpratation(interpretation,typeInterpretation);
+	PartialTypeInterpratation.interpretationOf.name(typeInterpretation,"HostInstance class");
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationInterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationInterpretation,"instances reference HostType");
+	find mustInstanceOfHostType_class(problem,interpretation,container);
+	find mayInstanceOfHostInstance_class(problem,interpretation,newObject);
+	find mayInRelationinstances_reference_HostType(problem,interpretation,container,newObject);
+	find mustExist(problem, interpretation, container);
+	neg find mustExist(problem, interpretation, newObject);
+}
+pattern createObject_ApplicationType_class_by_appTypes_reference_CyberPhysicalSystem_with_cps_reference_ApplicationType(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	relationInterpretation:PartialRelationInterpretation, inverseInterpretation:PartialRelationInterpretation, typeInterpretation:PartialTypeInterpratation,
+	container:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialtypeinterpratation(interpretation,typeInterpretation);
+	PartialTypeInterpratation.interpretationOf.name(typeInterpretation,"ApplicationType class");
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationInterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationInterpretation,"appTypes reference CyberPhysicalSystem");
+	PartialInterpretation.partialrelationinterpretation(interpretation,inverseInterpretation);
+	PartialRelationInterpretation.interpretationOf.name(inverseInterpretation,"cps reference ApplicationType");
+	find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,container);
+	find mayInstanceOfApplicationType_class(problem,interpretation,newObject);
+	find mayInRelationappTypes_reference_CyberPhysicalSystem(problem,interpretation,container,newObject);
+	find mustExist(problem, interpretation, container);
+	neg find mustExist(problem, interpretation, newObject);
+}
+pattern createObject_CyberPhysicalSystem_class_UndefinedPart(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	typeInterpretation:PartialTypeInterpratation)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialtypeinterpratation(interpretation,typeInterpretation);
+	PartialTypeInterpratation.interpretationOf.name(type,"CyberPhysicalSystem class UndefinedPart");
+	find mayInstanceOfCyberPhysicalSystem_class_UndefinedPart(problem,interpretation,newObject);
+	find mayExist(problem, interpretation, newObject);
+	neg find mustExist(problem, interpretation, newObject);
+}
+pattern createObject_ResourceRequirement_class_by_requirements_reference_ApplicationType(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	relationInterpretation:PartialRelationInterpretation, typeInterpretation:PartialTypeInterpratation,
+	container:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialtypeinterpratation(interpretation,typeInterpretation);
+	PartialTypeInterpratation.interpretationOf.name(typeInterpretation,"ResourceRequirement class");
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationInterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationInterpretation,"requirements reference ApplicationType");
+	find mustInstanceOfApplicationType_class(problem,interpretation,container);
+	find mayInstanceOfResourceRequirement_class(problem,interpretation,newObject);
+	find mayInRelationrequirements_reference_ApplicationType(problem,interpretation,container,newObject);
+	find mustExist(problem, interpretation, container);
+	neg find mustExist(problem, interpretation, newObject);
+}
+pattern createObject_Transition_class_by_outgoingTransitions_reference_State(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	relationInterpretation:PartialRelationInterpretation, typeInterpretation:PartialTypeInterpratation,
+	container:DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialtypeinterpratation(interpretation,typeInterpretation);
+	PartialTypeInterpratation.interpretationOf.name(typeInterpretation,"Transition class");
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationInterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationInterpretation,"outgoingTransitions reference State");
+	find mustInstanceOfState_class(problem,interpretation,container);
+	find mayInstanceOfTransition_class(problem,interpretation,newObject);
+	find mayInRelationoutgoingTransitions_reference_State(problem,interpretation,container,newObject);
+	find mustExist(problem, interpretation, container);
+	neg find mustExist(problem, interpretation, newObject);
+}
+
+//////////
+// 4.2 Type refinement
+//////////
+pattern refineTypeTo_State_class(problem:LogicProblem, interpretation:PartialInterpretation, element: DefinedElement) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+}
+pattern refineTypeTo_Requirement_class(problem:LogicProblem, interpretation:PartialInterpretation, element: DefinedElement) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+}
+pattern refineTypeTo_Request_class(problem:LogicProblem, interpretation:PartialInterpretation, element: DefinedElement) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+}
+pattern refineTypeTo_ApplicationInstance_class(problem:LogicProblem, interpretation:PartialInterpretation, element: DefinedElement) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+}
+pattern refineTypeTo_HostType_class(problem:LogicProblem, interpretation:PartialInterpretation, element: DefinedElement) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+}
+pattern refineTypeTo_StateMachine_class(problem:LogicProblem, interpretation:PartialInterpretation, element: DefinedElement) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+}
+pattern refineTypeTo_HostInstance_class(problem:LogicProblem, interpretation:PartialInterpretation, element: DefinedElement) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+}
+pattern refineTypeTo_ApplicationType_class(problem:LogicProblem, interpretation:PartialInterpretation, element: DefinedElement) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+}
+pattern refineTypeTo_CyberPhysicalSystem_class_UndefinedPart(problem:LogicProblem, interpretation:PartialInterpretation, element: DefinedElement) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class_UndefinedPart(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+}
+pattern refineTypeTo_EObject_class(problem:LogicProblem, interpretation:PartialInterpretation, element: DefinedElement) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfIdentifiable_class(problem,interpretation,element);
+}
+pattern refineTypeTo_ResourceRequirement_class(problem:LogicProblem, interpretation:PartialInterpretation, element: DefinedElement) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+}
+pattern refineTypeTo_Transition_class(problem:LogicProblem, interpretation:PartialInterpretation, element: DefinedElement) {
+	find interpretation(problem,interpretation);
+	PartialInterpretation.newElements(interpretation,element);
+	neg find mustInstanceOfCyberPhysicalSystem_class(problem,interpretation,element);
+	neg find mustInstanceOfState_class(problem,interpretation,element);
+	neg find mustInstanceOfRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfRequest_class(problem,interpretation,element);
+	neg find mustInstanceOfApplicationType_class(problem,interpretation,element);
+	neg find mustInstanceOfHostType_class(problem,interpretation,element);
+	neg find mustInstanceOfStateMachine_class(problem,interpretation,element);
+	neg find mustInstanceOfHostInstance_class(problem,interpretation,element);
+	neg find mustInstanceOfEObject_class(problem,interpretation,element);
+	neg find mustInstanceOfResourceRequirement_class(problem,interpretation,element);
+	neg find mustInstanceOfTransition_class(problem,interpretation,element);
+}
+
+//////////
+// 4.3 Relation refinement
+//////////
+pattern refineRelation_type_reference_ResourceRequirement(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	relationIterpretation:PartialRelationInterpretation,
+	from: DefinedElement, to: DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"type reference ResourceRequirement");
+	find mustExist(problem, interpretation, from);
+	find mustExist(problem, interpretation, to);
+	find mustInstanceOfResourceRequirement_class(problem,interpretation,from);
+	find mustInstanceOfHostType_class(problem,interpretation,to);
+	find mayInRelationtype_reference_ResourceRequirement(problem,interpretation,from,to);
+	neg find mustInRelationtype_reference_ResourceRequirement(problem,interpretation,from,to);
+}
+pattern refineRelation_communicateWith_reference_HostInstance(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	relationIterpretation:PartialRelationInterpretation,
+	from: DefinedElement, to: DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"communicateWith reference HostInstance");
+	find mustExist(problem, interpretation, from);
+	find mustExist(problem, interpretation, to);
+	find mustInstanceOfHostInstance_class(problem,interpretation,from);
+	find mustInstanceOfHostInstance_class(problem,interpretation,to);
+	find mayInRelationcommunicateWith_reference_HostInstance(problem,interpretation,from,to);
+	neg find mustInRelationcommunicateWith_reference_HostInstance(problem,interpretation,from,to);
+}
+pattern refineRelation_allocatedTo_reference_ApplicationInstance_and_applications_reference_HostInstance(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	relationIterpretation:PartialRelationInterpretation, oppositeInterpretation:PartialRelationInterpretation,
+	from: DefinedElement, to: DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"allocatedTo reference ApplicationInstance");
+	PartialInterpretation.partialrelationinterpretation(interpretation,oppositeInterpretation);
+	PartialRelationInterpretation.interpretationOf.name(oppositeInterpretation,"applications reference HostInstance");
+	find mustExist(problem, interpretation, from);
+	find mustExist(problem, interpretation, to);
+	find mustInstanceOfApplicationInstance_class(problem,interpretation,from);
+	find mustInstanceOfHostInstance_class(problem,interpretation,to);
+	find mayInRelationallocatedTo_reference_ApplicationInstance(problem,interpretation,from,to);
+	neg find mustInRelationallocatedTo_reference_ApplicationInstance(problem,interpretation,from,to);
+}
+pattern refineRelation_dependOn_reference_ApplicationInstance(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	relationIterpretation:PartialRelationInterpretation,
+	from: DefinedElement, to: DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"dependOn reference ApplicationInstance");
+	find mustExist(problem, interpretation, from);
+	find mustExist(problem, interpretation, to);
+	find mustInstanceOfApplicationInstance_class(problem,interpretation,from);
+	find mustInstanceOfApplicationInstance_class(problem,interpretation,to);
+	find mayInRelationdependOn_reference_ApplicationInstance(problem,interpretation,from,to);
+	neg find mustInRelationdependOn_reference_ApplicationInstance(problem,interpretation,from,to);
+}
+pattern refineRelation_type_reference_Requirement(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	relationIterpretation:PartialRelationInterpretation,
+	from: DefinedElement, to: DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"type reference Requirement");
+	find mustExist(problem, interpretation, from);
+	find mustExist(problem, interpretation, to);
+	find mustInstanceOfRequirement_class(problem,interpretation,from);
+	find mustInstanceOfApplicationType_class(problem,interpretation,to);
+	find mayInRelationtype_reference_Requirement(problem,interpretation,from,to);
+	neg find mustInRelationtype_reference_Requirement(problem,interpretation,from,to);
+}
+pattern refineRelation_applications_reference_Requirement(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	relationIterpretation:PartialRelationInterpretation,
+	from: DefinedElement, to: DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"applications reference Requirement");
+	find mustExist(problem, interpretation, from);
+	find mustExist(problem, interpretation, to);
+	find mustInstanceOfRequirement_class(problem,interpretation,from);
+	find mustInstanceOfApplicationInstance_class(problem,interpretation,to);
+	find mayInRelationapplications_reference_Requirement(problem,interpretation,from,to);
+	neg find mustInRelationapplications_reference_Requirement(problem,interpretation,from,to);
+}
+pattern refineRelation_initial_reference_StateMachine(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	relationIterpretation:PartialRelationInterpretation,
+	from: DefinedElement, to: DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"initial reference StateMachine");
+	find mustExist(problem, interpretation, from);
+	find mustExist(problem, interpretation, to);
+	find mustInstanceOfStateMachine_class(problem,interpretation,from);
+	find mustInstanceOfState_class(problem,interpretation,to);
+	find mayInRelationinitial_reference_StateMachine(problem,interpretation,from,to);
+	neg find mustInRelationinitial_reference_StateMachine(problem,interpretation,from,to);
+}
+pattern refineRelation_targetState_reference_Transition(
+	problem:LogicProblem, interpretation:PartialInterpretation,
+	relationIterpretation:PartialRelationInterpretation,
+	from: DefinedElement, to: DefinedElement)
+{
+	find interpretation(problem,interpretation);
+	PartialInterpretation.partialrelationinterpretation(interpretation,relationIterpretation);
+	PartialRelationInterpretation.interpretationOf.name(relationIterpretation,"targetState reference Transition");
+	find mustExist(problem, interpretation, from);
+	find mustExist(problem, interpretation, to);
+	find mustInstanceOfTransition_class(problem,interpretation,from);
+	find mustInstanceOfState_class(problem,interpretation,to);
+	find mayInRelationtargetState_reference_Transition(problem,interpretation,from,to);
+	neg find mustInRelationtargetState_reference_Transition(problem,interpretation,from,to);
+}
+

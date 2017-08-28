@@ -3,12 +3,13 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Cpsgen
 Bundle-SymbolicName: cpsgen;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Export-Package: cpsgen.patterns,
-  cpsgen.patterns.util
-Require-Bundle: hu.bme.mit.inf.dslreasoner.viatrasolver.partialinterpretationlanguage,
+Export-Package: cpsgen,
+  mutatedpatterns,
+  mutatedpatterns.util
+Require-Bundle: org.eclipse.viatra.examples.cps.model;bundle-version="0.1.0",
+  hu.bme.mit.inf.dslreasoner.viatrasolver.partialinterpretationlanguage,
   hu.bme.mit.inf.dslreasoner.ecore2logic;bundle-version="1.0.0",
   hu.bme.mit.inf.dslreasoner.logic.model;bundle-version="1.0.0",
-  org.eclipse.viatra.examples.cps.model;bundle-version="0.1.0",
   com.google.guava,
   org.eclipse.xtext.xbase.lib,
   org.eclipse.xtend.lib,

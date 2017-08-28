@@ -1,0 +1,29 @@
+package mutatedpatterns
+
+import "http://org.eclipse.viatra/model/cps"
+import "http://www.eclipse.org/emf/2002/Ecore"		
+
+pattern ApplicationInstance_Type(appInstance:ApplicationInstance, app:ApplicationType) {				
+	ApplicationInstance.type(appInstance, app);		
+}
+pattern State(target:State) {				
+	State(target);
+}
+pattern StateMachine_States(statemachine:StateMachine, state:State) {				
+	StateMachine.states(statemachine, state);		
+}
+pattern Transition_TargetState(transition:Transition, target:State) {				
+	Transition.targetState(transition, target);		
+}
+pattern ApplicationInstance_AllocatedTo(appInstance:ApplicationInstance, hostInstance:HostInstance) {				
+	ApplicationInstance.allocatedTo(appInstance, hostInstance);		
+}
+pattern HostInstance_CommunicateWith(fromHost:HostInstance, toHost:HostInstance) {				
+	HostInstance.communicateWith(fromHost, toHost);		
+}
+pattern State_OutgoingTransitions(source:State, transition:Transition) {				
+	State.outgoingTransitions(source, transition);		
+}
+pattern HostInstance(toHost:HostInstance) {				
+	HostInstance(toHost);
+}

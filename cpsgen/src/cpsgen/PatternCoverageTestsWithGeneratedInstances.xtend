@@ -1,7 +1,6 @@
 package cpsgen
 
 import com.google.common.collect.Sets
-import cpsgen.patterns.util.CircularDependencyInAppsQuerySpecification
 import java.io.File
 import java.util.Collection
 import org.eclipse.emf.ecore.resource.ResourceSet
@@ -25,6 +24,14 @@ import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
 import org.eclipse.viatra.query.testing.core.api.ViatraQueryTest
 import org.eclipse.emf.common.util.URI
+import mutatedpatterns.util.TransitionWithoutTargetStateQuerySpecification
+import mutatedpatterns.util.StateTransitionQuerySpecification
+import mutatedpatterns.util.TargetStateNotContainedBySameStateMachineQuerySpecification
+import mutatedpatterns.util.MultipleApplicationInstanceInCommunicationGroupQuerySpecification
+import mutatedpatterns.util.AppTypeInstanceAndHostQuerySpecification
+import mutatedpatterns.util.HostCommunicationQuerySpecification
+import mutatedpatterns.util.ReachableHostsQuerySpecification
+import mutatedpatterns.util.ReachableAppInstanceQuerySpecification
 
 @RunWith(Parameterized)
 class PatternCoverageTestsWithGeneratedInstances {
@@ -33,8 +40,36 @@ class PatternCoverageTestsWithGeneratedInstances {
     @Parameters(name="Model: {0}, Query: {1}")
     def static Collection<Object[]> testData() {
         newArrayList(Sets.cartesianProduct(
-            #{"cpsgen/outputModels/model.xmi"}, // models to use for testing queries
-            #{CircularDependencyInAppsQuerySpecification.instance} // queries to test
+            #{// models to use for testing queries
+            "cpsgen/saved_models/model_original.xmi"
+//            ,
+//            "cpsgen/outputModels/AppTypeInstanceAndHost1.xmi", 
+//            "cpsgen/outputModels/AppTypeInstanceAndHost2.xmi", 
+//            "cpsgen/outputModels/HostCommunication1.xmi",
+//            "cpsgen/outputModels/MultipleApplicationInstanceInCommunicationGroup1.xmi",
+//            "cpsgen/outputModels/MultipleApplicationInstanceInCommunicationGroup2.xmi",
+//            "cpsgen/outputModels/MultipleApplicationInstanceInCommunicationGroup3.xmi",
+//            "cpsgen/outputModels/ReachableAppInstance1.xmi",
+//            "cpsgen/outputModels/ReachableAppInstance2.xmi",
+//            "cpsgen/outputModels/StateTransition1.xmi",
+//            "cpsgen/outputModels/StateTransition2.xmi",
+//            "cpsgen/outputModels/StateTransition3.xmi",
+//            "cpsgen/outputModels/TargetStateNotContainedBySameStateMachine1.xmi",
+//            "cpsgen/outputModels/TargetStateNotContainedBySameStateMachine2.xmi",
+//            "cpsgen/outputModels/TargetStateNotContainedBySameStateMachine3.xmi",
+//            "cpsgen/outputModels/TransitionWithoutTargetState1.xmi",
+//            "cpsgen/outputModels/TransitionWithoutTargetState2.xmi"
+            }, 
+            #{ // queries to test
+            	TransitionWithoutTargetStateQuerySpecification.instance,
+            	StateTransitionQuerySpecification.instance,
+            	TargetStateNotContainedBySameStateMachineQuerySpecification.instance,
+            	MultipleApplicationInstanceInCommunicationGroupQuerySpecification.instance,
+            	AppTypeInstanceAndHostQuerySpecification.instance,
+            	HostCommunicationQuerySpecification.instance,
+            	ReachableHostsQuerySpecification.instance,
+            	ReachableAppInstanceQuerySpecification.instance
+            }
         ).map[it.toArray])
     }
 
@@ -77,6 +112,7 @@ class PatternCoverageTestsWithGeneratedInstances {
         coverage.processMatcher(matcher)
         ViatraQueryTest.test(query)
         .analyzeWith(coverage)
+
 //        .on(modelUri)
 //        .assertEquals
    

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ASCII"?>
+<cps:CyberPhysicalSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:cps="http://org.eclipse.viatra/model/cps">
+  <appTypes/>
+  <appTypes>
+    <requirements type="//@hostTypes.0"/>
+    <instances allocatedTo="//@hostTypes.1/@instances.0" dependOn="//@appTypes.1/@instances.0 //@appTypes.1/@instances.1 //@appTypes.1/@instances.2"/>
+    <instances allocatedTo="//@hostTypes.0/@instances.1" dependOn="//@appTypes.1/@instances.1 //@appTypes.1/@instances.2"/>
+    <instances dependOn="//@appTypes.1/@instances.0 //@appTypes.1/@instances.2"/>
+  </appTypes>
+  <requests>
+    <requirements type="//@appTypes.0" applications="//@appTypes.1/@instances.0 //@appTypes.1/@instances.1 //@appTypes.1/@instances.2"/>
+    <requirements type="//@appTypes.0" applications="//@appTypes.1/@instances.0"/>
+    <requirements type="//@appTypes.0" applications="//@appTypes.1/@instances.1 //@appTypes.1/@instances.2"/>
+  </requests>
+  <hostTypes>
+    <instances/>
+    <instances applications="//@appTypes.1/@instances.1" communicateWith="//@hostTypes.0/@instances.0 //@hostTypes.0/@instances.1"/>
+  </hostTypes>
+  <hostTypes>
+    <instances applications="//@appTypes.1/@instances.0" communicateWith="//@hostTypes.1/@instances.0 //@hostTypes.0/@instances.0"/>
+  </hostTypes>
+</cps:CyberPhysicalSystem>

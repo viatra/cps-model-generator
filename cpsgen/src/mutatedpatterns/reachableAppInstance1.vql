@@ -1,0 +1,12 @@
+package mutatedpatterns
+
+import "http://org.eclipse.viatra/model/cps"
+import "http://www.eclipse.org/emf/2002/Ecore"		
+
+pattern reachableAppInstanceV1(sourceHostInstance:HostInstance, app:ApplicationType, appInstance:ApplicationInstance) {				
+	EObject(app);
+	EObject(appInstance);
+	EObject(targetHostInstance);
+	neg find appTypeInstanceAndHost(app, appInstance, targetHostInstance);	
+	find reachableHosts(sourceHostInstance, targetHostInstance);	
+}

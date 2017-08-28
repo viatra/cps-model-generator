@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="ASCII"?>
+<cps:CyberPhysicalSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:cps="http://org.eclipse.viatra/model/cps">
+  <appTypes>
+    <instances dependOn="//@appTypes.0/@instances.0 //@appTypes.2/@instances.1 //@appTypes.1/@instances.1 //@appTypes.0/@instances.1"/>
+    <instances dependOn="//@appTypes.2/@instances.1"/>
+  </appTypes>
+  <appTypes>
+    <instances allocatedTo="//@hostTypes.0/@instances.0" dependOn="//@appTypes.2/@instances.0 //@appTypes.0/@instances.1 //@appTypes.2/@instances.2"/>
+    <instances allocatedTo="//@hostTypes.0/@instances.0" dependOn="//@appTypes.2/@instances.0 //@appTypes.2/@instances.1 //@appTypes.1/@instances.1 //@appTypes.0/@instances.1 //@appTypes.2/@instances.2"/>
+    <behavior initial="//@appTypes.2/@behavior/@states.0"/>
+  </appTypes>
+  <appTypes>
+    <requirements type="//@hostTypes.0"/>
+    <instances allocatedTo="//@hostTypes.0/@instances.0" dependOn="//@appTypes.2/@instances.0 //@appTypes.2/@instances.1 //@appTypes.1/@instances.1 //@appTypes.2/@instances.2"/>
+    <instances allocatedTo="//@hostTypes.0/@instances.0" dependOn="//@appTypes.1/@instances.0 //@appTypes.2/@instances.0 //@appTypes.0/@instances.0 //@appTypes.2/@instances.1 //@appTypes.1/@instances.1"/>
+    <instances allocatedTo="//@hostTypes.0/@instances.0" dependOn="//@appTypes.1/@instances.0 //@appTypes.2/@instances.0 //@appTypes.2/@instances.1 //@appTypes.0/@instances.1"/>
+    <behavior initial="//@appTypes.2/@behavior/@states.0">
+      <states>
+        <outgoingTransitions/>
+      </states>
+    </behavior>
+  </appTypes>
+  <appTypes>
+    <requirements type="//@hostTypes.0"/>
+  </appTypes>
+  <appTypes>
+    <requirements type="//@hostTypes.0"/>
+    <requirements type="//@hostTypes.0"/>
+    <requirements type="//@hostTypes.0"/>
+    <behavior/>
+  </appTypes>
+  <requests>
+    <requirements type="//@appTypes.4" applications="//@appTypes.2/@instances.0 //@appTypes.0/@instances.0 //@appTypes.1/@instances.1 //@appTypes.2/@instances.2"/>
+    <requirements type="//@appTypes.2" applications="//@appTypes.2/@instances.0 //@appTypes.0/@instances.0 //@appTypes.2/@instances.1 //@appTypes.2/@instances.2"/>
+  </requests>
+  <requests>
+    <requirements type="//@appTypes.1" applications="//@appTypes.1/@instances.0 //@appTypes.2/@instances.0 //@appTypes.0/@instances.0 //@appTypes.2/@instances.1 //@appTypes.0/@instances.1 //@appTypes.2/@instances.2"/>
+    <requirements type="//@appTypes.2" applications="//@appTypes.1/@instances.0 //@appTypes.1/@instances.1 //@appTypes.2/@instances.2"/>
+    <requirements type="//@appTypes.2" applications="//@appTypes.2/@instances.1 //@appTypes.1/@instances.1"/>
+  </requests>
+  <requests>
+    <requirements type="//@appTypes.0" applications="//@appTypes.1/@instances.0 //@appTypes.2/@instances.0 //@appTypes.2/@instances.1 //@appTypes.1/@instances.1 //@appTypes.2/@instances.2"/>
+    <requirements type="//@appTypes.0" applications="//@appTypes.2/@instances.0 //@appTypes.0/@instances.0 //@appTypes.1/@instances.1 //@appTypes.2/@instances.2"/>
+    <requirements type="//@appTypes.2" applications="//@appTypes.2/@instances.0 //@appTypes.2/@instances.1 //@appTypes.1/@instances.1 //@appTypes.0/@instances.1 //@appTypes.2/@instances.2"/>
+    <requirements type="//@appTypes.4" applications="//@appTypes.2/@instances.0 //@appTypes.2/@instances.1 //@appTypes.1/@instances.1 //@appTypes.2/@instances.2"/>
+    <requirements type="//@appTypes.4" applications="//@appTypes.0/@instances.0 //@appTypes.1/@instances.1 //@appTypes.2/@instances.2"/>
+  </requests>
+  <requests/>
+  <requests/>
+  <requests/>
+  <hostTypes>
+    <instances applications="//@appTypes.1/@instances.0 //@appTypes.2/@instances.0 //@appTypes.2/@instances.1 //@appTypes.1/@instances.1 //@appTypes.2/@instances.2" communicateWith="//@hostTypes.0/@instances.0"/>
+  </hostTypes>
+</cps:CyberPhysicalSystem>

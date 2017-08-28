@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="ASCII"?>
+<cps:CyberPhysicalSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:cps="http://org.eclipse.viatra/model/cps">
+  <appTypes>
+    <requirements type="//@hostTypes.0"/>
+    <requirements type="//@hostTypes.1"/>
+    <instances allocatedTo="//@hostTypes.0/@instances.1" dependOn="//@appTypes.0/@instances.1 //@appTypes.1/@instances.0 //@appTypes.0/@instances.2 //@appTypes.0/@instances.3 //@appTypes.0/@instances.4 //@appTypes.2/@instances.0 //@appTypes.1/@instances.1 //@appTypes.1/@instances.2 //@appTypes.1/@instances.3"/>
+    <instances allocatedTo="//@hostTypes.0/@instances.1" dependOn="//@appTypes.0/@instances.0 //@appTypes.0/@instances.1 //@appTypes.1/@instances.0 //@appTypes.0/@instances.2 //@appTypes.0/@instances.3 //@appTypes.0/@instances.4 //@appTypes.2/@instances.0 //@appTypes.1/@instances.2 //@appTypes.1/@instances.3"/>
+    <instances allocatedTo="//@hostTypes.0/@instances.0" dependOn="//@appTypes.0/@instances.0 //@appTypes.0/@instances.1 //@appTypes.1/@instances.0 //@appTypes.0/@instances.2 //@appTypes.0/@instances.3 //@appTypes.0/@instances.4 //@appTypes.2/@instances.0 //@appTypes.1/@instances.1 //@appTypes.1/@instances.2 //@appTypes.1/@instances.3"/>
+    <instances allocatedTo="//@hostTypes.0/@instances.0" dependOn="//@appTypes.0/@instances.0 //@appTypes.0/@instances.1 //@appTypes.1/@instances.0 //@appTypes.0/@instances.2 //@appTypes.0/@instances.3 //@appTypes.0/@instances.4 //@appTypes.2/@instances.0 //@appTypes.1/@instances.1 //@appTypes.1/@instances.2 //@appTypes.1/@instances.3"/>
+    <instances allocatedTo="//@hostTypes.0/@instances.1" dependOn="//@appTypes.0/@instances.1 //@appTypes.0/@instances.2 //@appTypes.0/@instances.3 //@appTypes.0/@instances.4 //@appTypes.2/@instances.0 //@appTypes.1/@instances.1 //@appTypes.1/@instances.2 //@appTypes.1/@instances.3"/>
+    <behavior initial="//@appTypes.0/@behavior/@states.0">
+      <states>
+        <outgoingTransitions targetState="//@appTypes.0/@behavior/@states.0"/>
+        <outgoingTransitions targetState="//@appTypes.0/@behavior/@states.0"/>
+        <outgoingTransitions targetState="//@appTypes.1/@behavior/@states.0"/>
+        <outgoingTransitions targetState="//@appTypes.1/@behavior/@states.0"/>
+        <outgoingTransitions targetState="//@appTypes.0/@behavior/@states.0"/>
+      </states>
+    </behavior>
+  </appTypes>
+  <appTypes>
+    <requirements type="//@hostTypes.1"/>
+    <requirements type="//@hostTypes.1"/>
+    <requirements type="//@hostTypes.0"/>
+    <requirements type="//@hostTypes.0"/>
+    <instances allocatedTo="//@hostTypes.0/@instances.0" dependOn="//@appTypes.0/@instances.0 //@appTypes.0/@instances.1 //@appTypes.0/@instances.2 //@appTypes.0/@instances.3 //@appTypes.0/@instances.4 //@appTypes.1/@instances.2 //@appTypes.1/@instances.3"/>
+    <instances allocatedTo="//@hostTypes.0/@instances.0" dependOn="//@appTypes.0/@instances.0 //@appTypes.0/@instances.1 //@appTypes.1/@instances.0 //@appTypes.0/@instances.2 //@appTypes.0/@instances.3 //@appTypes.0/@instances.4 //@appTypes.1/@instances.1 //@appTypes.1/@instances.2 //@appTypes.1/@instances.3"/>
+    <instances allocatedTo="//@hostTypes.0/@instances.1" dependOn="//@appTypes.0/@instances.0 //@appTypes.0/@instances.1 //@appTypes.1/@instances.0 //@appTypes.0/@instances.2 //@appTypes.0/@instances.3 //@appTypes.0/@instances.4 //@appTypes.1/@instances.2 //@appTypes.1/@instances.3"/>
+    <instances allocatedTo="//@hostTypes.0/@instances.0" dependOn="//@appTypes.0/@instances.0 //@appTypes.0/@instances.1 //@appTypes.1/@instances.0 //@appTypes.0/@instances.3 //@appTypes.0/@instances.4 //@appTypes.2/@instances.0 //@appTypes.1/@instances.1 //@appTypes.1/@instances.2 //@appTypes.1/@instances.3"/>
+    <behavior initial="//@appTypes.0/@behavior/@states.0">
+      <states/>
+    </behavior>
+  </appTypes>
+  <appTypes>
+    <requirements type="//@hostTypes.1"/>
+    <instances allocatedTo="//@hostTypes.0/@instances.0" dependOn="//@appTypes.0/@instances.0 //@appTypes.0/@instances.1 //@appTypes.0/@instances.2 //@appTypes.0/@instances.3 //@appTypes.0/@instances.4 //@appTypes.2/@instances.0 //@appTypes.1/@instances.1 //@appTypes.1/@instances.2 //@appTypes.1/@instances.3"/>
+    <behavior initial="//@appTypes.1/@behavior/@states.0"/>
+  </appTypes>
+  <requests/>
+  <requests>
+    <requirements type="//@appTypes.0" applications="//@appTypes.0/@instances.1 //@appTypes.0/@instances.2 //@appTypes.0/@instances.3 //@appTypes.0/@instances.4 //@appTypes.2/@instances.0 //@appTypes.1/@instances.1 //@appTypes.1/@instances.3"/>
+    <requirements type="//@appTypes.1" applications="//@appTypes.0/@instances.2 //@appTypes.0/@instances.3 //@appTypes.0/@instances.4 //@appTypes.2/@instances.0 //@appTypes.1/@instances.1 //@appTypes.1/@instances.2 //@appTypes.1/@instances.3"/>
+  </requests>
+  <requests>
+    <requirements type="//@appTypes.0" applications="//@appTypes.0/@instances.0 //@appTypes.0/@instances.1 //@appTypes.1/@instances.0 //@appTypes.0/@instances.2 //@appTypes.0/@instances.3 //@appTypes.0/@instances.4 //@appTypes.2/@instances.0 //@appTypes.1/@instances.1"/>
+  </requests>
+  <hostTypes>
+    <instances applications="//@appTypes.1/@instances.0 //@appTypes.0/@instances.2 //@appTypes.0/@instances.3 //@appTypes.2/@instances.0 //@appTypes.1/@instances.1 //@appTypes.1/@instances.3" communicateWith="//@hostTypes.0/@instances.1"/>
+    <instances applications="//@appTypes.0/@instances.0 //@appTypes.0/@instances.1 //@appTypes.0/@instances.4 //@appTypes.1/@instances.2" communicateWith="//@hostTypes.0/@instances.0 //@hostTypes.0/@instances.1"/>
+  </hostTypes>
+  <hostTypes/>
+</cps:CyberPhysicalSystem>

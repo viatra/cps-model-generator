@@ -1,0 +1,12 @@
+package mutatedpatterns
+
+import "http://org.eclipse.viatra/model/cps"
+import "http://www.eclipse.org/emf/2002/Ecore"		
+
+pattern targetStateNotContainedBySameStateMachineV2(transition:Transition, target:State) {				
+	find stateTransition(source, transition, target);	
+	EObject(statemachine);
+	EObject(source);
+	neg find statemachineState(statemachine, source);	
+	neg find statemachineState(statemachine, target);	
+}
