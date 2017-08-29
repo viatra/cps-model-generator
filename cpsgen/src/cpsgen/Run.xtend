@@ -16,7 +16,6 @@ import hu.bme.mit.inf.dslreasoner.viatrasolver.partialinterpretationlanguage.vis
 import hu.bme.mit.inf.dslreasoner.viatrasolver.reasoner.ViatraReasoner
 import hu.bme.mit.inf.dslreasoner.viatrasolver.reasoner.ViatraReasonerConfiguration
 import hu.bme.mit.inf.dslreasoner.workspace.FileSystemWorkspace
-import hu.bme.mit.inf.dslreasoner.workspace.ReasonerWorkspace
 import java.util.HashMap
 import java.util.HashSet
 import java.util.LinkedHashMap
@@ -53,58 +52,46 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl
 import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.CyberPhysicalSystemPackage
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.emf.types.BaseEMFTypeKey
+import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey
+import org.eclipse.viatra.query.runtime.emf.types.EClassUnscopedTransitiveInstancesKey
 
 class Run {
-    
+	
+     /**
+     *  Initializes the files needed for the generate method. Iterates over all the query specifications contained by <b>queriesToGenerateFrom</b> 
+     *  and calls the generate method for each ViatraQuerySetDescriptor.
+     */
     def static void main(String[] args) {
-        val inputs = new FileSystemWorkspace('''initialModels/''',"")
-        val workspace = new FileSystemWorkspace('''outputModels/''',"")
-        workspace.initAndClear
-        
-        println("Input and output workspaces are created")
-         
-        val metamodel = loadMetamodel(CyberPhysicalSystemPackage.eINSTANCE)
-        val partialModel = loadPartialModel(inputs)       
-        val  HashMap<String, ViatraQuerySetDescriptor> queries = new HashMap<String, ViatraQuerySetDescriptor>
-      	val baseSpecifications = (Pattern.instance.specifications + OutsourcedQueries.instance.specifications).toSet
-      	
+        val initialModelsLocation = new FileSystemWorkspace('''initialModels/''',"")
+        val outputModelsLocation = new FileSystemWorkspace('''outputModels/''',"")
+        outputModelsLocation.initAndClear      
+        println("Input and output workspaces are created")        
+        val EcoreMetamodelDescriptor metamodel = loadMetamodel(CyberPhysicalSystemPackage.eINSTANCE)
+        val List<EObject> initialModel = Run.loadInitialModel(initialModelsLocation, "cps.xmi")       
+        val HashMap<String, ViatraQuerySetDescriptor> queriesToGenerateFrom = new HashMap<String, ViatraQuerySetDescriptor>  
+        //Set of the base pattern specifications and outsourced pattern specifications, to be referred by the mutated patterns.
+      	val baseSpecifications = (Pattern.instance.specifications + OutsourcedQueries.instance.specifications).toSet  	
        	//TODO AutoLoad:   
-		queries.put("AppTypeInstanceAndHost1", loadQueries(metamodel, baseSpecifications, AppTypeInstanceAndHost1.instance.specifications))
-		queries.put("AppTypeInstanceAndHost2", loadQueries(metamodel, baseSpecifications, AppTypeInstanceAndHost2.instance.specifications))
-		queries.put("HostCommunication1", loadQueries(metamodel, baseSpecifications, HostCommunication1.instance.specifications))
-		queries.put("MultipleApplicationInstanceInCommunicationGroup1", loadQueries(metamodel, baseSpecifications, MultipleApplicationInstanceInCommunicationGroup1.instance.specifications))
-		queries.put("MultipleApplicationInstanceInCommunicationGroup2", loadQueries(metamodel, baseSpecifications, MultipleApplicationInstanceInCommunicationGroup2.instance.specifications))
-		queries.put("MultipleApplicationInstanceInCommunicationGroup3", loadQueries(metamodel, baseSpecifications, MultipleApplicationInstanceInCommunicationGroup3.instance.specifications))
-		queries.put("ReachableAppInstance1", loadQueries(metamodel, baseSpecifications, ReachableAppInstance1.instance.specifications))
-		queries.put("ReachableAppInstance2", loadQueries(metamodel, baseSpecifications, ReachableAppInstance2.instance.specifications))
-		queries.put("StateTransition1", loadQueries(metamodel, baseSpecifications, StateTransition1.instance.specifications))
-		queries.put("StateTransition2", loadQueries(metamodel, baseSpecifications, StateTransition2.instance.specifications))
-		queries.put("StateTransition3", loadQueries(metamodel, baseSpecifications, StateTransition3.instance.specifications))
-		queries.put("TargetStateNotContainedBySameStateMachine1", loadQueries(metamodel, baseSpecifications, TargetStateNotContainedBySameStateMachine1.instance.specifications))
-		queries.put("TargetStateNotContainedBySameStateMachine2", loadQueries(metamodel, baseSpecifications, TargetStateNotContainedBySameStateMachine2.instance.specifications))
-		queries.put("TargetStateNotContainedBySameStateMachine3", loadQueries(metamodel, baseSpecifications, TargetStateNotContainedBySameStateMachine3.instance.specifications))		
-		queries.put("TransitionWithoutTargetState1", loadQueries(metamodel, baseSpecifications, TransitionWithoutTargetState1.instance.specifications))
-		queries.put("TransitionWithoutTargetState2", loadQueries(metamodel, baseSpecifications, TransitionWithoutTargetState2.instance.specifications))
-		
-        for(descriptorKey : queries.keySet){
-        	println("____________________________")
-	        println("DSL loaded for " + '"' + descriptorKey + '"')
-	        val descriptor = queries.get(descriptorKey)
-	        val Ecore2Logic ecore2Logic = new Ecore2Logic
-	        val Logic2Ecore logic2Ecore = new Logic2Ecore(ecore2Logic)
-	        val Viatra2Logic viatra2Logic = new Viatra2Logic(ecore2Logic)
-	        val InstanceModel2Logic instanceModel2Logic = new InstanceModel2Logic        
-	        val modelGenerationProblem = ecore2Logic.transformMetamodel(metamodel,new Ecore2LogicConfiguration())
-	        val modelExtensionProblem = instanceModel2Logic.transform(modelGenerationProblem,partialModel)
-	        val validModelExtensionProblem = viatra2Logic.transformQueries(descriptor, modelGenerationProblem, new Viatra2LogicConfiguration)
-	        
-	        val logicProblem = validModelExtensionProblem.output
-	        
-	        println("Problem created")
-	        var LogicResult solution
-	        var LogicReasoner reasoner
-	        reasoner = new ViatraReasoner
-	        val viatraConfig = new ViatraReasonerConfiguration => [
+		queriesToGenerateFrom.put("AppTypeInstanceAndHost1", loadQueries(metamodel, baseSpecifications, AppTypeInstanceAndHost1.instance.specifications))
+		queriesToGenerateFrom.put("AppTypeInstanceAndHost2", loadQueries(metamodel, baseSpecifications, AppTypeInstanceAndHost2.instance.specifications))
+		queriesToGenerateFrom.put("HostCommunication1", loadQueries(metamodel, baseSpecifications, HostCommunication1.instance.specifications))
+		queriesToGenerateFrom.put("MultipleApplicationInstanceInCommunicationGroup1", loadQueries(metamodel, baseSpecifications, MultipleApplicationInstanceInCommunicationGroup1.instance.specifications))
+		queriesToGenerateFrom.put("MultipleApplicationInstanceInCommunicationGroup2", loadQueries(metamodel, baseSpecifications, MultipleApplicationInstanceInCommunicationGroup2.instance.specifications))
+		queriesToGenerateFrom.put("MultipleApplicationInstanceInCommunicationGroup3", loadQueries(metamodel, baseSpecifications, MultipleApplicationInstanceInCommunicationGroup3.instance.specifications))
+		queriesToGenerateFrom.put("ReachableAppInstance1", loadQueries(metamodel, baseSpecifications, ReachableAppInstance1.instance.specifications))
+		queriesToGenerateFrom.put("ReachableAppInstance2", loadQueries(metamodel, baseSpecifications, ReachableAppInstance2.instance.specifications))
+		queriesToGenerateFrom.put("StateTransition1", loadQueries(metamodel, baseSpecifications, StateTransition1.instance.specifications))
+		queriesToGenerateFrom.put("StateTransition2", loadQueries(metamodel, baseSpecifications, StateTransition2.instance.specifications))
+		queriesToGenerateFrom.put("StateTransition3", loadQueries(metamodel, baseSpecifications, StateTransition3.instance.specifications))
+		queriesToGenerateFrom.put("TargetStateNotContainedBySameStateMachine1", loadQueries(metamodel, baseSpecifications, TargetStateNotContainedBySameStateMachine1.instance.specifications))
+		queriesToGenerateFrom.put("TargetStateNotContainedBySameStateMachine2", loadQueries(metamodel, baseSpecifications, TargetStateNotContainedBySameStateMachine2.instance.specifications))
+		queriesToGenerateFrom.put("TargetStateNotContainedBySameStateMachine3", loadQueries(metamodel, baseSpecifications, TargetStateNotContainedBySameStateMachine3.instance.specifications))		
+		queriesToGenerateFrom.put("TransitionWithoutTargetState1", loadQueries(metamodel, baseSpecifications, TransitionWithoutTargetState1.instance.specifications))
+		queriesToGenerateFrom.put("TransitionWithoutTargetState2", loadQueries(metamodel, baseSpecifications, TransitionWithoutTargetState2.instance.specifications))
+	  	println("DSL loaded")     	
+		for(descriptorKey : queriesToGenerateFrom.keySet){						      
+			val descriptor = queriesToGenerateFrom.get(descriptorKey)			
+			val viatraConfig = new ViatraReasonerConfiguration => [
 	            it.typeScopes.maxNewElements = 40
 	            it.typeScopes.minNewElements = 40
 	            it.solutionScope.numberOfRequiredSolution = 1
@@ -112,20 +99,60 @@ class Run {
 	            it.debugCongiguration.logging = false
 	            //it.debugCongiguration.partalInterpretationVisualisationFrequency = 1
 	            //it.debugCongiguration.partialInterpretatioVisualiser = new GraphvizVisualisation
-	        ]
-	        solution = reasoner.solve(logicProblem,viatraConfig,workspace)
-	        println("Problem solved")
-	        val interpretations = reasoner.getInterpretations(solution as ModelResult)
-	        val models = new LinkedList
-	        for(interpretation : interpretations) {
-	            val instanceModel = logic2Ecore.transformInterpretation(interpretation,modelGenerationProblem.trace)
-	            models+=instanceModel
-	        }
-	        solution.writeSolution(workspace, models, descriptorKey)
-        }     
+		    ]
+		    println("____________________________")
+	    	println("Specifications to generate from: " + '"' + descriptorKey + '"')
+		    generate(viatraConfig, descriptorKey, descriptor, metamodel, initialModel, outputModelsLocation)
+		}//ENDFOR
     }
     
-    def private static loadMetamodel(EPackage pckg) {
+    /** 
+     * Generates an instance model from the provided configuration, patterns, metamodel, and initial model. 
+     * The generated instance model is saved in outputModelsLocation as "saveName".xmi. A "saveName"_solutionVisualisation.gml file 
+     * and other helper files are also saved in the same folder. The .gml is useable by yEd Graph Editor.
+     * @param viatraConfig ViatraReasonerConfiguration 
+     * @param saveName The generated instance model is saved in outputModelsLocation as saveName.
+     * @param queryToGenerateFrom ViatraQuerySetDescriptor describing the used patterns. 
+     * @param metamodel The metamodel for which we generate instances.
+     * @param initialModels List of the initial models, to use as base for the generation. 
+     * @param outputModelsLocation FileSystemWorkspace describing the location where the generated models are going to be saved.
+     * 
+     */
+    def private static void generate(
+    	ViatraReasonerConfiguration viatraConfig,
+    	String saveName,
+    	ViatraQuerySetDescriptor queryToGenerateFrom, 
+    	EcoreMetamodelDescriptor metamodel, 
+    	List<EObject> initialModel, 
+    	FileSystemWorkspace outputModelsLocation
+    ){
+        val Ecore2Logic ecore2Logic = new Ecore2Logic
+        val Logic2Ecore logic2Ecore = new Logic2Ecore(ecore2Logic)
+        val Viatra2Logic viatra2Logic = new Viatra2Logic(ecore2Logic)
+        val InstanceModel2Logic instanceModel2Logic = new InstanceModel2Logic        
+        val modelGenerationProblem = ecore2Logic.transformMetamodel(metamodel, new Ecore2LogicConfiguration())
+        val modelExtensionProblem = instanceModel2Logic.transform(modelGenerationProblem, initialModel)
+        val validModelExtensionProblem = viatra2Logic.transformQueries(queryToGenerateFrom, modelGenerationProblem, new Viatra2LogicConfiguration)       
+        val logicProblem = validModelExtensionProblem.output        
+        println("Problem created for " + '"' + saveName + '"')
+        var LogicResult solution
+        var LogicReasoner reasoner
+        reasoner = new ViatraReasoner
+        solution = reasoner.solve(logicProblem, viatraConfig, outputModelsLocation)       
+        println("Problem solved for " + '"' + saveName + '"')
+        val interpretations = reasoner.getInterpretations(solution as ModelResult)
+        val models = new LinkedList
+        for(interpretation : interpretations) {
+            val instanceModel = logic2Ecore.transformInterpretation(interpretation,modelGenerationProblem.trace)
+            models+=instanceModel
+        }
+        solution.writeSolution(outputModelsLocation, models, saveName)          
+    }
+    
+    /**
+     * Creates an EcoreMetamodelDescriptor as the metamodel to be used by the generator.
+     */
+    def private static EcoreMetamodelDescriptor loadMetamodel(EPackage pckg) {
         val List<EClass> classes = pckg.EClassifiers.filter(EClass).toList
         val List<EEnum> enums = pckg.EClassifiers.filter(EEnum).toList
         val List<EEnumLiteral> literals = enums.map[ELiterals].flatten.toList
@@ -134,17 +161,32 @@ class Run {
         return new EcoreMetamodelDescriptor(classes,#{},false,enums,literals,references, attributes)
     }
     
-    def private static loadQueries(EcoreMetamodelDescriptor metamodel, Set<IQuerySpecification<?>> baseSpecifications, Set<IQuerySpecification<?>> specifications) { 
+    /**
+     * Creates a <b>ViatraQuerySetDescriptor</b> from the provided metamodel, baseSpecifications and specifications.
+     * Well-formedness patterns must be marked with the <b>@Constraint</b> annotation.
+     * All the patterns referred by the <b>specifications</b> must be included in <b>baseSpecifications</b>. The non referred queries are filtered automatically.
+     * 
+     * @param metamodel 
+     * @param baseSpecifications 
+     * @param specifications
+     */
+    def private static ViatraQuerySetDescriptor loadQueries(EcoreMetamodelDescriptor metamodel, Set<IQuerySpecification<?>> baseSpecifications, Set<IQuerySpecification<?>> specifications) { 
         val patterns = new HashSet<IQuerySpecification<?>>
-        val wfPatterns = patterns.filter[it.allAnnotations.exists[it.name== "Constraint"]].toSet
-        val derivedFeatures = new LinkedHashMap       
+        val wfPatterns = patterns.filter[it.allAnnotations.exists[it.name== "Constraint"]].toSet   
         for (pattern : specifications.toList) {
-        	//Add EClasses defined in patterns: 
+        	//Add EClass keys defined in patterns: 
         	for(parameter : pattern.parameters){
-        		//TODO filter 
-	        	val emfKey = ((parameter.declaredUnaryType as BaseEMFTypeKey<?>).emfKey as EClass)
-	        	if(!metamodel.classes.contains(emfKey)){
-        			metamodel.classes.add(emfKey)
+        		val uType = parameter.declaredUnaryType
+        		if(uType.class == BaseEMFTypeKey){
+        			val emfkey = (uType as BaseEMFTypeKey<?>).emfKey
+	        		if(emfkey.class == EClassTransitiveInstancesKey || emfkey.class == EClassUnscopedTransitiveInstancesKey)
+	        		 {
+	        			println((parameter.declaredUnaryType as BaseEMFTypeKey<?>).emfKey)
+	        			val emfKey = ((uType as BaseEMFTypeKey<?>).emfKey as EClass)
+			        	if(!metamodel.classes.contains(emfKey)){
+		        			metamodel.classes.add(emfKey)
+		        		}		
+	        		}
         		}
         	}
         	//Get referredQueries
@@ -152,43 +194,43 @@ class Run {
         		patterns.addAll(baseSpecifications.filter[it.fullyQualifiedName == referredPQuery.fullyQualifiedName])
         	}      
         }    
-
-       // patterns.addAll(baseSpecifications.filter[it.fullyQualifiedName == ])
-        //derivedFeatures.put(i.type.internalQueryRepresentation,metamodel.attributes.filter[it.name == "type"].head)
-        //derivedFeatures.put(i.model.internalQueryRepresentation,metamodel.references.filter[it.name == "model"].head)
         val res = new ViatraQuerySetDescriptor(
             patterns.toList,
             wfPatterns,
-            derivedFeatures
+            new LinkedHashMap  
         )
         return res
     }
     
-    def static loadPartialModel(ReasonerWorkspace inputs) {
+    /**
+     * Loads the initial model and registers the resource.
+     */
+    def static List<EObject> loadInitialModel(FileSystemWorkspace location, String fileName) {
         Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("*", new XMIResourceFactoryImpl());
-               // println(inputs.readModel(EObject,"cps.xmi")/* .eResource.allContents.toList*/)
-        inputs.readModel(EObject,"cps.xmi").eResource.allContents.toList
+        return location.readModel(EObject, fileName).eResource.allContents.toList
     }
     
-    def static writeSolution(LogicResult solution, ReasonerWorkspace workspace, List<EObject> models, String name) {
+    /**
+     * 
+     */
+    def static writeSolution(LogicResult solution, FileSystemWorkspace location, List<EObject> models, String name) {
         if(solution instanceof ModelResult) {
             val representations = solution.representation
             for(representationIndex : 0..<representations.size) {
                 val representation = representations.get(representationIndex)
                 val representationNumber = representationIndex + 1
                 if(representation instanceof PartialInterpretation) {
-                    workspace.writeModel(representation, name + '''solution«representationNumber».partialinterpretation''')
+                    location.writeModel(representation, name + '''_solution«representationNumber».partialinterpretation''')
                     val partialInterpretation2GML = new PartialInterpretation2Gml
                     val gml = partialInterpretation2GML.transform(representation)
                         //ecore2GML.transform(root)
-                        workspace.writeText(name + '''solutionVisualisation.gml''',gml)
-                        
+                        location.writeText(name + '''_solutionVisualisation.gml''',gml)                        
                 } else {
-                    workspace.writeText(name + '''solution«representationNumber».txt''',representation.toString)
+                    location.writeText(name + '''_solution«representationNumber».txt''',representation.toString)
                 }
             }
             for(model : models) {
-                workspace.writeModel(model,name + ".xmi")
+                location.writeModel(model,name + ".xmi")
             }
             println("Solution saved and visualised for " + '"' + name + '"')
         } 
