@@ -50,6 +50,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PBodyNormaliz
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey
+import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
 
 public class PatternMutator {
 	
@@ -79,9 +81,6 @@ public class PatternMutator {
 		
 		new(PQuery queryToCopy, int version, PConstraint constraintToNegate) {
 			this.version = version
-			println("_______")
-			println(queryToCopy)
-			println(constraintToNegate)
 			copyPQuery(queryToCopy, constraintToNegate)
 
 			initializeBodies(bodies)
@@ -191,7 +190,6 @@ public class PatternMutator {
 		}
 		def void createTypeConstraintsForVars(List<PVariable> variables, PBody body){
 			for(variable : variables){
-				println("Created EObject for " + variable)
 				new TypeConstraint(body, Tuples.flatTupleOf(variable),
 					new EClassTransitiveInstancesKey(getClassifierLiteral("http://www.eclipse.org/emf/2002/Ecore", "EObject") as EClass))	
 			}	
@@ -257,12 +255,15 @@ public class PatternMutator {
 				}else if(baseConstraint.supplierKey.class == EStructuralFeatureInstancesKey){	
 					for(variable : outsourcedVariables){
 						var String typeName
+						var IInputKey key
 						//find the type name from the parameters
 						for(param : baseConstraint.PSystem.pattern.parameters){
-							if(param.name == variable.name)
+							if(param.name == variable.name && typeName === null && key === null){
 								typeName = param.typeName 
-						}									
-						var PParameter p = new PParameter(variable.name, typeName)
+								key = param.declaredUnaryType
+							}							
+						}				
+						var PParameter p = new PParameter(variable.name, typeName, key)
 						pq.addParameter(p)
 					}		
 					
@@ -338,7 +339,9 @@ public class PatternMutator {
 						}
 						case ConstantValue: {
 							//TODO negate?
-							new ConstantValue(body, variables.get(0), (constraint as ConstantValue).supplierKey)															
+//							println(variables)
+//							println(getTextualRepresentationOfPQuery(bodyToCopy.pattern, false))
+//							new ConstantValue(body, variables.get(0), (constraint as ConstantValue).supplierKey)															
 						}
 						case Equality: {
 							if (negate) {
@@ -381,7 +384,7 @@ public class PatternMutator {
 				this.name = queryToCopy.fullyQualifiedName.toString				
 				//Copy Parameters:
 				for (parameter : queryToCopy.parameters) {
-					var PParameter p = new PParameter(parameter.name, parameter.typeName/* , parameter.declaredUnaryType, parameter.direction*/)
+					var PParameter p = new PParameter(parameter.name, parameter.typeName, parameter.declaredUnaryType/* , /*parameter.direction*/)
 					addParameter(p)
 				}				
 				// Copy Bodies:	
@@ -441,8 +444,10 @@ public class PatternMutator {
 //		var patternAnnotation = '''«FOR annotation : pquery.allAnnotations»@«annotation.name»(«FOR value : annotation.allValues SEPARATOR ', '»«IF value.key == "message" || value.key == "severity"»«value.key» = "«value.value»"«ENDIF»«IF value.key == "key"»«value.key» = «value.value»«ENDIF»«ENDFOR»)«ENDFOR»'''
 //		var patternAnnotation = '''«FOR annotation : pquery.allAnnotations»@«annotation.name»«ENDFOR»'''	
 		var patternName = pquery.fullyQualifiedName.split("\\.").last
-		var patternParams ='''(«FOR param : params SEPARATOR ', '»«param.name»«IF param.typeName != null»:«param.typeName.split("\\.").last»«ENDIF»«ENDFOR»)'''		
-
+		
+		var patternParams ='''(«FOR param : params SEPARATOR ', '»«param.name»«IF param.typeName != null»: «
+		IF param.declaredUnaryType !== null && param.declaredUnaryType.class == JavaTransitiveInstancesKey»java «ENDIF»«
+		param.typeName.split("\\.").last»«ENDIF»«ENDFOR»)'''		
 		var String text = ""				
 		text +=	'''
 «««		«patternAnnotation»«»
