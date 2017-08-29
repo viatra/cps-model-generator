@@ -49,6 +49,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializa
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PBodyNormalizer
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples
+import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey
 
 public class PatternMutator {
 	
@@ -56,6 +57,10 @@ public class PatternMutator {
 	
 	/**
 	 * Helper class which extends the BasePQuery. Adds copying and mutating abilities.
+	 * Provides two constructors: One to copy a Query, and another one to Copy and negate one constraint contained by the original query.
+	 * 
+	 * Usage:
+	 * 
 	 *
 	 */		
 	static class HelperPQuery extends BasePQuery implements InitializablePQuery {
@@ -74,13 +79,11 @@ public class PatternMutator {
 		
 		new(PQuery queryToCopy, int version, PConstraint constraintToNegate) {
 			this.version = version
+			println("_______")
+			println(queryToCopy)
+			println(constraintToNegate)
 			copyPQuery(queryToCopy, constraintToNegate)
-			initializeBodies(bodies)
-		}
-		
-		new(PQuery queryToCopy, int version, PParameter parameterToNegate) {
-			this.version = version
-			copyPQuery(queryToCopy, null)
+
 			initializeBodies(bodies)
 		}
 
@@ -188,6 +191,7 @@ public class PatternMutator {
 		}
 		def void createTypeConstraintsForVars(List<PVariable> variables, PBody body){
 			for(variable : variables){
+				println("Created EObject for " + variable)
 				new TypeConstraint(body, Tuples.flatTupleOf(variable),
 					new EClassTransitiveInstancesKey(getClassifierLiteral("http://www.eclipse.org/emf/2002/Ecore", "EObject") as EClass))	
 			}	
@@ -205,7 +209,7 @@ public class PatternMutator {
 			}				
 			else if(baseConstraint.supplierKey.class == EStructuralFeatureInstancesKey){									
 				val wrappedKey = (baseConstraint.supplierKey as EStructuralFeatureInstancesKey).wrappedKey
-				var String packageUriName =  (wrappedKey as ETypedElement).EType.EPackage.nsURI.toString					
+				var String packageUriName =  wrappedKey.eContainer.eResource.URI.toString					
 				var String className = wrappedKey.containerClass.typeName.split("\\.").last
 				var String featureName = wrappedKey.name					
 				new TypeConstraint(body, Tuples.flatTupleOf(variables.toArray), new EStructuralFeatureInstancesKey(
@@ -221,7 +225,7 @@ public class PatternMutator {
 		 *
 		 */	  	    
 		def private void negateTypeConstraint(PBody body, TypeConstraint baseConstraint, List<PVariable> variables, HashMap<String ,PQuery> outsourcedQueries){																				
-			// Derive the name from the constraint	
+			// Derive the name from the constraint
 			val fqn = baseConstraint.PSystem.pattern.fullyQualifiedName
 			var String outsourcedPatternName = fqn.substring(0, fqn.lastIndexOf(".") + 1)																	
 			if(baseConstraint.supplierKey.class == EClassTransitiveInstancesKey)
@@ -240,6 +244,7 @@ public class PatternMutator {
 						var PVariable variable = outsourcedBody.getOrCreateVariableByName(filterParamWildCards(readVariable.toString))
 						outsourcedVariables.add(variable)
 				}		
+
 				//Different Key Types
 				if(baseConstraint.supplierKey.class == EClassTransitiveInstancesKey){					
 					for(variable : outsourcedVariables){
@@ -249,8 +254,7 @@ public class PatternMutator {
 					new TypeConstraint(outsourcedBody, Tuples.flatTupleOf(outsourcedVariables.get(0)),
 						new EClassTransitiveInstancesKey((baseConstraint.supplierKey as EClassTransitiveInstancesKey).emfKey))
 					
-				}else if(baseConstraint.supplierKey.class == EStructuralFeatureInstancesKey){
-					
+				}else if(baseConstraint.supplierKey.class == EStructuralFeatureInstancesKey){	
 					for(variable : outsourcedVariables){
 						var String typeName
 						//find the type name from the parameters
@@ -262,11 +266,10 @@ public class PatternMutator {
 						pq.addParameter(p)
 					}		
 					
-					val wrappedKey = (baseConstraint.supplierKey as EStructuralFeatureInstancesKey).wrappedKey
-					var String packageUriName =  (wrappedKey as ETypedElement).EType.EPackage.nsURI.toString					
+					val wrappedKey = (baseConstraint.supplierKey as EStructuralFeatureInstancesKey).wrappedKey										
+					var String packageUriName =  wrappedKey.eContainer.eResource.URI.toString		
 					var String className = wrappedKey.containerClass.typeName.split("\\.").last
 					var String featureName = wrappedKey.name
-					
 					new TypeConstraint(outsourcedBody, Tuples.flatTupleOf(outsourcedVariables.toArray), new EStructuralFeatureInstancesKey(
 						getFeatureLiteral(packageUriName, className, featureName)))	
 				}																				
@@ -306,9 +309,10 @@ public class PatternMutator {
 					var boolean negate = (constraintToNegate !== null && constraint.toString == constraintToNegate.toString)			
 					switch (constraint.class) {
 						case TypeConstraint: {																			
-							if (negate) { 			
-								createTypeConstraintsForVars(variables, body)													
-								negateTypeConstraint(body, constraint as TypeConstraint, variables, outsourcedQueries)
+							if (negate) { 										
+								createTypeConstraintsForVars(variables, body)				
+								negateTypeConstraint(body, constraintToNegate as TypeConstraint, variables, outsourcedQueries)									
+
 							} else {
 								createTypeConstraintFrom(body, variables, constraint as TypeConstraint)  
 							}						
@@ -446,13 +450,21 @@ public class PatternMutator {
 		«FOR body : disjunction.bodies SEPARATOR ' or {'»				
 			«FOR constraint : body.constraints»
 «««			«constraint.class»
-«««			TypeConstraint with EClassTransitiveInstancesKey:
 			«IF constraint.class ==  TypeConstraint»
+«««			TypeConstraint with EClassTransitiveInstancesKey:
 			«IF(constraint as TypeConstraint).supplierKey.class == EClassTransitiveInstancesKey»
 			«FOR param : (constraint as TypeConstraint).variablesTuple.elements»
 			«((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).wrappedKey.name»(«
 			HelperPQuery.filterParamWildCards(param.toString)»);
 			«ENDFOR»
+«««			TypeConstraint with EDataTypeInSlotsKey:
+			«IF(constraint as TypeConstraint).supplierKey.class == EDataTypeInSlotsKey»
+			TODO
+«««			«FOR param : (constraint as TypeConstraint).variablesTuple.elements»
+«««			«((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).wrappedKey.name»(«
+«««			HelperPQuery.filterParamWildCards(param.toString)»);
+«««			«ENDFOR»
+			«ENDIF»
 			«ENDIF»
 «««			TypeConstraint with EStructuralFeatureInstancesKey:
 			«IF(constraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey»
