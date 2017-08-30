@@ -1,0 +1,10 @@
+package mutatedpatterns
+
+import "http://org.eclipse.viatra/model/cps"
+import "http://www.eclipse.org/emf/2002/Ecore"		
+
+pattern allocatedApplicationV1(app: EObject) {				
+	EObject(app);
+	EObject(aVariable0);
+	neg find ApplicationInstance_AllocatedTo(app, aVariable0);	
+}

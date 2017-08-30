@@ -3,7 +3,7 @@ package mutatedpatterns
 import "http://org.eclipse.viatra/model/cps"
 import "http://www.eclipse.org/emf/2002/Ecore"		
 
-pattern appTypeInstanceAndHostV1(app:EObject, appInstance:EObject, hostInstance:HostInstance) {				
+pattern appTypeInstanceAndHostV1(app: EObject, appInstance: EObject, hostInstance: HostInstance) {				
 	EObject(appInstance);
 	EObject(app);
 	neg find ApplicationInstance_Type(appInstance, app);	

@@ -1,0 +1,11 @@
+package mutatedpatterns
+
+import "http://org.eclipse.viatra/model/cps"
+import "http://www.eclipse.org/emf/2002/Ecore"		
+
+pattern availableGreaterThanTotalRamV2(host: EObject) {				
+	HostInstance.availableRam(host, aRam);		
+	EObject(host);
+	EObject(tRam);
+	neg find HostInstance_TotalRam(host, tRam);	
+}

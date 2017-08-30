@@ -1,0 +1,12 @@
+package mutatedpatterns
+
+import "http://org.eclipse.viatra/model/cps"
+import "http://www.eclipse.org/emf/2002/Ecore"		
+
+pattern initialStateNotContainedByStateMachineV1(statemachine: EObject, state: EObject) {				
+	EObject(statemachine);
+	EObject(state);
+	neg find StateMachine_Initial(statemachine, state);	
+	State(state);
+	neg find statemachineState(statemachine, state);	
+}

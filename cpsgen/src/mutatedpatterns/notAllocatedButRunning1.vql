@@ -1,0 +1,9 @@
+package mutatedpatterns
+
+import "http://org.eclipse.viatra/model/cps"
+import "http://www.eclipse.org/emf/2002/Ecore"		
+
+pattern notAllocatedButRunningV1(app: ApplicationInstance) {				
+	ApplicationInstance.state(app, enumVariable0);		
+	neg find allocatedApplication(app);	
+}

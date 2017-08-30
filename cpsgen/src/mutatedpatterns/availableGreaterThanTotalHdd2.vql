@@ -1,0 +1,11 @@
+package mutatedpatterns
+
+import "http://org.eclipse.viatra/model/cps"
+import "http://www.eclipse.org/emf/2002/Ecore"		
+
+pattern availableGreaterThanTotalHddV2(host: EObject) {				
+	HostInstance.availableHdd(host, aHdd);		
+	EObject(host);
+	EObject(tHdd);
+	neg find HostInstance_TotalHdd(host, tHdd);	
+}

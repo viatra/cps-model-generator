@@ -3,7 +3,7 @@ package mutatedpatterns
 import "http://org.eclipse.viatra/model/cps"
 import "http://www.eclipse.org/emf/2002/Ecore"		
 
-pattern stateTransitionV2(source:State, transition:EObject, target:EObject) {				
+pattern stateTransitionV2(source: State, transition: EObject, target: EObject) {				
 	State.outgoingTransitions(source, transition);		
 	EObject(transition);
 	EObject(target);

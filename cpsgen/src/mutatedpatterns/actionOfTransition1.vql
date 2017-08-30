@@ -1,0 +1,10 @@
+package mutatedpatterns
+
+import "http://org.eclipse.viatra/model/cps"
+import "http://www.eclipse.org/emf/2002/Ecore"		
+
+pattern actionOfTransitionV1(transition: EObject, action: EObject) {				
+	EObject(transition);
+	EObject(action);
+	neg find Transition_Action(transition, action);	
+}

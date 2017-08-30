@@ -1,0 +1,12 @@
+package mutatedpatterns
+
+import "http://org.eclipse.viatra/model/cps"
+import "http://www.eclipse.org/emf/2002/Ecore"		
+
+pattern nodeIpIsNotUniqueV1(host: HostInstance) {				
+	EObject(host);
+	EObject(ip);
+	neg find nodeIpOfHost(host, ip);	
+	find nodeIpOfHost(otherHost, ip);	
+	host != otherHost;
+}

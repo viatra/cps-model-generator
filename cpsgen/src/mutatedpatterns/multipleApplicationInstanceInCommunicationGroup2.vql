@@ -3,7 +3,7 @@ package mutatedpatterns
 import "http://org.eclipse.viatra/model/cps"
 import "http://www.eclipse.org/emf/2002/Ecore"		
 
-pattern multipleApplicationInstanceInCommunicationGroupV2(sourceHostInstance:HostInstance, app:ApplicationType) {				
+pattern multipleApplicationInstanceInCommunicationGroupV2(sourceHostInstance: HostInstance, app: ApplicationType) {				
 	find reachableAppInstance(sourceHostInstance, app, appInstance);	
 	EObject(sourceHostInstance);
 	EObject(app);

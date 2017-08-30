@@ -3,7 +3,7 @@ package mutatedpatterns
 import "http://org.eclipse.viatra/model/cps"
 import "http://www.eclipse.org/emf/2002/Ecore"		
 
-pattern transitionWithoutTargetStateV2(transition:Transition) {				
+pattern transitionWithoutTargetStateV2(transition: Transition) {				
 	State.outgoingTransitions(source, transition);		
-	find stateTransition(source, transition, _);	
+	find stateTransition(source, transition, aVariable0);	
 }

@@ -3,7 +3,7 @@ package mutatedpatterns
 import "http://org.eclipse.viatra/model/cps"
 import "http://www.eclipse.org/emf/2002/Ecore"		
 
-pattern hostCommunicationV2(fromHost:HostInstance, toHost:EObject) {				
+pattern hostCommunicationV2(fromHost: HostInstance, toHost: EObject) {				
 	HostInstance.communicateWith(fromHost, toHost);		
 	EObject(toHost);
 	neg find HostInstance(toHost);	

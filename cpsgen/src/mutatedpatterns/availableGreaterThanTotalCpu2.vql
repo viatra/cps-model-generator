@@ -1,0 +1,11 @@
+package mutatedpatterns
+
+import "http://org.eclipse.viatra/model/cps"
+import "http://www.eclipse.org/emf/2002/Ecore"		
+
+pattern availableGreaterThanTotalCpuV2(host: EObject) {				
+	HostInstance.availableCpu(host, aCpu);		
+	EObject(host);
+	EObject(tCpu);
+	neg find HostInstance_TotalCpu(host, tCpu);	
+}

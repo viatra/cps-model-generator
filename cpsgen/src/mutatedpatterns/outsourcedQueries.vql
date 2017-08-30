@@ -3,27 +3,60 @@ package mutatedpatterns
 import "http://org.eclipse.viatra/model/cps"
 import "http://www.eclipse.org/emf/2002/Ecore"		
 
-pattern ApplicationInstance_Type(appInstance:ApplicationInstance, app:ApplicationType) {				
-	ApplicationInstance.type(appInstance, app);		
+pattern State_OutgoingTransitions(state: State, transition) {				
+	State.outgoingTransitions(state, transition);		
 }
-pattern State(target:State) {				
-	State(target);
+pattern Identifiable_Identifier(identifiable: Identifiable, id: java String) {				
+	Identifiable.identifier(identifiable, id);		
 }
-pattern StateMachine_States(statemachine:StateMachine, state:State) {				
-	StateMachine.states(statemachine, state);		
+pattern HostInstance_NodeIp(host: HostInstance, ip: java String) {				
+	HostInstance.nodeIp(host, ip);		
 }
-pattern Transition_TargetState(transition:Transition, target:State) {				
+pattern HostInstance_TotalRam(host: HostInstance, tRam) {				
+	HostInstance.totalRam(host, tRam);		
+}
+pattern HostInstance(toHost: HostInstance) {				
+	HostInstance(toHost);
+}
+pattern Transition_TargetState(transition: Transition, target: State) {				
 	Transition.targetState(transition, target);		
 }
-pattern ApplicationInstance_AllocatedTo(appInstance:ApplicationInstance, hostInstance:HostInstance) {				
+pattern Transition_Action(transition: Transition, action: java String) {				
+	Transition.action(transition, action);		
+}
+pattern StateMachine_Initial(statemachine: StateMachine, state: State) {				
+	StateMachine.initial(statemachine, state);		
+}
+pattern State(state: State) {				
+	State(state);
+}
+pattern HostInstance_AvailableRam(host: HostInstance, aRam) {				
+	HostInstance.availableRam(host, aRam);		
+}
+pattern ApplicationInstance_AllocatedTo(appInstance: ApplicationInstance, hostInstance: HostInstance) {				
 	ApplicationInstance.allocatedTo(appInstance, hostInstance);		
 }
-pattern HostInstance_CommunicateWith(fromHost:HostInstance, toHost:HostInstance) {				
+pattern ApplicationInstance_Type(appInstance: ApplicationInstance, app: ApplicationType) {				
+	ApplicationInstance.type(appInstance, app);		
+}
+pattern StateMachine_States(statemachine: StateMachine, state: State) {				
+	StateMachine.states(statemachine, state);		
+}
+pattern HostInstance_TotalHdd(host: HostInstance, tHdd) {				
+	HostInstance.totalHdd(host, tHdd);		
+}
+pattern HostInstance_TotalCpu(host: HostInstance, tCpu) {				
+	HostInstance.totalCpu(host, tCpu);		
+}
+pattern ApplicationInstance_State(app: ApplicationInstance, enumVariable0) {				
+	ApplicationInstance.state(app, enumVariable0);		
+}
+pattern HostInstance_AvailableHdd(host: HostInstance, aHdd) {				
+	HostInstance.availableHdd(host, aHdd);		
+}
+pattern HostInstance_CommunicateWith(fromHost: HostInstance, toHost: HostInstance) {				
 	HostInstance.communicateWith(fromHost, toHost);		
 }
-pattern State_OutgoingTransitions(source:State, transition:Transition) {				
-	State.outgoingTransitions(source, transition);		
-}
-pattern HostInstance(toHost:HostInstance) {				
-	HostInstance(toHost);
+pattern HostInstance_AvailableCpu(host: HostInstance, aCpu) {				
+	HostInstance.availableCpu(host, aCpu);		
 }

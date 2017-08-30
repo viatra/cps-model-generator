@@ -1,0 +1,12 @@
+package mutatedpatterns
+
+import "http://org.eclipse.viatra/model/cps"
+import "http://www.eclipse.org/emf/2002/Ecore"		
+
+pattern idIsNotUniqueV1(identifiable: Identifiable) {				
+	EObject(identifiable);
+	EObject(id);
+	neg find identifiableId(identifiable, id);	
+	find identifiableId(otherIdentifiable, id);	
+	identifiable != otherIdentifiable;
+}

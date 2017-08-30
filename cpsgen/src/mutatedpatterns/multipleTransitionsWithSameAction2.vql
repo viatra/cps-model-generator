@@ -1,0 +1,14 @@
+package mutatedpatterns
+
+import "http://org.eclipse.viatra/model/cps"
+import "http://www.eclipse.org/emf/2002/Ecore"		
+
+pattern multipleTransitionsWithSameActionV2(state: EObject, action: java String) {				
+	State.outgoingTransitions(state, transition);		
+	EObject(state);
+	EObject(otherTransition);
+	neg find State_OutgoingTransitions(state, otherTransition);	
+	find actionOfTransition(transition, action);	
+	find actionOfTransition(otherTransition, action);	
+	transition != otherTransition;
+}
