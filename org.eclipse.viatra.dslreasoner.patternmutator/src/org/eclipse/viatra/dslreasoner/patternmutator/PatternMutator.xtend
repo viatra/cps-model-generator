@@ -541,22 +541,27 @@ public class PatternMutator {
 	 * ConstantValue, AggregatorConstraint, ExpressionEvaluation, ExportedParameter, PatternMatchCounter, TypeFilterConstraint, BinaryTransitiveClosure
 	 * 
 	 * @param querySpecifications The list of IQuerySpecifications that we want to mutate.
-	 * @param packageOfVqls Package declaration of the mutated patterns as string.
+	 * @param packageDeclaration Package declaration of the mutated patterns as string.
 	 * @param imports Java imports as strings that are needed in the mutated patterns.
 	 * @param outputFolder Output location of the mutated patterns as string. 
 	 */
-	def mutate(List<? extends IQuerySpecification<?>> querySpecifications, String packageOfVqls, String importsInVqls, String outputFolder) {		
+	def mutate(List<? extends IQuerySpecification<?>> querySpecifications, String packageDeclaration, Set<String> imports, String outputFolder) {		
 		var specifications = new ArrayList<IQuerySpecification<?>>
 		var pQueries = new HashSet<PQuery>
 		var HashSet<PQuery> workingSetQueries = new HashSet<PQuery>
 		var HashMap<String, String> mutatedQueries = new HashMap<String, String>
 		var String outsourcedRepresentation = ""
-		var String imports =		
+		var String usedPackage = 
 		'''
-		import "http://www.eclipse.org/emf/2002/Ecore"
+		package «packageDeclaration»
 		
 		'''
-		imports += imports
+		var String allImports =		
+		'''
+		import "http://www.eclipse.org/emf/2002/Ecore"
+		«FOR imp : imports.toList SEPARATOR "\\n" »import "«imp»"«ENDFOR»
+		
+		'''
 		for (IQuerySpecification<?> specification : querySpecifications) {
 			specifications.add(specification);
 		}
@@ -605,8 +610,8 @@ public class PatternMutator {
 		file = new File(outputFolder + "outsourcedQueries.vql");
 	    try {
 	        writer = new FileWriter(file)	  
-	        vqlFile += packageOfVqls
-	        vqlFile += imports
+	        vqlFile += usedPackage
+	        vqlFile += allImports
 	        vqlFile += outsourcedRepresentation
 	        writer.write(vqlFile)
 	    } catch (IOException e) {
@@ -622,8 +627,8 @@ public class PatternMutator {
 			vqlFile = ""
 		    try {
 		        writer = new FileWriter(file);		  
-		        vqlFile += packageOfVqls
-		        vqlFile += imports
+		        vqlFile += usedPackage
+		        vqlFile += allImports
 		        vqlFile += mutatedQueries.get(key)		
 		        writer.write(vqlFile);
 		    } catch (IOException e) {

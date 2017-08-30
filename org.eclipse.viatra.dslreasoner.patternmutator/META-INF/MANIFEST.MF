@@ -3,9 +3,11 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Patternmutator
 Bundle-SymbolicName: org.eclipse.viatra.dslreasoner.patternmutator;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Export-Package: org.eclipse.viatra.dslreasoner.patternmutator,
-  org.eclipse.viatra.dslreasoner.patternmutator.util
-Require-Bundle: org.eclipse.viatra.addon.querybasedfeatures.runtime,
+Export-Package: org.eclipse.viatra.dslreasoner.mutatedpatterns,
+  org.eclipse.viatra.dslreasoner.mutatedpatterns.util,
+  org.eclipse.viatra.dslreasoner.patternmutator
+Require-Bundle: org.eclipse.emf.ecore,
+  org.eclipse.viatra.addon.querybasedfeatures.runtime,
   com.google.guava,
   org.eclipse.xtext.xbase.lib,
   org.eclipse.xtend.lib,
