@@ -16,12 +16,13 @@ import org.eclipse.emf.ecore.EEnumLiteral
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EStructuralFeature
-import org.eclipse.emf.ecore.ETypedElement
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.emf.EMFQueryMetaContext
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
+import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey
 import org.eclipse.viatra.query.runtime.matchers.psystem.EnumerablePConstraint
 import org.eclipse.viatra.query.runtime.matchers.psystem.InitializablePQuery
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody
@@ -49,10 +50,10 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializa
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PBodyNormalizer
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples
-import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey
-import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey
-import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
 
+/**
+ * <b>Usage:</b> Instantiate then use the mutate method for pattern mutations.
+ */
 public class PatternMutator {
 	
 	static protected var HashMap<String ,PQuery> outsourcedQueries = newHashMap
@@ -60,10 +61,6 @@ public class PatternMutator {
 	/**
 	 * Helper class which extends the BasePQuery. Adds copying and mutating abilities.
 	 * Provides two constructors: One to copy a Query, and another one to Copy and negate one constraint contained by the original query.
-	 * 
-	 * Usage:
-	 * 
-	 *
 	 */		
 	static class HelperPQuery extends BasePQuery implements InitializablePQuery {
 
@@ -87,12 +84,22 @@ public class PatternMutator {
 		}
 
 		static public def String filterParamWildCards(String parameter) {
+			var String temp = parameter
 			if (parameter.matches("_<[0-9]+>")) {
-				return "_"
+				temp = parameter.replaceAll("_", "")
+				temp = temp.replaceAll("<", "")
+				temp = temp.replaceAll(">", "")			
+				temp = "aVariable" + temp 	
 			}
-			return parameter
+			if (parameter.matches(".virtual\\{([0-9]+)\\}")) {
+				temp = parameter.replaceAll("\\{", "")
+				temp = temp.replaceAll("virtual", "enumVariable")
+				temp = temp.replaceAll("\\}", "")
+				temp = temp.replaceAll("\\.", "")
+			}
+			return temp	
 		}
-
+			
 		def EClassifier getClassifierLiteral(String packageUri,
 			String classifierName) throws QueryInitializationException {
 			var EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(packageUri);
@@ -339,9 +346,13 @@ public class PatternMutator {
 						}
 						case ConstantValue: {
 							//TODO negate?
-//							println(variables)
-//							println(getTextualRepresentationOfPQuery(bodyToCopy.pattern, false))
-//							new ConstantValue(body, variables.get(0), (constraint as ConstantValue).supplierKey)															
+							//println((constraint as ConstantValue).supplierKey)
+							if(!variables.empty){
+								new ConstantValue(body, variables.get(0), (constraint as ConstantValue).supplierKey)	
+							}else{
+								//TODO
+							}
+														
 						}
 						case Equality: {
 							if (negate) {
@@ -431,7 +442,21 @@ public class PatternMutator {
 		}			
 	}
 	
-	static public def String getTextualRepresentationOfPQuery(PQuery pquery, boolean normalized){		
+	
+	/**
+	 * Returns the textual representation of a provided PQuery. The returned string is formatted as a .vql pattern.
+	 * <p>
+	 * <b>Unsupported constraint types:</b>
+	 * ConstantValue, AggregatorConstraint, ExpressionEvaluation, ExportedParameter, PatternMatchCounter, TypeFilterConstraint, BinaryTransitiveClosure
+	 *
+	 * <p>
+	 * <b>Supported key types for TypeConstraint:</b>
+	 * EStructuralFeatureInstancesKey, EClassTransitiveInstancesKey
+	 * 
+	 * @param pquery
+	 * @param normalized
+	 */
+	static private def String getTextualRepresentationOfPQuery(PQuery pquery, boolean normalized){		
 		//TODO explain why it is okay to normalize
 		var PDisjunction disjunction 
 		if (normalized) {
@@ -445,7 +470,7 @@ public class PatternMutator {
 //		var patternAnnotation = '''«FOR annotation : pquery.allAnnotations»@«annotation.name»«ENDFOR»'''	
 		var patternName = pquery.fullyQualifiedName.split("\\.").last
 		
-		var patternParams ='''(«FOR param : params SEPARATOR ', '»«param.name»«IF param.typeName != null»: «
+		var patternParams ='''(«FOR param : params SEPARATOR ', '»«param.name»«IF param.typeName !== null»: «
 		IF param.declaredUnaryType !== null && param.declaredUnaryType.class == JavaTransitiveInstancesKey»java «ENDIF»«
 		param.typeName.split("\\.").last»«ENDIF»«ENDFOR»)'''		
 		var String text = ""				
@@ -462,14 +487,6 @@ public class PatternMutator {
 			«((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).wrappedKey.name»(«
 			HelperPQuery.filterParamWildCards(param.toString)»);
 			«ENDFOR»
-«««			TypeConstraint with EDataTypeInSlotsKey:
-			«IF(constraint as TypeConstraint).supplierKey.class == EDataTypeInSlotsKey»
-			TODO
-«««			«FOR param : (constraint as TypeConstraint).variablesTuple.elements»
-«««			«((constraint as TypeConstraint).supplierKey as EClassTransitiveInstancesKey).wrappedKey.name»(«
-«««			HelperPQuery.filterParamWildCards(param.toString)»);
-«««			«ENDFOR»
-			«ENDIF»
 			«ENDIF»
 «««			TypeConstraint with EStructuralFeatureInstancesKey:
 			«IF(constraint as TypeConstraint).supplierKey.class == EStructuralFeatureInstancesKey»
@@ -514,14 +531,32 @@ public class PatternMutator {
 		return text
 	}
 	
-	def mutate(List<? extends IQuerySpecification<?>> querySpecifications, String packageOfVqls, String importsInVqls, String outputFolder) {
-		
+	/**
+	 * Creates an outsourcedQueries.vql, which contains all the patterns needed for negative calls.
+	 * Also creates a standalone .vql file for each mutated pattern.
+	 * <p>
+	 * Automatically adds the import of Ecore to the provided imports. 
+	 * <p>
+	 * <b>Unsupported constraint types:</b>
+	 * ConstantValue, AggregatorConstraint, ExpressionEvaluation, ExportedParameter, PatternMatchCounter, TypeFilterConstraint, BinaryTransitiveClosure
+	 * 
+	 * @param querySpecifications The list of IQuerySpecifications that we want to mutate.
+	 * @param packageOfVqls Package declaration of the mutated patterns as string.
+	 * @param imports Java imports as strings that are needed in the mutated patterns.
+	 * @param outputFolder Output location of the mutated patterns as string. 
+	 */
+	def mutate(List<? extends IQuerySpecification<?>> querySpecifications, String packageOfVqls, String importsInVqls, String outputFolder) {		
 		var specifications = new ArrayList<IQuerySpecification<?>>
 		var pQueries = new HashSet<PQuery>
 		var HashSet<PQuery> workingSetQueries = new HashSet<PQuery>
 		var HashMap<String, String> mutatedQueries = new HashMap<String, String>
 		var String outsourcedRepresentation = ""
+		var String imports =		
+		'''
+		import "http://www.eclipse.org/emf/2002/Ecore"
 		
+		'''
+		imports += imports
 		for (IQuerySpecification<?> specification : querySpecifications) {
 			specifications.add(specification);
 		}
@@ -535,8 +570,7 @@ public class PatternMutator {
 			for (annotation : query.allAnnotations) {
 				if(annotation.name == "QueryBasedFeature")
 					go = false
-			}
-			
+			}			
 			//Filter source queries
 			if(go && query.disjunctBodies.bodies.forall[it.constraints.forall[it.class != BinaryTransitiveClosure]]){
 				workingSetQueries.add(query)
@@ -549,7 +583,8 @@ public class PatternMutator {
 			var String representation = ""
 			for (body : normalizedPQuery.bodies) {	
 				for (constraint : body.constraints) {
-					if (constraint.class != AggregatorConstraint && constraint.class != ExpressionEvaluation && constraint.class != ExportedParameter && constraint.class != PatternMatchCounter && constraint.class != TypeFilterConstraint && constraint.class != BinaryTransitiveClosure ) {
+					//TODO implement non-supported constraint types
+					if (constraint.class != ConstantValue && constraint.class != AggregatorConstraint && constraint.class != ExpressionEvaluation && constraint.class != ExportedParameter && constraint.class != PatternMatchCounter && constraint.class != TypeFilterConstraint && constraint.class != BinaryTransitiveClosure ) {
 						var p = new HelperPQuery(workingQuery, cntr, constraint)
 						representation = getTextualRepresentationOfPQuery(p, false)
 						mutatedQueries.put(p.name + cntr, representation)
@@ -571,7 +606,7 @@ public class PatternMutator {
 	    try {
 	        writer = new FileWriter(file)	  
 	        vqlFile += packageOfVqls
-	        vqlFile += importsInVqls
+	        vqlFile += imports
 	        vqlFile += outsourcedRepresentation
 	        writer.write(vqlFile)
 	    } catch (IOException e) {
@@ -588,7 +623,7 @@ public class PatternMutator {
 		    try {
 		        writer = new FileWriter(file);		  
 		        vqlFile += packageOfVqls
-		        vqlFile += importsInVqls
+		        vqlFile += imports
 		        vqlFile += mutatedQueries.get(key)		
 		        writer.write(vqlFile);
 		    } catch (IOException e) {
@@ -597,8 +632,7 @@ public class PatternMutator {
 		        if (writer !== null) try { writer.close(); } catch (IOException ignore) {}
 		    }	    
   			System.out.printf("File is located at %s%n", file.getAbsolutePath());
-		}		
-		
+		}				
 	}
 }
 

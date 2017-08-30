@@ -1,5 +1,6 @@
 package org.eclipse.viatra.dslreasoner.patternmutator
 
+import org.eclipse.viatra.dslreasoner.mutatedpatterns.Pattern
 import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.CyberPhysicalSystemPackage
 
 class Run {
@@ -8,7 +9,7 @@ class Run {
 	 	val p = Pattern.instance
         val PatternMutator mutator = new PatternMutator()
               
-        val String outputFolder = "src/org/eclipse/viatra/dslreasoner/patternmutator/"
+        val String outputFolder = "src/org/eclipse/viatra/dslreasoner/mutatedpatterns/"
 		val String packageOfVqls=
 		'''
 		package mutatedpatterns
@@ -17,10 +18,8 @@ class Run {
 		val String importsInVqls = 
 		'''
 		import "http://org.eclipse.viatra/model/cps"
-		import "http://www.eclipse.org/emf/2002/Ecore"		
 		
 		'''
-     	mutator.mutate(p.specifications.toList, packageOfVqls, importsInVqls, outputFolder)
-   
+     	mutator.mutate(p.specifications.toList, packageOfVqls, importsInVqls, outputFolder)  
 	 }
 }
