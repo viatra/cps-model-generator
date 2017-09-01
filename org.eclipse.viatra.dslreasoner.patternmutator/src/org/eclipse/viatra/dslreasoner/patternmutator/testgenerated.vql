@@ -1,5 +1,0 @@
-package org.eclipse.viatra.dslreasoner.patternmutator
-
-import epackage "FAM";
-
-
